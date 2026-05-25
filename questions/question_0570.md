@@ -1,0 +1,14 @@
+# Question #570 - Topic 1
+
+A company has a large workload that runs every Friday evening. The workload runs on Amazon EC2 instances that are in two Availability Zones in the us-east-1 Region. Normally, the company must run no more than two instances at all times. However, the company wants to scale up to six instances each Friday to handle a regularly repeating increased workload. Which solution will meet these requirements with the LEAST operational overhead?
+
+## Options
+
+**A.** Create a reminder in Amazon EventBridge to scale the instances.
+
+**B.** Create an Auto Scaling group that has a scheduled action.
+
+**C.** Create an Auto Scaling group that uses manual scaling.
+
+**D.** Create an Auto Scaling group that uses automatic scaling.
+

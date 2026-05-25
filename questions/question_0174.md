@@ -1,0 +1,14 @@
+# Question #174 - Topic 1
+
+A company has a multi-tier application that runs six front-end web servers in an Amazon EC2 Auto Scaling group in a single Availability Zone behind an Application Load Balancer (ALB). A solutions architect needs to modify the infrastructure to be highly available without modifying the application. Which architecture should the solutions architect choose that provides high availability?
+
+## Options
+
+**A.** Create an Auto Scaling group that uses three instances across each of two Regions.
+
+**B.** Modify the Auto Scaling group to use three instances across each of two Availability Zones.
+
+**C.** Create an Auto Scaling template that can be used to quickly create more instances in another Region.
+
+**D.** Change the ALB in front of the Amazon EC2 instances in a round-robin configuration to balance traffic to the web tier.
+

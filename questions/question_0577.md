@@ -1,0 +1,14 @@
+# Question #577 - Topic 1
+
+A company uses an Amazon CloudFront distribution to serve content pages for its website. The company needs to ensure that clients use a TLS certificate when accessing the company's website. The company wants to automate the creation and renewal of the TLS certificates. Which solution will meet these requirements with the MOST operational efficiency?
+
+## Options
+
+**A.** Use a CloudFront security policy to create a certificate.
+
+**B.** Use a CloudFront origin access control (OAC) to create a certificate.
+
+**C.** Use AWS Certificate Manager (ACM) to create a certificate. Use DNS validation for the domain.
+
+**D.** Use AWS Certificate Manager (ACM) to create a certificate. Use email validation for the domain.
+

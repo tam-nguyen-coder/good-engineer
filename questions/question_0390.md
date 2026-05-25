@@ -1,0 +1,16 @@
+# Question #390 - Topic 1
+
+A company hosts a three-tier ecommerce application on a fleet of Amazon EC2 instances. The instances run in an Auto Scaling group behind an Application Load Balancer (ALB). All ecommerce data is stored in an Amazon RDS for MariaDB Multi-AZ DB instance. The company wants to optimize customer session management during transactions. The application must store session data durably. Which solutions will meet these requirements? (Choose two.)
+
+## Options
+
+**A.** Turn on the sticky sessions feature (session affinity) on the ALB.
+
+**B.** Use an Amazon DynamoDB table to store customer session information.
+
+**C.** Deploy an Amazon Cognito user pool to manage user session information.
+
+**D.** Deploy an Amazon ElastiCache for Redis cluster to store customer session information.
+
+**E.** Use AWS Systems Manager Application Manager in the application to manage user session information.
+

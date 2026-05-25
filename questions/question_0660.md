@@ -1,0 +1,14 @@
+# Question #660 - Topic 1
+
+A company hosts an application on Amazon EC2 On-Demand Instances in an Auto Scaling group. Application peak hours occur at the same time each day. Application users report slow application performance at the start of peak hours. The application performs normally 2-3 hours after peak hours begin. The company wants to ensure that the application works properly at the start of peak hours. Which solution will meet these requirements?
+
+## Options
+
+**A.** Configure an Application Load Balancer to distribute traffic properly to the instances.
+
+**B.** Configure a dynamic scaling policy for the Auto Scaling group to launch new instances based on memory utilization.
+
+**C.** Configure a dynamic scaling policy for the Auto Scaling group to launch new instances based on CPU utilization.
+
+**D.** Configure a scheduled scaling policy for the Auto Scaling group to launch new instances before peak hours.
+

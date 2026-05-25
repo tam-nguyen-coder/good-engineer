@@ -1,0 +1,14 @@
+# Question #344 - Topic 1
+
+A company has a Java application that uses Amazon Simple Queue Service (Amazon SQS) to parse messages. The application cannot parse messages that are larger than 256 KB in size. The company wants to implement a solution to give the application the ability to parse messages as large as 50 MB. Which solution will meet these requirements with the FEWEST changes to the code?
+
+## Options
+
+**A.** Use the Amazon SQS Extended Client Library for Java to host messages that are larger than 256 KB in Amazon S3.
+
+**B.** Use Amazon EventBridge to post large messages from the application instead of Amazon SQS.
+
+**C.** Change the limit in Amazon SQS to handle messages that are larger than 256 KB.
+
+**D.** Store messages that are larger than 256 KB in Amazon Elastic File System (Amazon EFS). Configure Amazon SQS to reference this location in the messages.
+

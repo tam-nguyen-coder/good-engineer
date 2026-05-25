@@ -1,0 +1,14 @@
+# Question #448 - Topic 1
+
+A company has two VPCs named Management and Production. The Management VPC uses VPNs through a customer gateway to connect to a single device in the data center. The Production VPC uses a virtual private gateway with two attached AWS Direct Connect connections. The Management and Production VPCs both use a single VPC peering connection to allow communication between the applications. What should a solutions architect do to mitigate any single point of failure in this architecture?
+
+## Options
+
+**A.** Add a set of VPNs between the Management and Production VPCs.
+
+**B.** Add a second virtual private gateway and attach it to the Management VPC.
+
+**C.** Add a second set of VPNs to the Management VPC from a second customer gateway device.
+
+**D.** Add a second VPC peering connection between the Management VPC and the Production VPC.
+

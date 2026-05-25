@@ -1,0 +1,14 @@
+# Question #518 - Topic 1
+
+An application uses an Amazon RDS MySQL DB instance. The RDS database is becoming low on disk space. A solutions architect wants to increase the disk space without downtime. Which solution meets these requirements with the LEAST amount of effort?
+
+## Options
+
+**A.** Enable storage autoscaling in RDS
+
+**B.** Increase the RDS database instance size
+
+**C.** Change the RDS database instance storage type to Provisioned IOPS
+
+**D.** Back up the RDS database, increase the storage capacity, restore the database, and stop the previous instance
+

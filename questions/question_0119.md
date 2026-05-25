@@ -1,0 +1,14 @@
+# Question #119 - Topic 1
+
+A global company is using Amazon API Gateway to design REST APIs for its loyalty club users in the us-east-1 Region and the ap-southeast-2 Region. A solutions architect must design a solution to protect these API Gateway managed REST APIs across multiple accounts from SQL injection and cross-site scripting attacks. Which solution will meet these requirements with the LEAST amount of administrative effort?
+
+## Options
+
+**A.** Set up AWS WAF in both Regions. Associate Regional web ACLs with an API stage.
+
+**B.** Set up AWS Firewall Manager in both Regions. Centrally configure AWS WAF rules.
+
+**C.** Set up AWS Shield in bath Regions. Associate Regional web ACLs with an API stage.
+
+**D.** Set up AWS Shield in one of the Regions. Associate Regional web ACLs with an API stage.
+

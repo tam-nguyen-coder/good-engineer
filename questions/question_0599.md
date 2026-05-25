@@ -1,0 +1,16 @@
+# Question #599 - Topic 1
+
+A company wants to use Amazon Elastic Container Service (Amazon ECS) clusters and Amazon RDS DB instances to build and run a payment processing application. The company will run the application in its on-premises data center for compliance purposes. A solutions architect wants to use AWS Outposts as part of the solution. The solutions architect is working with the company's operational team to build the application. Which activities are the responsibility of the company's operational team? (Choose three.)
+
+## Options
+
+**A.** Providing resilient power and network connectivity to the Outposts racks
+
+**B.** Managing the virtualization hypervisor, storage systems, and the AWS services that run on Outposts
+
+**C.** Physical security and access controls of the data center environment
+
+**D.** Availability of the Outposts infrastructure including the power supplies, servers, and networking equipment within the Outposts racks
+
+**E.** Physical maintenance of Outposts components F. Providing extra capacity for Amazon ECS clusters to mitigate server failures and maintenance events
+

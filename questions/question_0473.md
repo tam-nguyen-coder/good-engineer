@@ -1,0 +1,14 @@
+# Question #473 - Topic 1
+
+A company hosts a website on Amazon EC2 instances behind an Application Load Balancer (ALB). The website serves static content. Website traffic is increasing, and the company is concerned about a potential increase in cost.
+
+## Options
+
+**A.** Create an Amazon CloudFront distribution to cache state files at edge locations
+
+**B.** Create an Amazon ElastiCache cluster. Connect the ALB to the ElastiCache cluster to serve cached files
+
+**C.** Create an AWS WAF web ACL and associate it with the ALB. Add a rule to the web ACL to cache static files
+
+**D.** Create a second ALB in an alternative AWS Region. Route user traffic to the closest Region to minimize data transfer costs
+

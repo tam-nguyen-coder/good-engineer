@@ -1,0 +1,14 @@
+# Question #34 - Topic 1
+
+A company hosts its multi-tier applications on AWS. For compliance, governance, auditing, and security, the company must track configuration changes on its AWS resources and record a history of API calls made to these resources. What should a solutions architect do to meet these requirements?
+
+## Options
+
+**A.** Use AWS CloudTrail to track configuration changes and AWS Config to record API calls.
+
+**B.** Use AWS Config to track configuration changes and AWS CloudTrail to record API calls.
+
+**C.** Use AWS Config to track configuration changes and Amazon CloudWatch to record API calls.
+
+**D.** Use AWS CloudTrail to track configuration changes and Amazon CloudWatch to record API calls.
+

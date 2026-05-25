@@ -1,0 +1,14 @@
+# Question #253 - Topic 1
+
+A solutions architect has created two IAM policies: Policy1 and Policy2. Both policies are attached to an IAM group. A cloud engineer is added as an IAM user to the IAM group. Which action will the cloud engineer be able to perform?
+
+## Options
+
+**A.** Deleting IAM users
+
+**B.** Deleting directories
+
+**C.** Deleting Amazon EC2 instances
+
+**D.** Deleting logs from Amazon CloudWatch Logs
+

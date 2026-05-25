@@ -1,0 +1,14 @@
+# Question #251 - Topic 1
+
+An Amazon EC2 instance is located in a private subnet in a new VPC. This subnet does not have outbound internet access, but the EC2 instance needs the ability to download monthly security updates from an outside vendor. What should a solutions architect do to meet these requirements?
+
+## Options
+
+**A.** Create an internet gateway, and attach it to the VPC. Configure the private subnet route table to use the internet gateway as the default route.
+
+**B.** Create a NAT gateway, and place it in a public subnet. Configure the private subnet route table to use the NAT gateway as the default route.
+
+**C.** Create a NAT instance, and place it in the same subnet where the EC2 instance is located. Configure the private subnet route table to use the NAT instance as the default route.
+
+**D.** Create an internet gateway, and attach it to the VPC. Create a NAT instance, and place it in the same subnet where the EC2 instance is located. Configure the private subnet route table to use the internet gateway as the default route.
+

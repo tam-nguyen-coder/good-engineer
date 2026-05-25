@@ -1,0 +1,14 @@
+# Question #395 - Topic 1
+
+An IAM user made several configuration changes to AWS resources in their company's account during a production deployment last week. A solutions architect learned that a couple of security group rules are not configured as desired. The solutions architect wants to confirm which IAM user was responsible for making changes. Which service should the solutions architect use to find the desired information?
+
+## Options
+
+**A.** Amazon GuardDuty
+
+**B.** Amazon Inspector
+
+**C.** AWS CloudTrail
+
+**D.** AWS Config
+

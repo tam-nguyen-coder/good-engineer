@@ -1,0 +1,14 @@
+# Question #67 - Topic 1
+
+A company hosts an application on multiple Amazon EC2 instances. The application processes messages from an Amazon SQS queue, writes to an Amazon RDS table, and deletes the message from the queue. Occasional duplicate records are found in the RDS table. The SQS queue does not contain any duplicate messages. What should a solutions architect do to ensure messages are being processed once only?
+
+## Options
+
+**A.** Use the CreateQueue API call to create a new queue.
+
+**B.** Use the AddPermission API call to add appropriate permissions.
+
+**C.** Use the ReceiveMessage API call to set an appropriate wait time.
+
+**D.** Use the ChangeMessageVisibility API call to increase the visibility timeout.
+

@@ -1,0 +1,14 @@
+# Question #289 - Topic 1
+
+A company has an AWS Lambda function that needs read access to an Amazon S3 bucket that is located in the same AWS account. Which solution will meet these requirements in the MOST secure manner?
+
+## Options
+
+**A.** Apply an S3 bucket policy that grants read access to the S3 bucket.
+
+**B.** Apply an IAM role to the Lambda function. Apply an IAM policy to the role to grant read access to the S3 bucket.
+
+**C.** Embed an access key and a secret key in the Lambda function’s code to grant the required IAM permissions for read access to the S3 bucket.
+
+**D.** Apply an IAM role to the Lambda function. Apply an IAM policy to the role to grant read access to all S3 buckets in the account.
+

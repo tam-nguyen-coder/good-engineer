@@ -1,0 +1,14 @@
+# Question #595 - Topic 1
+
+A company's applications run on Amazon EC2 instances in Auto Scaling groups. The company notices that its applications experience sudden traffic increases on random days of the week. The company wants to maintain application performance during sudden traffic increases. Which solution will meet these requirements MOST cost-effectively?
+
+## Options
+
+**A.** Use manual scaling to change the size of the Auto Scaling group.
+
+**B.** Use predictive scaling to change the size of the Auto Scaling group.
+
+**C.** Use dynamic scaling to change the size of the Auto Scaling group.
+
+**D.** Use schedule scaling to change the size of the Auto Scaling group.
+

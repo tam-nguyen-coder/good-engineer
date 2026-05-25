@@ -1,0 +1,14 @@
+# Question #591 - Topic 1
+
+A company runs a container application by using Amazon Elastic Kubernetes Service (Amazon EKS). The application includes microservices that manage customers and place orders. The company needs to route incoming requests to the appropriate microservices. Which solution will meet this requirement MOST cost-effectively?
+
+## Options
+
+**A.** Use the AWS Load Balancer Controller to provision a Network Load Balancer.
+
+**B.** Use the AWS Load Balancer Controller to provision an Application Load Balancer.
+
+**C.** Use an AWS Lambda function to connect the requests to Amazon EKS.
+
+**D.** Use Amazon API Gateway to connect the requests to Amazon EKS.
+

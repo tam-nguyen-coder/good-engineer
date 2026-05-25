@@ -1,0 +1,14 @@
+# Question #576 - Topic 1
+
+A company is building a RESTful serverless web application on AWS by using Amazon API Gateway and AWS Lambda. The users of this web application will be geographically distributed, and the company wants to reduce the latency of API requests to these users. Which type of endpoint should a solutions architect use to meet these requirements?
+
+## Options
+
+**A.** Private endpoint
+
+**B.** Regional endpoint
+
+**C.** Interface VPC endpoint
+
+**D.** Edge-optimized endpoint
+

@@ -1,0 +1,16 @@
+# Question #550 - Topic 1
+
+A company is using AWS Key Management Service (AWS KMS) keys to encrypt AWS Lambda environment variables. A solutions architect needs to ensure that the required permissions are in place to decrypt and use the environment variables. Which steps must the solutions architect take to implement the correct permissions? (Choose two.)
+
+## Options
+
+**A.** Add AWS KMS permissions in the Lambda resource policy.
+
+**B.** Add AWS KMS permissions in the Lambda execution role.
+
+**C.** Add AWS KMS permissions in the Lambda function policy.
+
+**D.** Allow the Lambda execution role in the AWS KMS key policy.
+
+**E.** Allow the Lambda resource policy in the AWS KMS key policy.
+

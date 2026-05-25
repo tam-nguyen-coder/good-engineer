@@ -1,0 +1,14 @@
+# Question #552 - Topic 1
+
+A company needs to optimize the cost of its Amazon EC2 instances. The company also needs to change the type and family of its EC2 instances every 2-3 months. What should the company do to meet these requirements?
+
+## Options
+
+**A.** Purchase Partial Upfront Reserved Instances for a 3-year term.
+
+**B.** Purchase a No Upfront Compute Savings Plan for a 1-year term.
+
+**C.** Purchase All Upfront Reserved Instances for a 1-year term.
+
+**D.** Purchase an All Upfront EC2 Instance Savings Plan for a 1-year term.
+

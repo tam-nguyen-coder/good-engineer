@@ -1,0 +1,14 @@
+# Question #294 - Topic 1
+
+An application that is hosted on Amazon EC2 instances needs to access an Amazon S3 bucket. Traffic must not traverse the internet. How should a solutions architect configure access to meet these requirements?
+
+## Options
+
+**A.** Create a private hosted zone by using Amazon Route 53.
+
+**B.** Set up a gateway VPC endpoint for Amazon S3 in the VPC.
+
+**C.** Configure the EC2 instances to use a NAT gateway to access the S3 bucket.
+
+**D.** Establish an AWS Site-to-Site VPN connection between the VPC and the S3 bucket.
+

@@ -1,0 +1,14 @@
+# Question #2 - Topic 1
+
+A company needs the ability to analyze the log files of its proprietary application. The logs are stored in JSON format in an Amazon S3 bucket. Queries will be simple and will run on-demand. A solutions architect needs to perform the analysis with minimal changes to the existing architecture. What should the solutions architect do to meet these requirements with the LEAST amount of operational overhead?
+
+## Options
+
+**A.** Use Amazon Redshift to load all the content into one place and run the SQL queries as needed.
+
+**B.** Use Amazon CloudWatch Logs to store the logs. Run SQL queries as needed from the Amazon CloudWatch console.
+
+**C.** Use Amazon Athena directly with Amazon S3 to run the queries as needed.
+
+**D.** Use AWS Glue to catalog the logs. Use a transient Apache Spark cluster on Amazon EMR to run the SQL queries as needed.
+

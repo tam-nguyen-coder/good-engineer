@@ -1,0 +1,16 @@
+# Question #458 - Topic 1
+
+A solutions architect is designing a RESTAPI in Amazon API Gateway for a cash payback service. The application requires 1 GB of memory and 2 GB of storage for its computation resources. The application will require that the data is in a relational format. Which additional combination ofAWS services will meet these requirements with the LEAST administrative effort? (Choose two.)
+
+## Options
+
+**A.** Amazon EC2
+
+**B.** AWS Lambda
+
+**C.** Amazon RDS
+
+**D.** Amazon DynamoDB
+
+**E.** Amazon Elastic Kubernetes Services (Amazon EKS)
+

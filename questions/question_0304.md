@@ -1,0 +1,14 @@
+# Question #304 - Topic 1
+
+A company recently created a disaster recovery site in a different AWS Region. The company needs to transfer large amounts of data back and forth between NFS file systems in the two Regions on a periodic basis. Which solution will meet these requirements with the LEAST operational overhead?
+
+## Options
+
+**A.** Use AWS DataSync.
+
+**B.** Use AWS Snowball devices.
+
+**C.** Set up an SFTP server on Amazon EC2.
+
+**D.** Use AWS Database Migration Service (AWS DMS).
+

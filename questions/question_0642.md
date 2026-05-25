@@ -1,0 +1,14 @@
+# Question #642 - Topic 1
+
+A company wants to run a gaming application on Amazon EC2 instances that are part of an Auto Scaling group in the AWS Cloud. The application will transmit data by using UDP packets. The company wants to ensure that the application can scale out and in as traffic increases and decreases. What should a solutions architect do to meet these requirements?
+
+## Options
+
+**A.** Attach a Network Load Balancer to the Auto Scaling group.
+
+**B.** Attach an Application Load Balancer to the Auto Scaling group.
+
+**C.** Deploy an Amazon Route 53 record set with a weighted policy to route traffic appropriately.
+
+**D.** Deploy a NAT instance that is configured with port forwarding to the EC2 instances in the Auto Scaling group.
+

@@ -1,0 +1,16 @@
+# Question #655 - Topic 1
+
+A company runs a web application on Amazon EC2 instances in an Auto Scaling group that has a target group. The company designed the application to work with session affinity (sticky sessions) for a better user experience. The application must be available publicly over the internet as an endpoint. A WAF must be applied to the endpoint for additional security. Session affinity (sticky sessions) must be configured on the endpoint. Which combination of steps will meet these requirements? (Choose two.)
+
+## Options
+
+**A.** Create a public Network Load Balancer. Specify the application target group.
+
+**B.** Create a Gateway Load Balancer. Specify the application target group.
+
+**C.** Create a public Application Load Balancer. Specify the application target group.
+
+**D.** Create a second target group. Add Elastic IP addresses to the EC2 instances.
+
+**E.** Create a web ACL in AWS WAF. Associate the web ACL with the endpoint
+

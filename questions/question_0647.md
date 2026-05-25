@@ -1,0 +1,14 @@
+# Question #647 - Topic 1
+
+A gaming company is building an application with Voice over IP capabilities. The application will serve traffic to users across the world. The application needs to be highly available with an automated failover across AWS Regions. The company wants to minimize the latency of users without relying on IP address caching on user devices. What should a solutions architect do to meet these requirements?
+
+## Options
+
+**A.** Use AWS Global Accelerator with health checks.
+
+**B.** Use Amazon Route 53 with a geolocation routing policy.
+
+**C.** Create an Amazon CloudFront distribution that includes multiple origins.
+
+**D.** Create an Application Load Balancer that uses path-based routing.
+
