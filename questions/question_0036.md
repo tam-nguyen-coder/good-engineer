@@ -12,3 +12,7 @@ A company is building an application in the AWS Cloud. The application will stor
 
 **D.** Create a customer managed KMS key and an S3 bucket in each Region. Configure the S3 buckets to use server-side encryption with AWS KMS keys (SSE-KMS). Configure replication between the S3 buckets.
 
+
+
+
+

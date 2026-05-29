@@ -12,3 +12,7 @@ A company runs an online marketplace web application on AWS. The application ser
 
 **D.** Store the batched transactions data in Amazon S3 as files. Use AWS Lambda to process every file and remove sensitive data before updating the files in Amazon S3. The Lambda function then stores the data in Amazon DynamoDB. Other applications can consume transaction files stored in Amazon S3.
 
+
+
+
+

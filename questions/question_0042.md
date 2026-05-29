@@ -12,3 +12,9 @@ A company runs a highly available image-processing application on Amazon EC2 ins
 
 **D.** Provision an EC2 Dedicated Host to run the EC2 instances.
 
+
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Công ty vận hành ứng dụng xử lý ảnh highly available trên các instance `Amazon EC2` trong một `VPC` duy nhất. Các instance được phân bổ trong nhiều `subnet` trải rộng qua nhiều `Availability Zones`. Các instance không giao tiếp với nhau, nhưng thường xuyên download và upload ảnh từ/tới `Amazon S3` thông qua một `NAT gateway` đơn lẻ.
+- **Existing Resources:** `EC2` instances (đa AZ), `VPC`, `subnet`, single `NAT gateway`, `Amazon S3`.
+- **Current Issue/Goal:** Giảm thiểu chi phí data transfer (`

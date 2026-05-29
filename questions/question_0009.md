@@ -12,3 +12,7 @@ A company is running an SMB file server in its data center. The file server stor
 
 **D.** Install a utility on each user's computer to access Amazon S3. Create an S3 Lifecycle policy to transition the data to S3 Glacier Flexible Retrieval after 7 days.
 
+
+
+
+
