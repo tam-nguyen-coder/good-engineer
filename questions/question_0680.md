@@ -12,3 +12,41 @@ A solutions architect needs to copy files from an Amazon S3 bucket to an Amazon 
 
 **D.** Launch an Amazon EC2 instance in the same VPC as the file system. Mount the file system. Create a script to routinely synchronize all objects that changed in the origin S3 bucket to the destination S3 bucket and the mounted file system.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Continuous copy from S3 to EFS + another S3 bucket. Only overwrite if source changes.
+- **Existing Resources:** Source S3 bucket, destination S3 bucket, EFS file system.
+- **Current Issue/Goal:** Continuous sync with least overhead.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `continuously` | DataSync schedule hoặc event-driven. |
+| `overwritten only if the source file changes` | DataSync "transfer only data that has changed" (incremental). |
+| `AWS DataSync` | Managed service for data transfer between AWS storage services. |
+| `least operational overhead` | DataSync (managed) vs custom Lambda or EC2 script. |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Least operational overhead
+- **Constraints:** Continuous, incremental copy, two destinations
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: A**
+
+**Giải thích:**
+- DataSync là managed service chuyên dụng cho data transfer.
+- Tạo DataSync location cho source S3, destination S3, destination EFS.
+- Tạo 2 DataSync tasks (S3→S3 và S3→EFS) với scheduled execution để chạy liên tục.
+- "Transfer only data that has changed" = incremental sync, chỉ copy files đã thay đổi.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án B:**
+- Lambda function: cần code custom, mount EFS, handle errors → operational overhead cao.
+
+**❌ Đáp án C:**
+- "Transfer all data" mỗi lần chạy → không hiệu quả, copy lại file không thay đổi.
+
+**❌ Đáp án D:**
+- EC2 + custom script → operational overhead cao nhất (quản lý EC2, script, monitoring).
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"S3 to S3 + EFS sync → AWS DataSync incremental mode. Cheapest operational overhead."*

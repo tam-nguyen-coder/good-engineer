@@ -12,3 +12,40 @@ A company runs its application on an Oracle database. The company plans to quick
 
 **D.** Migrate the database to Amazon RDS for PostgreSQL by rewriting the application code to remove dependency on Oracle APEX.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Oracle DB with third-party features requiring privileged access. Limited DB/backup/admin resources. Need quick, cost-effective migration.
+- **Existing Resources:** Oracle database, third-party features.
+- **Current Issue/Goal:** Migrate to AWS with minimal cost + effort.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `privileged access` | RDS Custom: cấp quyền SYS/SYSDBA, có thể cài thêm features. |
+| `limited resources` | RDS Custom: managed nhưng vẫn customizable. |
+| `third-party database features` | Standard RDS không cho phép cài thêm extensions. |
+| `RDS Custom` | Managed DB với privileged access + customization. |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Migration / Database
+- **Constraints:** Oracle, privileged access, cost-effective
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: B**
+
+**Giải thích:**
+- RDS Custom for Oracle: managed DB (automated backup, patching) + granted privileged access (SYS/SYSDBA).
+- Cho phép cài third-party features, customize database settings.
+- Cost-effective hơn EC2 (tự quản) mà vẫn linh hoạt hơn standard RDS.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- Standard RDS for Oracle: không cấp privileged access → không support third-party features yêu cầu sysdba.
+
+**❌ Đáp án C:**
+- EC2 AMI for Oracle: tự quản hoàn toàn (OS, DB, backup) → operational overhead cao, limited resources.
+
+**❌ Đáp án D:**
+- Rewrite to PostgreSQL: tốn thời gian và chi phí phát triển lớn. Không "quickly migrate".
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Oracle cần privileged access → RDS Custom. Standard RDS = no sysdba. EC2 = self-managed."*

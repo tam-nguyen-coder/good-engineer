@@ -12,3 +12,41 @@ A company has an ordering application that stores customer information in Amazon
 
 **D.** Schedule the reporting queries for non-peak hours.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Ordering app on RDS MySQL. Reporting queries during work hours cause timeouts. Need to stop timeouts without blocking queries.
+- **Existing Resources:** RDS MySQL, ordering app.
+- **Current Issue/Goal:** Separate reporting traffic from OLTP traffic.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `one-time queries for reporting` | Heavy read workload |
+| `timeouts` | Reporting queries interfere with OLTP |
+| `without preventing employees from performing queries` | **Read replica** for reporting |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Database / Performance
+- **Constraints:** Keep both apps running, no timeouts
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: A**
+
+**Giải thích:**
+- **Read replica** — offload reporting queries, không ảnh hưởng primary DB.
+- Read replica có endpoint riêng → move reporting queries to read replica.
+- Ordering app (OLTP) vẫn chạy trên primary.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án B:**
+- Distributing ordering app to read replica — ordering is write-heavy, read replica không accept writes.
+
+**❌ Đáp án C:**
+- Migrate to DynamoDB — major change, không cần thiết.
+
+**❌ Đáp án D:**
+- Schedule queries non-peak hours — prevents employees from querying during work hours.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Read replica = offload reporting. Primary = OLTP. Schedule queries = prevents access"*

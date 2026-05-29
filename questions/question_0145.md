@@ -12,3 +12,41 @@ A company hosts a website analytics application on a single Amazon EC2 On-Demand
 
 **D.** Migrate the database to an Amazon Aurora MySQL DB instance. Create an AMI of the web application. Apply the AMI to a launch template. Create an Auto Scaling group with the launch template Configure the launch template to use a Spot Fleet. Attach an Application Load Balancer to the Auto Scaling group.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Single EC2 (PHP + MySQL). Performance degradation + 5xx during busy times. Need seamless scaling.
+- **Existing Resources:** 1 EC2 On-Demand.
+- **Current Issue/Goal:** Auto-scaling, cost-effective.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `scale seamlessly` | ASG + ALB |
+| `most cost-effectively` | **Aurora** (better performance) + **Spot Fleet** (cost savings) |
+| `5xx errors` | Server overload — cần scale out |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Scalability + Cost optimization
+- **Constraints:** Seamless scaling, cost-effective
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: D**
+
+**Giải thích:**
+- **Aurora MySQL** — better performance and scalability than RDS MySQL, cost-effective.
+- **ASG + Launch Template + ALB** — tự động scale in/out, seamless.
+- **Spot Fleet** — giảm cost (có thể pha trộn Spot + On-Demand).
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- RDS MySQL + 2 EC2 — không auto-scaling, chỉ 2 instances cố định. Không scale seamlessly.
+
+**❌ Đáp án B:**
+- Route 53 weighted routing — không tự động health check/failover như ALB.
+
+**❌ Đáp án C:**
+- Lambda resize instance — phải stop instance, gây downtime. Không seamless.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"ASG + ALB = seamless scaling. Aurora = better than MySQL. Spot Fleet = cost-effective"*

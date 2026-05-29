@@ -12,3 +12,39 @@ A company has hired a solutions architect to design a reliable architecture for 
 
 **D.** Place the EC2 instances in an EC2 Auto Scaling group that has multiple subnets located in multiple Availability Zones. Use Spot Instances instead of On-Demand Instances. Set up Amazon CloudWatch alarms to monitor the health of the instances Update the DB instance to be Multi-AZ, and enable deletion protection.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Single AZ: 2 EC2 (manual) + 1 RDS. Employee deleted RDS → 24h downtime. Need max reliability.
+- **Existing Resources:** 2 EC2 web servers, 1 RDS DB instance.
+- **Current Issue/Goal:** Maximize reliability: HA + data protection.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `maximize reliability` | Multi-AZ for both compute + database. Deletion protection. |
+| `deletion protection` | RDS deletion protection: ngăn accidental delete. |
+| `Multi-AZ` | RDS Multi-AZ (HA) + EC2 ASG across AZs. |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** High Availability / Reliability
+- **Constraints:** Prevent accidental deletion, survive AZ failure
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: B**
+
+**Giải thích:**
+- RDS Multi-AZ: automatic failover nếu primary fails. Deletion protection: ngăn delete DB instance.
+- EC2: ALB + ASG across AZs → compute HA, tự động replace failed instances.
+- Multi-AZ architecture: không SPOF.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- Delete 1 EC2: chỉ còn 1 instance → SPOF. Termination protection không ngăn được AZ failure.
+
+**❌ Đáp án C:**
+- API Gateway + Lambda + 2 DB: overly complex, không cần thiết cho web app.
+
+**❌ Đáp án D:**
+- Spot Instances: có thể bị interrupt → không reliable cho production.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Reliability = Multi-AZ (compute + DB) + deletion protection. Spot != reliable."*

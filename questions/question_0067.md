@@ -12,3 +12,40 @@ A company hosts an application on multiple Amazon EC2 instances. The application
 
 **D.** Use the ChangeMessageVisibility API call to increase the visibility timeout.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** EC2 instances đọc SQS → write RDS → delete message. Occasional duplicates in RDS.
+- **Existing Resources:** EC2, SQS queue, RDS.
+- **Current Issue/Goal:** SQS không có duplicate, nhưng RDS có duplicate records.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `SQS queue does not contain any duplicate messages` | Vấn đề không phải do SQS gửi duplicate |
+| `processes messages... writes to... deletes the message` | Worker pattern |
+| `duplicate records in RDS` | Message được process nhiều lần |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Fault tolerance / Message processing
+- **Constraints:** Process once only
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: D**
+
+**Giải thích:**
+- **Visibility timeout** là thời gian message ẩn sau khi được receive. Nếu worker không delete kịp (do timeout), message trở lại queue và được xử lý lại → duplicate.
+- **Tăng visibility timeout** giúp worker có đủ thời gian xử lý và delete message trước khi nó xuất hiện lại.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- Tạo queue mới không giải quyết vấn đề processing duplicate.
+
+**❌ Đáp án B:**
+- AddPermission chỉ để phân quyền, không liên quan đến duplicate processing.
+
+**❌ Đáp án C:**
+- **Wait time** (long polling) giảm số lần poll rỗng, không ảnh hưởng đến duplicate processing.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Visibility timeout quá thấp → message process lại → duplicate. Tăng timeout để đủ thời gian xử lý"*

@@ -12,3 +12,41 @@ A company has a data ingestion workflow that includes the following components: 
 
 **D.** Configure an Amazon Simple Queue Service (Amazon SQS) queue as the on-failure destination. Modify the Lambda function to process messages in the queue.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** SNS → Lambda. Occasional network failures → data not ingested (manual rerun needed).
+- **Existing Resources:** SNS topic, Lambda function.
+- **Current Issue/Goal:** Ensure all notifications processed eventually (durability + retry).
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `eventually processed` | Cần dead-letter queue (DLQ) |
+| `network connectivity issues` | Cần retry mechanism |
+| `on-failure destination` | Lambda có thể gửi failed events đến SQS |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Event-driven / Resilience
+- **Constraints:** Eventually consistent processing
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: D**
+
+**Giải thích:**
+- **SQS queue as on-failure destination** — Lambda failed events được gửi vào queue.
+- Lambda có thể xử lý lại messages từ queue sau khi network khôi phục.
+- Pattern: SNS → Lambda → (on failure) SQS DLQ → reprocess.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- Multi-AZ Lambda — không giúp retry khi network failure.
+
+**❌ Đáp án B:**
+- Tăng CPU/memory — không giải quyết network connectivity issue.
+
+**❌ Đáp án C:**
+- SNS retry strategy — chỉ retry gửi đến Lambda, không durable storage cho failed events.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"SQS DLQ = async retry for failed Lambda invocations. SNS retry = limited. Multi-AZ ≠ retry"*

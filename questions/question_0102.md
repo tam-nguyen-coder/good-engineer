@@ -14,3 +14,41 @@ A company wants to migrate an on-premises data center to AWS. The data center ho
 
 **E.** Use AWS DataSync to create a suitable location configuration for the on-premises SFTP server.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Migrate 200GB SFTP data (NFS) to EC2 + EFS. Tự động hóa.
+- **Existing Resources:** On-prem SFTP server, NFS storage.
+- **Current Issue/Goal:** EC2 + EFS, automated transfer.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `automate this task` | Cần **AWS DataSync** |
+| `NFS-based file system` | DataSync hỗ trợ NFS |
+| `200 GB of data` | DataSync lý tưởng cho lượng data vừa |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Data transfer + Automation
+- **Constraints:** Chọn 2 đáp án
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: B và E**
+
+**Giải thích:**
+- **B: DataSync agent on-prem** — cài agent trong data center để đọc data từ NFS.
+- **E: DataSync location config** — tạo source location (on-prem NFS) và destination (EFS).
+- DataSync tự động transfer, schedule, verify data.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- EC2 cần ở cùng AZ với EFS để mount — đúng kỹ thuật nhưng một mình nó không đủ để transfer.
+
+**❌ Đáp án C:**
+- EBS volume — không cần, EFS là shared storage.
+
+**❌ Đáp án D:**
+- Manual copy — không tự động hóa.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"DataSync = automated data transfer on-prem ↔ AWS. Agent on-prem + location config = complete setup"*

@@ -14,3 +14,40 @@ A company is migrating its applications and databases to the AWS Cloud. The comp
 
 **E.** Ensure the physical security of the Amazon RDS infrastructure in the data center F. Encryption of the data that moves in transit through Direct Connect
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Shared Responsibility Model. ECS, Direct Connect, RDS. Which tasks are customer's responsibility?
+- **Existing Resources:** N/A.
+- **Current Issue/Goal:** Identify customer-managed activities.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `managed by the company` | Customer responsibility per Shared Responsibility Model. |
+| `RDS` | Customer: DB instance config, data, access. AWS: infra, OS, patching. |
+| `ECS` | Customer: container, task def, monitoring. |
+| `Direct Connect` | Customer: encryption in transit. |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Shared Responsibility Model
+- **Constraints:** Choose 3 customer-managed activities
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: B, C, F**
+
+**Giải thích:**
+- **B:** Customer creates DB instance, configures maintenance window.
+- **C:** Customer manages software on ECS (monitoring, patching, log, IDS).
+- **F:** Customer encrypts data in transit over Direct Connect.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- AWS manages RDS infrastructure, OS, platform.
+
+**❌ Đáp án D:**
+- AWS manages RDS DB engine patching (minor + major for some versions).
+
+**❌ Đáp án E:**
+- AWS manages physical security of data centers.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Shared responsibility: AWS = infra/OS/physical. Customer = config/data/encryption/monitoring."*

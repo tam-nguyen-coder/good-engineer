@@ -12,3 +12,44 @@ A company needs to configure a real-time data ingestion architecture for its app
 
 **D.** Configure an Amazon API Gateway API to send data to AWS Glue. Use AWS Lambda functions to transform the data. Use AWS Glue to send the data to Amazon S3.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Real-time data ingestion: cần API + stream transformation + storage.
+- **Existing Resources:** Chưa có.
+- **Current Issue/Goal:** Real-time ingestion, least operational overhead.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `real-time data ingestion` | Cần **Kinesis** streaming |
+| `transforms data as the data is streamed` | Lambda + Firehose transformation |
+| `least operational overhead` | Serverless, không EC2 |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Real-time streaming + Operational efficiency
+- **Constraints:** API, stream transform, storage
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: C**
+
+**Giải thích:**
+- **API Gateway** — managed API, không cần EC2.
+- **Kinesis Data Streams** — real-time data ingestion.
+- **Kinesis Data Firehose** — automatically load data vào S3, với **Lambda** để transform.
+- Tất cả đều serverless — **least operational overhead**.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- EC2 để host API — operational overhead (quản lý OS, patching, scaling).
+
+**❌ Đáp án B:**
+- **AWS Glue** là ETL batch, không phải real-time streaming.
+- EC2 + Glue — operational overhead cao.
+
+**❌ Đáp án D:**
+- API Gateway → Glue — không hỗ trợ real-time streaming (Glue là batch).
+- Glue không phải streaming destination cho API Gateway.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"API Gateway + Kinesis + Firehose + Lambda = serverless real-time ingestion pipeline"*

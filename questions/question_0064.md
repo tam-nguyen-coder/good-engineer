@@ -12,3 +12,43 @@ A company has more than 5 TB of file data on Windows file servers that run on pr
 
 **D.** Deploy and configure Amazon FSx for Windows File Server on AWS. Deploy and configure an Amazon FSx File Gateway on premises. Move the on-premises file data to the FSx File Gateway. Configure the cloud workloads to use FSx for Windows File Server on AWS. Configure the on- premises workloads to use the FSx File Gateway.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** 5TB+ Windows file servers on-prem, hybrid migration to AWS.
+- **Existing Resources:** Windows file servers on-prem, Site-to-Site VPN.
+- **Current Issue/Goal:** Min latency, min operational overhead, no changes to access patterns, hybrid access.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `Windows file servers` | SMB protocol, cần Windows-native solution |
+| `no significant changes to existing file access patterns` | Giữ nguyên SMB file share |
+| `minimum latency` | Cache local trên on-prem |
+| `Site-to-Site VPN` | Kết nối hybrid sẵn có |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Hybrid storage + Minimal changes
+- **Constraints:** Windows, SMB, hybrid access, low latency
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: D**
+
+**Giải thích:**
+- **FSx for Windows File Server** trên AWS — managed Windows file server cho cloud workloads.
+- **FSx File Gateway** on-prem — cache local cho on-prem workloads, đồng bộ với FSx qua VPN.
+- Cả on-prem và cloud workloads đều dùng SMB — **không thay đổi access pattern**.
+- FSx File Gateway caches data locally → **minimum latency** cho on-prem users.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- Chỉ có FSx trên AWS — on-prem workloads không có local cache, latency cao qua VPN.
+
+**❌ Đáp án B:**
+- S3 File Gateway dùng S3 backend, không native Windows file server (thiếu Windows ACLs, AD integration).
+
+**❌ Đáp án C:**
+- Tương tự B — phải reconfigure workloads, S3 khác access pattern so với Windows file shares.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"FSx for Windows = SMB + AD. FSx File Gateway = local cache cho on-prem. Hybrid solution cho Windows"*

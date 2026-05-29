@@ -14,3 +14,41 @@ A company is storing sensitive user information in an Amazon S3 bucket. The comp
 
 **E.** Create a NAT instance and have the EC2 instances use the NAT instance to access the S3 bucket.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Sensitive data in S3, EC2 in VPC cần access.
+- **Existing Resources:** S3 bucket, VPC with EC2 instances.
+- **Current Issue/Goal:** Secure private access từ VPC đến S3.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `secure access` | VPC endpoint + bucket policy |
+| `sensitive user information` | Không public, access từ VPC only |
+| `VPC gateway endpoint` | Private connection to S3 |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Security + Networking
+- **Constraints:** Chọn 2 đáp án
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: A và C**
+
+**Giải thích:**
+- **A: VPC Gateway Endpoint** — kết nối private từ VPC đến S3.
+- **C: Bucket policy restrict to VPC** — chỉ cho phép access từ VPC (dùng `aws:SourceVpc` condition).
+- Kết hợp: private network + access control = secure solution.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án B:**
+- Public bucket — không secure cho sensitive data.
+
+**❌ Đáp án D:**
+- IAM user credentials trên EC2 (access key/secret key) — không secure (long-lived credentials), nên dùng IAM role.
+
+**❌ Đáp án E:**
+- NAT instance — traffic đi qua internet, không private, thêm chi phí.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"S3 Gateway Endpoint + bucket policy restrict to VPC = private + secure. Credentials trên EC2 = bad practice"*

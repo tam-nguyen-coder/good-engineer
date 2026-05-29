@@ -12,3 +12,46 @@ A retail company has several businesses. The IT team for each business manages i
 
 **D.** Integrate DynamoDB with AWS Certificate Manager (ACM). Generate identity certificates to authenticate DynamoDB. Configure the application to use the correct certificate to authenticate and read the DynamoDB table.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Nhiều business accounts (mỗi team có AWS account riêng), mỗi account có DynamoDB table inventory. Central inventory reporting app deployed trong shared account cần read items từ tất cả DynamoDB tables.
+- **Existing Resources:** DynamoDB tables trong mỗi business account, AWS Organizations.
+- **Current Issue/Goal:** Authenticate cross-account để central app đọc được DynamoDB của từng business account, với security cao nhất.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `cross-account access` | IAM role + trust policy + STS AssumeRole |
+| `most securely` | Không dùng IAM user keys (long-lived credentials), không dùng Secrets Manager cho DynamoDB auth |
+| `trust policy` | Cho phép role ở account A assume role ở account B |
+| `IAM role` | Temporary credentials, secure hơn IAM user access keys |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Most secure
+- **Constraints:** Cross-account, nhiều business accounts, central inventory app
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: C**
+
+**Giải thích:**
+- IAM role với cross-account trust policy là best practice cho cross-account access.
+- Ở mỗi business account: tạo BU_ROLE với policy cho phép read DynamoDB table, trust policy cho phép APP_ROLE từ inventory account assume.
+- Ở inventory account: APP_ROLE có quyền gọi STS AssumeRole.
+- Application assume BU_ROLE → nhận temporary credentials → truy cập DynamoDB.
+- Temporary credentials tự động rotate, không cần quản lý long-lived keys.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- Secrets Manager dùng để lưu secrets (database credentials, API keys), không phải để authenticate DynamoDB cross-account.
+- DynamoDB không hỗ trợ auth qua Secrets Manager.
+
+**❌ Đáp án B:**
+- IAM user access keys là long-lived credentials, security kém hơn temporary credentials từ role.
+- Phải manually rotate keys mỗi 30 ngày → operational overhead cao.
+- AWS khuyến cáo không dùng IAM user keys cho cross-account access.
+
+**❌ Đáp án D:**
+- ACM dùng để quản lý SSL/TLS certificates, không phải để authenticate DynamoDB.
+- DynamoDB không hỗ trợ certificate-based authentication.
+
+## 6. MẸO GHI NHỚ (MEMORY HOOK)
+🧠 *"Cross-account = IAM role + STS AssumeRole. Không dùng IAM user keys cho cross-account."*

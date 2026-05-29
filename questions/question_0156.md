@@ -14,3 +14,41 @@ A company produces batch data that comes from different databases. The company a
 
 **E.** Use blueprints in AWS Lake Formation to identify the data that can be ingested into a data lake. Use AWS Glue to crawl the source, extract the data, and load the data into Amazon S3 in Apache Parquet format.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Consolidate batch + live stream data → S3 data lake. One-time queries + BI dashboards.
+- **Existing Resources:** Databases, sensors, APIs.
+- **Current Issue/Goal:** Data lake + analytics, least overhead.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `one-time queries` | **Athena** (serverless SQL on S3) |
+| `business intelligence tool` | **QuickSight** (managed BI) |
+| `least operational overhead` | **Lake Formation + Glue** (managed data lake) |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Data analytics
+- **Constraints:** Chọn 2, least overhead
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: A và E**
+
+**Giải thích:**
+- **A: Athena + QuickSight** — serverless SQL queries + managed BI dashboard.
+- **E: Lake Formation + Glue** — managed data lake, crawl/ETL vào S3 dạng Parquet (tối ưu cho Athena).
+- Data lake trên S3 → Athena query → QuickSight visualize.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án B:**
+- Kinesis Data Analytics — real-time analytics, không phải one-time queries.
+
+**❌ Đáp án C:**
+- Lambda + Redshift — operational overhead, không phải least.
+
+**❌ Đáp án D:**
+- Glue → OpenSearch — OpenSearch là search engine, không phải BI tool.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Lake Formation + Glue = data lake. Athena = query S3. QuickSight = BI. Parquet = optimal format"*

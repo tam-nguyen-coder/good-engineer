@@ -12,3 +12,41 @@ A reporting team receives files each day in an Amazon S3 bucket. The reporting t
 
 **D.** Configure S3 replication between the S3 buckets. Configure the analysis S3 bucket to send event notifications to Amazon EventBridge (Amazon CloudWatch Events). Configure an ObjectCreated rule in EventBridge (CloudWatch Events). Configure Lambda and SageMaker Pipelines as targets for the rule.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Auto copy files initial S3 → analysis S3 (S3 replication), trigger Lambda + SageMaker Pipelines.
+- **Existing Resources:** Initial S3 bucket.
+- **Current Issue/Goal:** Auto replication + event-driven processing, least overhead.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `move the files automatically` | **S3 replication** (managed) |
+| `pattern-matching code` | Lambda function |
+| `SageMaker Pipelines` | ML pipeline |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Data processing + Automation
+- **Constraints:** Least operational overhead
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: C**
+
+**Giải thích:**
+- **S3 replication** — tự động copy files, managed, không cần Lambda copy.
+- **S3 event notification** trên analysis bucket → trigger Lambda + SageMaker Pipelines.
+- **Least operational overhead** — replication managed, event notification native.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- Lambda để copy files — operational overhead (phải viết code, error handling).
+
+**❌ Đáp án B:**
+- Lambda copy + EventBridge — over-engineered, nhiều moving parts.
+
+**❌ Đáp án D:**
+- S3 replication đúng + EventBridge — EventBridge thêm complexity so với S3 event notification trực tiếp.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"S3 replication = managed copy. S3 event notification = trigger Lambda/SageMaker. EventBridge = extra complexity"*

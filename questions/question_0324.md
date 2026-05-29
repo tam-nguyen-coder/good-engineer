@@ -12,3 +12,40 @@ A company wants to implement a disaster recovery plan for its primary on-premise
 
 **D.** Provision an AWS Storage Gateway Volume Gateway stored volume with the same amount of disk space as the existing file storage volume. Mount the Volume Gateway stored volume to the existing file server by using iSCSI, and copy all files to the storage volume. Configure scheduled snapshots of the storage volume. To recover from a disaster, restore a snapshot to an Amazon Elastic Block Store (Amazon EBS) volume and attach the EBS volume to an Amazon EC2 instance.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** On-premises iSCSI file storage (hundreds of TB). Cần DR plan, end users cần immediate local access không latency, least infrastructure change.
+- **Existing Resources:** iSCSI device, local storage server.
+- **Current Issue/Goal:** DR plan, không latency cho local users, least change.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `iSCSI` | Block storage protocol → Volume Gateway (iSCSI), không phải File Gateway (NFS/SMB). |
+| `immediate access to all file types` | Cần local access không latency → stored volume (all data locally). |
+| `without experiencing latency` | Stored volume: all data on-premises, không phải fetch từ AWS. |
+| `least amount of change` | Stored volume dùng iSCSI → tương thích infrastructure hiện tại. |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Least amount of change to existing infrastructure
+- **Constraints:** iSCSI, no latency, hundreds of TB, DR
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: D**
+
+**Giải thích:**
+- Stored volume gateway: toàn bộ dữ liệu lưu on-premises (zero latency cho local users), async snapshot lên AWS cho DR.
+- iSCSI protocol → compatible với existing infrastructure, không cần thay đổi.
+- Snapshot schedule → backup lên S3, có thể restore thành EBS volume cho DR trên EC2.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- S3 File Gateway dùng NFS, không phải iSCSI → cần modify applications. 10 TB cache quá nhỏ cho hundreds of TB.
+
+**❌ Đáp án B:**
+- Tape Gateway dùng cho backup (VTL), không phải primary storage. Users không thể access files trực tiếp từ VTL.
+
+**❌ Đáp án C:**
+- Cached volume: primary data ở AWS, cache 10 TB on-premises → có thể gây latency cho data không cached.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"No latency + iSCSI → Stored Volume Gateway (all data local, async backup). Cached = latency cho data không cache."*

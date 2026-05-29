@@ -12,3 +12,43 @@ A company is designing an application where users upload small files into Amazon
 
 **D.** Configure Amazon EventBridge (Amazon CloudWatch Events) to send an event to Amazon Kinesis Data Streams when a new file is uploaded. Use an AWS Lambda function to consume the event from the stream and process the data. Store the resulting JSON file in an Amazon Aurora DB cluster.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Upload small files → S3 → process → JSON. Demand thay đổi (có thể zero).
+- **Existing Resources:** S3 bucket.
+- **Current Issue/Goal:** Process nhanh, scale to zero, least operational overhead.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `processed as quickly as possible` | Event-driven processing |
+| `Demand will vary` | Có thể zero traffic → scale to zero |
+| `least operational overhead` | Serverless |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Event-driven processing + Operational efficiency
+- **Constraints:** Quick processing, variable demand
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: C**
+
+**Giải thích:**
+- **S3 event → SQS queue** — durable, decoupled.
+- **Lambda** — serverless, scale tự động, scale to zero khi không có files.
+- **DynamoDB** — lưu JSON, serverless, không cần quản lý.
+- Toàn bộ serverless → **least operational overhead**.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- **EMR** — overkill cho "simple processing", operational overhead cao.
+
+**❌ Đáp án B:**
+- **EC2** — phải quản lý instances, không scale to zero, overhead cao.
+
+**❌ Đáp án D:**
+- **EventBridge + Kinesis** — phức tạp hơn S3 + SQS cho use case này.
+- Aurora có operational overhead hơn DynamoDB.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"S3 → SQS → Lambda = serverless processing pipeline. Scale to zero, pay per use"*

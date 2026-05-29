@@ -12,3 +12,39 @@ A company runs applications on Amazon EC2 instances in one AWS Region. The compa
 
 **D.** Deploy a similar number of EC2 instances in the second Region. Use AWS DataSync to transfer the data from the source Region to the second Region.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** EC2 in one Region. Need cross-Region backup + centrally manage.
+- **Existing Resources:** EC2 instances in source Region.
+- **Current Issue/Goal:** Cross-Region backup, cost-effective.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `back up EC2 instances to a second Region` | Cross-Region backup. |
+| `centrally from one account` | AWS Backup: centralized management. |
+| `most cost-effectively` | Only store backups (not running instances) in DR Region. |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Backup / Disaster Recovery
+- **Constraints:** Cross-Region, central management, cost-effective
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: C**
+
+**Giải thích:**
+- AWS Backup: centralized backup service, hỗ trợ cross-Region backup.
+- Configure backup plan → EC2 backups automatically copied to second Region.
+- Cost-effective: chỉ trả cho backup storage, không cần running instances.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- DR plan with similar instances: duy trì EC2 instances ở DR Region → tốn kém.
+
+**❌ Đáp án B:**
+- Manual EBS snapshots + copy: không centralized management, cần custom scripts.
+
+**❌ Đáp án D:**
+- Deploy instances in second Region + DataSync: tốn kém (EC2 running cost).
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Cross-Region backup → AWS Backup (centralized, managed). Không cần EC2 running in DR."*

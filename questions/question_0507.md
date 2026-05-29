@@ -12,3 +12,44 @@ A company has a web application for travel ticketing. The application is based o
 
 **D.** Migrate the application to an Amazon Aurora Serverless database. Deploy instances of the database to each Region. Use the correct Regional endpoint in each Regional deployment to access the database. Use AWS Lambda functions to process event streams in each Region to synchronize the databases.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Travel ticketing app mở rộng global. Cần deploy multi-region, <1s latency on updates, single primary database globally consistent.
+- **Existing Resources:** Single data center database in North America.
+- **Current Issue/Goal:** Global deployment, low-latency writes, strong consistency.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `globally consistent` | Strong consistency, eventual consistency không đáp ứng. |
+| `single primary reservation database` | Một database chính duy nhất (single writer). |
+| `less than 1 second on updates` | Update nhanh, nhưng vẫn consistent. |
+| `separate deployments across multiple Regions` | Multi-region web + read replicas local. |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Meet requirements
+- **Constraints:** Globally consistent, single primary, <1s latency on updates, multi-region
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: B**
+
+**Giải thích:**
+- Aurora MySQL: single primary (writer) đảm bảo global consistency, cross-region Read Replicas cho phép đọc dữ liệu với latency thấp ở mỗi region.
+- Aurora cross-region Read Replicas có replication lag thường <100ms → đáp ứng <1s.
+- Web platform deploy mỗi region đọc từ local Read Replica, write vẫn về primary.
+- Aurora managed service giảm operational overhead.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- DynamoDB global tables là multi-region active-active, nhưng chỉ hỗ trợ eventual consistency (last writer wins). Không đáp ứng "globally consistent".
+- Nếu cần strongly consistent reads, chỉ available trong cùng region với write.
+
+**❌ Đáp án C:**
+- RDS MySQL read replicas cross-region được, nhưng replication performance không bằng Aurora.
+- Aurora có replication latency thấp hơn và failover nhanh hơn RDS MySQL.
+
+**❌ Đáp án D:**
+- Aurora Serverless + Lambda sync tạo eventual consistency, không đảm bảo globally consistent.
+- Phức tạp, dễ mất dữ liệu nếu Lambda fail. Không phải single primary pattern.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Global consistency + multi-region → Aurora global database (single writer + cross-region replicas). DynamoDB global tables = eventual consistency."*

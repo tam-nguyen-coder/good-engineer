@@ -12,3 +12,39 @@ A serverless application uses Amazon API Gateway, AWS Lambda, and Amazon DynamoD
 
 **D.** Create an IAM role that includes DynamoDB as a trusted service. Attach a policy to the role that allows read and write access from the Lambda function. Update the code of the Lambda function to attach to the new role as an execution role.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** API Gateway → Lambda → DynamoDB. Lambda needs read/write DynamoDB.
+- **Existing Resources:** API Gateway, Lambda, DynamoDB.
+- **Current Issue/Goal:** Grant Lambda permissions to DynamoDB most securely.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `MOST securely` | IAM execution role (best practice). Không dùng long-term credentials. |
+| `execution role` | Lambda assume role khi chạy → temporary credentials. |
+| `trusted service` | Lambda là trusted entity, DynamoDB là resource. |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Security / IAM
+- **Constraints:** Lambda → DynamoDB permissions
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: B**
+
+**Giải thích:**
+- IAM execution role với Lambda là trusted service → Lambda assume role tự động.
+- Attach policy với DynamoDB read/write permissions.
+- Temporary credentials (STS), không hardcode, tự động rotate.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- IAM user + env variables: long-term credentials trong code → security risk.
+
+**❌ Đáp án C:**
+- IAM user + Parameter Store: tốt hơn env vars nhưng vẫn dùng long-term credentials, quản lý phức tạp.
+
+**❌ Đáp án D:**
+- DynamoDB là trusted service → sai. Lambda execution role trust Lambda, không phải DynamoDB.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Lambda permissions = IAM execution role (trust Lambda). Không dùng IAM user credentials."*

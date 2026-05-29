@@ -12,3 +12,44 @@ A company runs an on-premises application that is powered by a MySQL database. T
 
 **D.** Use Amazon RDS for MySQL with a Multi-AZ deployment and read replicas for production. Populate the staging database by implementing a backup and restore process that uses the mysqldump utility.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** MySQL on-prem migration to AWS. Heavy read. Full export to staging every 4 hours causes latency + staging unavailable.
+- **Existing Resources:** MySQL database, staging environment.
+- **Current Issue/Goal:** Fix latency during export, staging available immediately.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `full export of the production database` | mysqldump gây performance impact |
+| `heavy read activity` | Read replicas for read scaling |
+| `database cloning` | **Aurora cloning** — instant, no performance impact |
+| `staging environment without delay` | Clone tạo staging nhanh, không block |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Performance + Database
+- **Constraints:** Không latency khi export, staging available ngay
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: B**
+
+**Giải thích:**
+- **Aurora MySQL** — hiệu năng cao, có **Aurora Replicas** cho read scaling.
+- **Aurora database cloning** — tạo staging database từ production snapshot **siêu nhanh** (copy-on-write), không ảnh hưởng performance production.
+- Staging available ngay lập tức.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- mysqldump vẫn gây performance impact trên production.
+
+**❌ Đáp án C:**
+- RDS MySQL **standby instance không serve reads** (unlike Aurora).
+- Không thể dùng standby cho staging.
+
+**❌ Đáp án D:**
+- mysqldump vẫn gây performance impact.
+- Cần backup/restore mất thời gian.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Aurora cloning = instant copy, no performance impact. mysqldump = slow, impacts production. Standby RDS ≠ readable"*

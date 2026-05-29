@@ -12,3 +12,41 @@ A company wants to experiment with individual AWS accounts for its engineer team
 
 **D.** Use AWS Cost and Usage Reports to create a report with hourly granularity. Integrate the report data with Amazon Athena. Use Amazon EventBridge to schedule an Athena query. Configure an Amazon Simple Notification Service (Amazon SNS) topic to receive a notification when a threshold is exceeded.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Multiple AWS accounts for engineers. Notify when EC2 usage exceeds monthly threshold.
+- **Existing Resources:** AWS accounts.
+- **Current Issue/Goal:** Cost threshold alert, most cost-effective.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `notified as soon as... exceeds a specific threshold` | **AWS Budgets** with alerts |
+| `for each account` | Per-account budgets |
+| `most cost-effectively` | AWS Budgets (free tier available) |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Cost management
+- **Constraints:** Per-account threshold alert, cost-effective
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: C**
+
+**Giải thích:**
+- **AWS Budgets** — tạo cost budget cho mỗi account, scope EC2.
+- Set **alert threshold** → gửi notification qua **SNS** khi vượt ngưỡng.
+- AWS Budgets có free tier → cost-effective.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- Cost Explorer — chỉ xem report, không gửi notification trực tiếp.
+
+**❌ Đáp án B:**
+- Cost Explorer — không có tính năng gửi alert.
+
+**❌ Đáp án D:**
+- CUR + Athena + EventBridge — quá phức tạp, tốn kém.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"AWS Budgets + SNS = cost threshold alerts. Cost Explorer = reports only (no alerts)"*

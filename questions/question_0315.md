@@ -12,3 +12,40 @@ A company experienced a breach that affected several applications in its on-prem
 
 **D.** Turn on Amazon Inspector. Deploy the Amazon Inspector agent to the EC2 instances. Configure an AWS Lambda function to automate the generation and distribution of reports that detail the findings.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** After breach, migrate to EC2. Cần vulnerability scanning cho EC2 instances.
+- **Existing Resources:** EC2 instances.
+- **Current Issue/Goal:** Actively scan for vulnerabilities, generate reports.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `actively scans for vulnerabilities` | Vulnerability assessment, không phải threat detection. |
+| `Amazon Inspector` | Automated vulnerability management, scan EC2 for software vulnerabilities và network exposure. |
+| `vulnerabilities` | Lỗ hổng bảo mật trong OS/application → Amazon Inspector. |
+| `report` | Inspector tự động tạo findings, có thể tích hợp Lambda để gửi report. |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Which solution meets requirements
+- **Constraints:** Vulnerability scanning on EC2, automated reporting
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: D**
+
+**Giải thích:**
+- Amazon Inspector: dịch vụ vulnerability management, actively scan EC2 instances cho software vulnerabilities và unintended network exposure.
+- Cài Amazon Inspector agent trên EC2 để scan OS/application vulnerabilities.
+- Lambda automation: dùng để generate và distribute findings report.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- AWS Shield: DDoS protection, không phải vulnerability scanner.
+
+**❌ Đáp án B:**
+- Amazon Macie: data classification (PII detection in S3), không scan EC2 vulnerabilities.
+
+**❌ Đáp án C:**
+- GuardDuty: threat detection service (phát hiện hành vi bất thường), không phải vulnerability scanner. GuardDuty không có agent để cài trên EC2.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Vulnerability scan EC2 → Amazon Inspector. Shield = DDoS. GuardDuty = threat detection. Macie = PII."*

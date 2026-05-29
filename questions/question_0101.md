@@ -12,3 +12,41 @@ A solutions architect is designing a VPC with public and private subnets. The VP
 
 **D.** Create an egress-only internet gateway on one of the public subnets. Update the route table for the private subnets that forward non-VPC traffic to the egress-only Internet gateway.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** VPC public/private subnets across 3 AZs. Private subnets cần internet access (software updates).
+- **Existing Resources:** VPC, IGW, public/private subnets.
+- **Current Issue/Goal:** Enable internet for private subnets.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `three Availability Zones` | Cần HA → **NAT gateway per AZ** |
+| `private subnets require access to the internet` | **NAT gateway** in public subnet |
+| `IPv4 CIDR blocks` | NAT gateway (egress-only IGW là cho IPv6) |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Networking
+- **Constraints:** 3 AZs, IPv4, HA
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: A**
+
+**Giải thích:**
+- **NAT gateway** trong public subnet — cho phép private subnet outbound internet.
+- **3 NAT gateways** (1 per AZ) — đảm bảo HA: nếu 1 AZ fails, các AZ khác vẫn hoạt động.
+- Route table riêng cho mỗi AZ, trỏ 0.0.0.0/0 đến NAT gateway trong cùng AZ.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án B:**
+- **NAT instances** — phải tự quản lý (patching, HA), không managed, không tối ưu.
+
+**❌ Đáp án C:**
+- Một VPC chỉ có **1 internet gateway**. Không thể tạo IGW riêng cho private subnet.
+
+**❌ Đáp án D:**
+- **Egress-only internet gateway** chỉ dùng cho **IPv6**, không phải IPv4.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"NAT gateway = IPv4 outbound. Egress-only IGW = IPv6. 1 NAT per AZ = HA"*

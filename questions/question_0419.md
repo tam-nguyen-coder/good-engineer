@@ -14,3 +14,39 @@ A company uses AWS Organizations with all features enabled and runs multiple Ama
 
 **E.** In the Organizations management account, specify the Default EBS volume encryption setting.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Organizations multi-account. SCP cấm tạo resources ngoài ap-southeast-2. Audit phát hiện EBS volumes không được encrypt. Cần encrypt mọi volume mới.
+- **Existing Resources:** AWS Organizations, SCP (region restriction), EC2, EBS.
+- **Current Issue/Goal:** Enforce EBS encryption for new volumes. Minimal effect on employees.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `minimal effect on employees` | Default encryption: tự động, không cần employee nhớ encrypt. |
+| `EBS encryption account attribute` | Default encryption key ở account level. |
+| `SCP` | Deny CreateVolume nếu không encrypted. |
+| `Choose two` | 2 answers required. |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Security / Governance
+- **Constraints:** All new EBS volumes encrypted, minimal employee impact
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: A, C**
+
+**Giải thích:**
+- **A:** EBS encryption by default (account attribute): tự động encrypt volumes mới → không cần employee can thiệp.
+- **C:** SCP deny ec2:CreateVolume khi ec2:Encrypted = false → enforce kể cả khi ai đó cố tình tắt default encryption.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án B:**
+- Permission boundary: gán vào IAM user/role, không thể attach vào OU.
+
+**❌ Đáp án D:**
+- Update IAM policies per account: nhiều công sức, không "minimal effect".
+
+**❌ Đáp án E:**
+- Không có tính năng "Default EBS volume encryption" ở cấp Organizations management account.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"EBS encrypt enforcement: default encryption (account attribute) + SCP deny non-encrypted."*

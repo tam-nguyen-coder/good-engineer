@@ -12,3 +12,40 @@ A company is using a content management system that runs on a single Amazon EC2 
 
 **D.** Move the database to a separate EC2 instance, and schedule backups to Amazon S3. Create an Amazon Machine Image (AMI) from the original EC2 instance. Configure an Application Load Balancer in two Availability Zones. Attach an Auto Scaling group that uses the AMI across two Availability Zones.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** CMS on single EC2 (web + DB). Need HA + scaling.
+- **Existing Resources:** Single EC2 instance.
+- **Current Issue/Goal:** Decouple web + DB, make both HA.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `highly available` | Multi-AZ cho cả web và database |
+| `scale to meet user demand` | **ASG** + **Aurora** |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** High Availability / Scaling
+- **Constraints:** HA, scalable
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: C**
+
+**Giải thích:**
+- **Aurora with read replica in another AZ** — managed DB, HA, auto-scaling.
+- **AMI + ALB + ASG across 2 AZs** — web tier HA + auto-scale.
+- Tách biệt web và database tier → mỗi tier scale độc lập.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- Same AZ — không HA. Manual launch — không auto-scale.
+
+**❌ Đáp án B:**
+- Same AZ for both DB and web — không HA.
+
+**❌ Đáp án D:**
+- DB on separate EC2 — self-managed, single point of failure.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Aurora Multi-AZ + ASG across AZs = HA + scalable. Same AZ = not HA"*

@@ -12,3 +12,42 @@ A company uses Amazon FSx for NetApp ONTAP in its primary AWS Region for CIFS an
 
 **D.** Create an Amazon Elastic File System (Amazon EFS) volume. Migrate the current data to the volume. Replicate the volume to the secondary Region.
 
+## 1. CONTEXT & DE BAI
+- **Scenario:** FSx for ONTAP (CIFS + NFS) trong primary Region. Can DR solution o secondary Region voi cung protocols.
+- **Existing Resources:** FSx for ONTAP, EC2 instances.
+- **Current Issue/Goal:** Cross-region DR cho FSx for ONTAP, cung protocol (CIFS/NFS), least operational overhead.
+
+## 2. KEYWORDS QUAN TRONG
+| Keyword | Y nghia / Goi y |
+|---------|-----------------|
+| `FSx for NetApp ONTAP` | NetApp file system tren AWS. |
+| `CIFS and NFS` | Can support ca hai protocols. |
+| `same protocols` | Secondary Region cung phai ho tro CIFS + NFS. |
+| `NetApp SnapMirror` | Built-in NetApp replication technology, tu dong, async. |
+| `least operational overhead` | SnapMirror la native solution, toi uu nhat cho FSx for ONTAP DR. |
+
+## 3. YEU CAU CUA DE
+- **Question type:** Least operational overhead
+- **Constraints:** Cross-region DR, same protocols (CIFS/NFS), FSx for ONTAP
+
+## 4. DAP AN DUNG
+**Dap an: C**
+
+**Giai thich:**
+- NetApp SnapMirror: native replication technology cho NetApp ONTAP, duoc ho tro tren FSx for ONTAP.
+- Replicate truc tiep tu primary region sang secondary region FSx for ONTAP instance, tu dong, async.
+- Secondary instance cung ho tro CIFS + NFS (cung protocols).
+- Operational overhead thap nhat vi SnapMirror la built-in feature.
+
+## 5. CAC DAP AN SAI
+**Dap an A:**
+- Lambda copy + S3 replication: can code, operational overhead cao. S3 khong ho tro CIFS/NFS.
+
+**Dap an B:**
+- AWS Backup: point-in-time backup, khong phai continuous replication. Can restore de su dung => operational overhead cao hon SnapMirror.
+
+**Dap an D:**
+- EFS: chi ho tro NFS, khong ho tro CIFS. Phai migrate du lieu => operational overhead cao.
+
+## 6. MEO GHI NHO (Memory Hook)
+*"FSx for ONTAP DR => NetApp SnapMirror (native replication, cung protocols). AWS Backup = restore needed."*

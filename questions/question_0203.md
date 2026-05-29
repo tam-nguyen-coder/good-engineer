@@ -12,3 +12,41 @@ The customers of a finance company request appointments with financial advisors 
 
 **D.** Add an Auto Scaling group for the application that sends meeting invitations. Configure the Auto Scaling group to scale based on the depth of the SQS queue.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Web app → SQS → processing app → DynamoDB. Invitations arriving slowly as company grows.
+- **Existing Resources:** EC2 web app, SQS, EC2 processing app, DynamoDB.
+- **Current Issue/Goal:** Backend processing bottleneck — need to scale consumers.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `taking longer to arrive` | Consumer (processing app) không đủ capacity |
+| `expand` | Cần **Auto Scaling** cho consumer |
+| `depth of the SQS queue` | Metric phù hợp để scale |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Scaling / Messaging
+- **Constraints:** Resolve slow processing, scale consumers
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: D**
+
+**Giải thích:**
+- SQS queue depth tăng → consumer không đủ nhanh.
+- **Auto Scaling group** cho processing application scale dựa trên **SQS queue depth** → tự động thêm instances.
+- CloudWatch metric `ApproximateNumberOfMessagesVisible` → scale threshold.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- DAX — cải thiện read performance của DynamoDB, không giải quyết processing bottleneck.
+
+**❌ Đáp án B:**
+- API Gateway — cho front-end, không giúp scale backend processing.
+
+**❌ Đáp án C:**
+- CloudFront — CDN, không liên quan.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"SQS queue depth + ASG = scale consumers. DAX = DB cache. API Gateway/CloudFront = frontend"*

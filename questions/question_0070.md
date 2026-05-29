@@ -12,3 +12,41 @@ A company's HTTP application is behind a Network Load Balancer (NLB). The NLB's 
 
 **D.** Create an Amazon Cloud Watch alarm that monitors the UnhealthyHostCount metric for the NLB. Configure an Auto Scaling action to replace unhealthy instances when the alarm is in the ALARM state.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** HTTP app sau NLB, NLB không detect HTTP errors, cần manual restart EC2.
+- **Existing Resources:** NLB, EC2 ASG.
+- **Current Issue/Goal:** Auto-detect HTTP errors, replace unhealthy instances, no custom scripts.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `HTTP errors` | Layer 7 — NLB là layer 4, không hiểu HTTP |
+| `without writing custom scripts or code` | Không dùng cron job, Lambda, etc. |
+| `manual restart of the EC2 instances` | Cần auto health check + auto replacement |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** High Availability
+- **Constraints:** No custom code, HTTP health check
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: C**
+
+**Giải thích:**
+- **NLB chỉ hỗ trợ TCP/health check (layer 4)** — không thể detect HTTP errors.
+- **ALB hỗ trợ HTTP health checks (layer 7)** — có thể check specific URL path và HTTP status code.
+- Auto Scaling action với ALB health check → tự động replace unhealthy instances.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- **NLB không hỗ trợ HTTP health checks** — chỉ TCP, HTTPS (nhưng không check nội dung response).
+
+**❌ Đáp án B:**
+- **Cron job** là custom script — vi phạm "without writing custom scripts or code".
+
+**❌ Đáp án D:**
+- UnhealthyHostCount metric chỉ phản ánh số lượng target unhealthy — NLB vẫn không detect được HTTP errors để đánh dấu target unhealthy.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"NLB = Layer 4 (TCP health check). ALB = Layer 7 (HTTP health check). HTTP errors → ALB"*

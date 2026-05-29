@@ -12,3 +12,41 @@ A solutions architect needs to securely store a database user name and password 
 
 **D.** Create an IAM trust relationship between the DB instance and the EC2 instance. Specify Systems Manager as a principal in the trust policy.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Store DB credentials in SSM Parameter Store. EC2 app needs to read them securely.
+- **Existing Resources:** EC2 instance, RDS DB instance.
+- **Current Issue/Goal:** Secure credential storage and retrieval.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `AWS Systems Manager Parameter Store` | Lưu secret parameters |
+| `IAM role` | Gắn role vào EC2 instance profile |
+| `KMS key` | Encrypt/decrypt parameter |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Security / Secrets management
+- **Constraints:** EC2 access, secure
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: A**
+
+**Giải thích:**
+- **IAM role** — attach role vào EC2 instance profile.
+- Role cần: `ssm:GetParameter` (read) + `kms:Decrypt` (nếu parameter được KMS-encrypted).
+- Best practice: dùng IAM role, không dùng IAM user.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án B:**
+- IAM policy không được "assign" trực tiếp vào EC2 — cần IAM role.
+
+**❌ Đáp án C:**
+- Trust relationship — dùng cho IAM roles (assume role), không phải parameters.
+
+**❌ Đáp án D:**
+- Trust relationship giữa DB và EC2 — không đúng, SSM không phải principal.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"SSM Parameter Store + IAM role + KMS = secure secrets. IAM policy = not assignable to EC2"*

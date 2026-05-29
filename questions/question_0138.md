@@ -12,3 +12,41 @@ A company runs its ecommerce application on AWS. Every new order is published as
 
 **D.** Create a Multi-AZ Auto Scaling group for EC2 instances that host the RabbitMQ queue. Create another Multi-AZ Auto Scaling group for EC2 instances that host the application. Create a third Multi-AZ Auto Scaling group for EC2 instances that host the PostgreSQL database
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** RabbitMQ (EC2) → Application (EC2) → PostgreSQL (EC2). Tất cả single AZ.
+- **Existing Resources:** 3 EC2 instances trong 1 AZ.
+- **Current Issue/Goal:** Highest availability, least operational overhead.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `highest availability` | Managed services + Multi-AZ |
+| `least operational overhead` | Dùng **Amazon MQ** + **RDS** thay vì self-managed |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** High Availability
+- **Constraints:** Least overhead
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: B**
+
+**Giải thích:**
+- **Amazon MQ** (managed RabbitMQ) — active/standby across AZs, tự động failover.
+- **ASG Multi-AZ** cho application — tự động scale, HA.
+- **RDS PostgreSQL Multi-AZ** — managed DB, tự động failover.
+- Cả 3 layers đều managed → least operational overhead.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- PostgreSQL trên EC2 ASG — không managed, operational overhead cao.
+
+**❌ Đáp án C:**
+- RabbitMQ trên EC2 ASG — tự quản lý queue, không bằng Amazon MQ.
+
+**❌ Đáp án D:**
+- Tất cả self-managed trên EC2 — operational overhead cao nhất.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Amazon MQ + RDS = managed HA. Self-managed EC2 = more overhead. B là best cho cả 3 layers"*

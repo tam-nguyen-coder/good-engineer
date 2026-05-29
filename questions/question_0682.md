@@ -12,3 +12,42 @@ A company needs a solution to enforce data encryption at rest on Amazon EC2 inst
 
 **D.** Use Amazon inspector to detect unencrypted Amazon Elastic Block Store (Amazon EBS) volumes. Use AWS Systems Manager Automation rules to automatically encrypt existing and new EBS volumes.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Enforce EBS encryption at rest on EC2. Auto-detect noncompliant resources, auto-remediate.
+- **Existing Resources:** EC2 instances, EBS volumes.
+- **Current Issue/Goal:** Enforce encryption compliance with least admin overhead.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `automatically identify noncompliant resources` | AWS Config: evaluate resource compliance against rules. |
+| `enforce compliance policies` | AWS Systems Manager Automation: auto-remediate. |
+| `IAM policy to allow only encrypted` | Preventive control (block creation of unencrypted volumes). |
+| `least administrative overhead` | AWS Config managed rules + SSM Automation documents. |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Least administrative overhead
+- **Constraints:** Auto-detect + auto-remediate
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: A**
+
+**Giải thích:**
+- IAM policy: preventive control, block users from creating unencrypted volumes ngay từ đầu.
+- AWS Config: detect unencrypted volumes (managed rule `encrypted-volumes`).
+- AWS Systems Manager Automation: auto-remediate (attach encryption or snapshot + recreate encrypted).
+- Kết hợp preventive + detective + corrective → least admin overhead.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án B:**
+- Lambda + EventBridge: operational overhead cao hơn AWS Config managed rules.
+- KMS manage access không phải detection mechanism.
+
+**❌ Đáp án C:**
+- Amazon Macie dùng để discover sensitive data (PII), không detect unencrypted volumes.
+
+**❌ Đáp án D:**
+- Amazon Inspector dùng để vulnerability assessment, không detect unencrypted volumes.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Enforce EBS encryption: IAM (prevent) + AWS Config (detect) + SSM (auto-remediate)."*

@@ -12,3 +12,43 @@ A company hosts a containerized web application on a fleet of on-premises server
 
 **D.** Use a high performance computing (HPC) solution such as AWS ParallelCluster to establish an HPC cluster that can process the incoming requests at the appropriate scale.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Containerized web app on-prem, growing requests, need to move to AWS.
+- **Existing Resources:** On-prem servers.
+- **Current Issue/Goal:** Migrate containers, min code changes, min dev effort, least operational overhead.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `containerized web application` | Đã có container → dùng **ECS/EKS** |
+| `minimum code changes` | Giữ nguyên container images |
+| `least operational overhead` | **Fargate** (serverless containers) |
+| `Application Load Balancer` | Distribute traffic |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Container migration + Operational efficiency
+- **Constraints:** Min code changes, min overhead
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: A**
+
+**Giải thích:**
+- **AWS Fargate** — serverless containers, không quản lý infrastructure.
+- **Service Auto Scaling** — tự động scale theo request.
+- **ALB** — distribute traffic.
+- Không cần thay đổi container images → **minimum code changes**.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án B:**
+- 2 EC2 instances — không scale, operational overhead (quản lý OS, Docker).
+
+**❌ Đáp án C:**
+- Lambda + API Gateway — yêu cầu **viết lại code**, nhiều dev effort.
+
+**❌ Đáp án D:**
+- ParallelCluster HPC — overkill, không phù hợp cho web application.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Fargate = serverless containers (no infra management). Lambda = new code required. EC2 = more overhead"*

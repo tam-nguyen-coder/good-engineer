@@ -12,3 +12,38 @@ A company is experiencing sudden increases in demand. The company needs to provi
 
 **D.** Use Amazon EventBridge to invoke AWS Backup lifecycle policies that provision AMIs. Configure Auto Scaling group capacity limits as an event source in EventBridge.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Sudden demand spikes, cần provision large EC2 instances nhanh chóng với minimum initialization latency. ASG with AMI.
+- **Existing Resources:** Auto Scaling group, AMI.
+- **Current Issue/Goal:** Giảm initialization latency khi launch instances từ AMI.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `minimum initialization latency` | Cần EBS fast snapshot restore để initialize EBS volumes từ snapshot không bị lazy loading. |
+| `EBS fast snapshot restore` | Loại bỏ quá trình lazy loading khi restore snapshot → full performance ngay lập tức. |
+| `large Amazon EC2 instances` | EBS volumes lớn có thể mất thời gian initialize → fast snapshot restore khắc phục. |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Minimum initialization latency
+- **Constraints:** Auto Scaling group, AMI-based, large instances
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: B**
+
+**Giải thích:**
+- EBS fast snapshot restore: khi enable trên snapshot, EBS volumes restored từ snapshot đó có full performance ngay lập tức (không bị lazy loading).
+- AMI được tạo từ snapshot có fast snapshot restore → EC2 instances launch từ AMI này có initialization latency tối thiểu.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- register-image tạo AMI từ snapshot, không giải quyết vấn đề initialization latency. Step Functions không giúp tăng tốc launch.
+
+**❌ Đáp án C:**
+- DLM quản lý lifecycle của snapshots, không giảm latency. Lambda replace AMI trong ASG cũng không giúp.
+
+**❌ Đáp án D:**
+- AWS Backup provision AMIs nhưng không giải quyết initialization latency.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Minimum initialization latency when launching EC2 → EBS fast snapshot restore (no lazy loading)."*

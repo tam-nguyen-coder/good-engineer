@@ -12,3 +12,44 @@ A company is building an Amazon Elastic Kubernetes Service (Amazon EKS) cluster 
 
 **D.** Create a new AWS Key Management Service (AWS KMS) key with the alias/aws/ebs alias. Enable default Amazon Elastic Block Store (Amazon EBS) volume encryption for the account.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Cần encrypt secrets trong EKS etcd store.
+- **Existing Resources:** EKS cluster (building).
+- **Current Issue/Goal:** Encrypt secrets trong etcd key-value store của Kubernetes.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `secrets in EKS` | Kubernetes secrets lưu trong etcd |
+| `encrypted in etcd` | EKS supports envelope encryption of Kubernetes secrets using AWS KMS |
+| `EKS KMS secrets encryption` | Tính năng native của EKS để encrypt secrets trong etcd |
+| `AWS KMS key` | Customer managed key để encrypt/decrypt secrets |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Security
+- **Constraints:** Encrypt secrets in etcd
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: B**
+
+**Giải thích:**
+- Amazon EKS hỗ trợ KMS secrets encryption: tính năng native dùng AWS KMS để encrypt Kubernetes secrets trong etcd.
+- Khi enable, EKS tự động encrypt secrets khi ghi vào etcd và decrypt khi đọc.
+- Chỉ cần tạo KMS key và enable tính năng này trên EKS cluster.
+- Đây là encryption at rest cho secrets, bảo vệ dữ liệu nhạy cảm.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- Secrets Manager dùng để lưu secrets riêng, không encrypt etcd của EKS.
+- Kubernetes secrets vẫn được lưu trong etcd dạng plaintext nếu không bật EKS KMS encryption.
+
+**❌ Đáp án C:**
+- EBS CSI driver dùng để quản lý persistent volumes, không liên quan đến encrypt etcd secrets.
+- Default options không bật KMS encryption cho etcd.
+
+**❌ Đáp án D:**
+- EBS volume encryption encrypt dữ liệu trên EBS volumes, không phải etcd secrets.
+- `alias/aws/ebs` là alias cho EBS encryption, không phải cho EKS secrets.
+
+## 6. MẸO GHI NHỚ (MEMORY HOOK)
+🧠 *"EKS etcd encryption = EKS KMS secrets encryption. EBS CSI driver = volumes, không phải etcd."*

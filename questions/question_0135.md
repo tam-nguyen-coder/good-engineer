@@ -12,3 +12,41 @@ A company runs workloads on AWS. The company needs to connect to a service from 
 
 **D.** Ask the provider to create a VPC endpoint for the target service. Use AWS PrivateLink to connect to the target service.
 
+---
+
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** Kết nối private đến service của provider trong VPC của họ. Restricted to target service only.
+- **Existing Resources:** Company VPC.
+- **Current Issue/Goal:** Private kết nối, chỉ đến target service, initiated từ company VPC.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `private` | Không qua internet |
+| `restricted to the target service` | Không expose entire VPC |
+| `initiated only from the company's VPC` | **AWS PrivateLink** (VPC endpoint) |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Networking / Security
+- **Constraints:** Private, service-specific, single direction
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: D**
+
+**Giải thích:**
+- **AWS PrivateLink** — kết nối private giữa VPCs thông qua VPC endpoints.
+- **Provider tạo VPC endpoint** (AWS NLB + PrivateLink) — company tạo VPC endpoint trong VPC của mình.
+- Chỉ access target service, không phải entire provider VPC.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- VPC peering — kết nối entire VPCs, không restricted to one service. Security team không muốn điều này.
+
+**❌ Đáp án B:**
+- Virtual private gateway dùng cho VPN/Direct Connect, không phải PrivateLink.
+
+**❌ Đáp án C:**
+- NAT gateway — traffic qua internet, không private.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"PrivateLink = kết nối private đến specific service. VPC peering = entire VPC. NAT = internet"*

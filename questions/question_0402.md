@@ -12,3 +12,41 @@ A company needs to ingest and handle large amounts of streaming data that its ap
 
 **D.** Turn on S3 Versioning within the S3 bucket to preserve every version of every object that is ingested in the S3 bucket.
 
+## 1. CONTEXT & ĐỀ BÀI
+- **Scenario:** EC2 app sends streaming data → Kinesis Data Streams (default settings) → consumed every other day → S3 for BI. S3 missing data.
+- **Existing Resources:** EC2 instances, Kinesis Data Streams (default), S3 bucket.
+- **Current Issue/Goal:** Data loss between Kinesis → S3. Need to fix so all data reaches S3.
+
+## 2. KEYWORDS QUAN TRỌNG
+| Keyword | Ý nghĩa / Gợi ý |
+|---------|-----------------|
+| `default settings` | 1 shard (1 MB/s write, 2 MB/s read). |
+| `not receiving all the data` | Throughput throttling → data dropped. |
+| `large amounts of streaming data` | Need more shards for higher throughput. |
+| `shards` | Đơn vị capacity của Kinesis Data Streams. |
+
+## 3. YÊU CẦU CỦA ĐỀ
+- **Question type:** Troubleshooting / Performance
+- **Constraints:** Must ingest all streaming data
+
+## 4. ĐÁP ÁN ĐÚNG
+**✅ Đáp án: C**
+
+**Giải thích:**
+- Default = 1 shard → throughput giới hạn (1 MB/s write). Nếu data vượt quá → bị throttled → mất data.
+- Tăng số shard → tăng throughput → đủ capacity cho lượng data lớn.
+- Kinesis shards scale horizontally.
+
+## 5. CÁC ĐÁP ÁN SAI
+**❌ Đáp án A:**
+- Data retention period (default 24h) → chỉ ảnh hưởng thời gian data tồn tại, không ảnh hưởng throughput hay mất data.
+
+**❌ Đáp án B:**
+- KPL giúp batching/compression để tăng hiệu quả gửi, nhưng nếu shard throughput đã đạt giới hạn thì KPL không giải quyết được.
+
+**❌ Đáp án D:**
+- S3 Versioning giúp bảo vệ object khỏi bị overwrite/delete, không giúp data đến được S3.
+
+## 6. MẸO GHI NHỚ (Memory Hook)
+🧠 *"Missing data in Kinesis → not enough shards (throughput). Retention ≠ throughput."*
+
