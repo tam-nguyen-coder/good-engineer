@@ -1,0 +1,16 @@
+AWS Certified Solutions Architect Associate, question one. A company collects 500 gigabytes of data daily from sites across multiple continents. Each site has high-speed internet. The goal is to aggregate all data as quickly as possible into a single Amazon S3 bucket with minimum operational complexity. Which solution meets these requirements?
+
+Let's review the options.
+Option A: Turn on S3 Transfer Acceleration on the destination S3 bucket. Use multipart uploads to directly upload site data to the destination S3 bucket.
+Option B: Upload data from each site to an S3 bucket in the closest Region. Use Cross-Region Replication to copy objects to the destination S3 bucket. Then remove data from the origin S3 bucket.
+Option C: Schedule AWS Snowball Edge Storage Optimized device jobs daily to transfer data from each site to the closest Region. Use Cross-Region Replication to copy objects to the destination S3 bucket.
+Option D: Upload data to an EC2 instance in the closest Region. Store data in an EBS volume, take EBS snapshots at regular intervals, and copy them to the destination Region.
+
+The correct answer is Option A.
+Option A is correct because S3 Transfer Acceleration routes data over the private AWS backbone via edge locations, bypassing the public internet. Multipart Uploads parallelize transfer of large files, maximizing throughput. This serverless route requires zero active management.
+
+Option B is incorrect. Staging regional buckets and managing synchronization scripts adds heavy operational complexity.
+Option C is incorrect. Daily shipping and recycling of physical Snowball devices for 500 gigabytes of data is extremely slow and logistically complex.
+Option D is incorrect. Running EC2 instances, EBS volumes, and scheduling snapshot copies is over-engineered and costly.
+
+Here is your memory hook. Fast network plus large files plus distance equals S3 Transfer Acceleration and Multipart uploads. Avoid cross-region replication, Snowball, or EC2.

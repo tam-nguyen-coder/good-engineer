@@ -1,0 +1,94 @@
+{
+  "video_metadata": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "audio_voice": "am_adam",
+    "audio_speed": 1.0
+  },
+  "design_system": {
+    "colors": {
+      "primary": "#0F172A",
+      "on_primary": "#F8FAFC",
+      "accent_orange": "#FF9900",
+      "accent_blue": "#00A1C9",
+      "accent_green": "#10B981",
+      "accent_red": "#EF4444",
+      "surface": "#1E293B"
+    },
+    "fonts": {
+      "headline": "Space Grotesk",
+      "body": "Space Mono"
+    }
+  },
+  "scene_flow": [
+    { "scene_index": 1, "name": "Title Card", "description": "Displaying Title Card with Exam Code and Question Number", "transition_duration": 0.8 },
+    { "scene_index": 2, "name": "Question Context", "description": "Displaying verbatim question context", "transition_duration": 0.8 },
+    { "scene_index": 3, "name": "Keywords Analysis", "description": "Analyzing constraints and key requirements", "transition_duration": 0.8 },
+    { "scene_index": 4, "name": "Options & Explanations", "description": "Displaying options with dynamic scaling highlights and technical analysis", "transition_duration": 0.8 },
+    { "scene_index": 5, "name": "Memory Hook", "description": "Highlighting quick memory hooks and closing remarks", "transition_duration": 0.8 }
+  ],
+  "variables": {
+    "exam_code": "SAA-C03",
+    "question_number": "Question #1",
+    "question_id": "Question #1 - Topic 1",
+    "question_context": "A company collects data for temperature, humidity, and atmospheric pressure in cities across multiple continents. The average volume of data that the company collects from each site daily is 500 GB. Each site has a high-speed Internet connection. The company wants to aggregate the data from all these global sites as quickly as possible in a single Amazon S3 bucket. The solution must minimize operational complexity. Which solution meets these requirements?",
+    "keywords": [
+      {
+        "index": "01",
+        "title": "500 GB Daily + High-Speed Internet",
+        "desc": "Large data volume but excellent transit capacity. Bypasses the need for physical transport devices."
+      },
+      {
+        "index": "02",
+        "title": "Single S3 Bucket",
+        "desc": "Aggregate all data into a single target bucket. Eliminates complex staging architectures."
+      },
+      {
+        "index": "03",
+        "title": "Minimize Operational Complexity",
+        "desc": "Prioritize direct serverless routes. Avoid virtual machines, manual replication policies, and logic scripts."
+      }
+    ],
+    "options": {
+      "A": "Turn on S3 Transfer Acceleration on the destination S3 bucket. Use multipart uploads to directly upload site data to the destination S3 bucket.",
+      "B": "Upload the data from each site to an S3 bucket in the closest Region. Use S3 Cross-Region Replication to copy objects to the destination S3 bucket. Then remove the data from the origin S3 bucket.",
+      "C": "Schedule AWS Snowball Edge Storage Optimized device jobs daily to transfer data from each site to the closest Region. Use S3 Cross-Region Replication to copy objects to the destination S3 bucket.",
+      "D": "Upload the data from each site to an Amazon EC2 instance in the closest Region. Store the data in an Amazon Elastic Block Store (Amazon EBS) volume. At regular intervals, take an EBS snapshot and copy it to the Region that contains the destination S3 bucket. Restore the EBS volume in that Region."
+    },
+    "correct_option": "A",
+    "explanations": {
+      "A": {
+        "status": "Correct",
+        "points": [
+          "S3TA: Leverages AWS edge locations to route uploads over the optimized private AWS global backbone network, bypassing the public internet.",
+          "Multipart Uploads: Parallelizes large uploads (500 GB) for increased network throughput and automatic resilience/retries.",
+          "Serverless: Zero compute resources or replication policies to configure. Minimum management overhead."
+        ]
+      },
+      "B": {
+        "status": "Incorrect",
+        "points": [
+          "CRR: Doubles active storage, requires management of multiple regional buckets, and requires scripts to delete source objects."
+        ]
+      },
+      "C": {
+        "status": "Incorrect",
+        "points": [
+          "Snowball: Massive logistical overhead of ordering, copying, shipping, and recycling physical devices daily for a 500 GB file."
+        ]
+      },
+      "D": {
+        "status": "Incorrect",
+        "points": [
+          "EC2 + EBS: Heavily over-engineered. Introduces servers, volume sizing, snapshots copy procedures, and excessive storage costs."
+        ]
+      }
+    },
+    "memory_hook": {
+      "title": "AWS S3 Golden Rule:",
+      "formula": "Fast Network + Large Files + Global Distance = S3TA (Transfer Acceleration) + Multipart Uploads",
+      "note": "Avoid CRR, Snowball, or EC2 when minimizing operations is required!"
+    }
+  }
+}

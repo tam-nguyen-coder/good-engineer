@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>AWS Certified Solutions Architect Associate (SAA-C03) - Question 1</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      /* --- Local Font Face Definitions --- */
+      @font-face {
+        font-family: 'Space Grotesk';
+        src: url('fonts/space-grotesk-latin-400-normal.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Space Grotesk';
+        src: url('fonts/space-grotesk-latin-700-normal.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Space Mono';
+        src: url('fonts/space-mono-latin-400-normal.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Space Mono';
+        src: url('fonts/space-mono-latin-700-normal.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+      }
+
+      /* --- Design Tokens --- */
+      :root {
+        --primary: #0F172A;
+        --on-primary: #F8FAFC;
+        --accent-orange: #FF9900;
+        --accent-blue: #00A1C9;
+        --accent-green: #10B981;
+        --accent-red: #EF4444;
+        --surface: #1E293B;
+        --surface-border: rgba(255, 255, 255, 0.08);
+        --muted: #94A3B8;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--primary);
+        font-family: 'Space Mono', monospace;
+        color: var(--on-primary);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* --- Global Layout Wrapper --- */
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+      }
+
+      /* --- Background Layer (Global) --- */
+      .bg-grid {
+        position: absolute;
+        inset: 0;
+        background-image: 
+          linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        background-size: 80px 80px;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .bg-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(140px);
+        opacity: 0.12;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .bg-glow-1 {
+        width: 600px;
+        height: 600px;
+        background: var(--accent-orange);
+        top: -100px;
+        left: -100px;
+      }
+
+      .bg-glow-2 {
+        width: 800px;
+        height: 800px;
+        background: var(--accent-blue);
+        bottom: -200px;
+        right: -200px;
+      }
+
+      /* --- Scene Base Styling --- */
+      .scene {
+        position: absolute;
+        width: 1080px;
+        height: 1920px;
+        top: 0;
+        left: 0;
+        padding: 120px 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        z-index: 10;
+        background: var(--primary);
+      }
+
+      /* --- Typography & Headers --- */
+      .scene-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 60px;
+        border-bottom: 1px solid var(--surface-border);
+        padding-bottom: 24px;
+      }
+
+      .header-badge {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--accent-blue);
+        background: rgba(0, 161, 201, 0.1);
+        padding: 8px 20px;
+        border-radius: 30px;
+        border: 1px solid rgba(0, 161, 201, 0.2);
+      }
+
+      .header-info {
+        font-size: 22px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .scene-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 54px;
+        font-weight: 700;
+        color: var(--on-primary);
+        margin-bottom: 60px;
+        line-height: 1.2;
+        text-align: center;
+      }
+
+      .highlight-orange {
+        color: var(--accent-orange);
+      }
+
+      .highlight-blue {
+        color: var(--accent-blue);
+      }
+
+      .highlight-green {
+        color: var(--accent-green);
+      }
+
+      /* --- Cards and Containers --- */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--surface-border);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      /* --- Scene 1: Title Card --- */
+      .title-card-layout {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        gap: 30px;
+        padding-top: 350px;
+      }
+
+      .exam-badge {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--accent-blue);
+        letter-spacing: 0.15em;
+        background: rgba(0, 161, 201, 0.1);
+        padding: 12px 32px;
+        border-radius: 40px;
+        border: 1px solid rgba(0, 161, 201, 0.2);
+      }
+
+      .exam-code {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 120px;
+        font-weight: 700;
+        color: var(--on-primary);
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+      }
+
+      .question-num {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 54px;
+        font-weight: 700;
+        color: var(--accent-orange);
+      }
+
+      .decorative-line {
+        width: 200px;
+        height: 5px;
+        background: linear-gradient(90deg, var(--accent-blue), var(--accent-orange));
+        border-radius: 2px;
+        margin-top: 10px;
+      }
+
+      /* --- Persistent Question Context Card --- */
+      #global-question-card {
+        position: absolute;
+        top: 260px;
+        left: 80px;
+        width: 920px;
+        height: 440px;
+        border-left: 6px solid var(--accent-orange);
+        opacity: 0;
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        pointer-events: none;
+      }
+
+      .question-text {
+        font-size: 28px;
+        line-height: 1.6;
+        font-weight: 500;
+        color: var(--on-primary);
+        font-family: 'Space Mono', monospace;
+      }
+
+      .status-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 20px;
+        font-family: 'Space Mono', monospace;
+        font-size: 20px;
+        color: var(--muted);
+      }
+
+      .status-dot {
+        width: 12px;
+        height: 12px;
+        background: var(--accent-orange);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--accent-orange);
+      }
+
+      /* --- Scene 2: Question Visual (Network) --- */
+      #scene2 .question-visual {
+        position: absolute;
+        top: 780px; /* Offset into the bottom half */
+        left: 80px;
+        width: 920px;
+        height: 600px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* Styled Global Earth Node Network */
+      .network-node-sphere {
+        position: relative;
+        width: 320px;
+        height: 320px;
+        border: 2px dashed rgba(255, 153, 0, 0.2);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .network-center-s3 {
+        width: 100px;
+        height: 100px;
+        background: var(--accent-orange);
+        border-radius: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 700;
+        font-size: 24px;
+        box-shadow: 0 0 40px rgba(255, 153, 0, 0.4);
+        z-index: 2;
+      }
+
+      .network-outer-node {
+        position: absolute;
+        width: 44px;
+        height: 44px;
+        background: var(--surface);
+        border: 2px solid var(--accent-blue);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--on-primary);
+      }
+
+      .node-na { top: -22px; left: 50%; transform: translateX(-50%); }
+      .node-eu { right: -22px; top: 50%; transform: translateY(-50%); }
+      .node-as { bottom: -22px; left: 50%; transform: translateX(-50%); }
+      .node-sa { left: -22px; top: 50%; transform: translateY(-50%); }
+
+      /* --- Scene 3: Options Presentation (Bottom Half Center Focus) --- */
+      .options-presentation-layout {
+        position: absolute;
+        top: 720px; /* Workspace bottom alignment */
+        left: 80px;
+        width: 920px;
+        height: 700px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .option-card-vertical {
+        position: absolute;
+        width: 100%;
+        max-width: 920px;
+        padding: 50px 48px;
+        border-radius: 24px;
+        background: var(--surface);
+        border: 3px solid var(--surface-border);
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+        text-align: center;
+        opacity: 0;
+        transform: scale(0.9);
+        transition: border-color 0.3s, box-shadow 0.3s;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+      }
+
+      .option-card-vertical.active-focus {
+        opacity: 1;
+        transform: scale(1.1);
+        border-color: var(--accent-blue);
+        box-shadow: 0 25px 60px rgba(0, 161, 201, 0.25);
+      }
+
+      .option-card-vertical .option-badge {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(0, 161, 201, 0.1);
+        border: 3px solid var(--accent-blue);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--accent-blue);
+      }
+
+      .option-card-vertical .option-text {
+        font-size: 28px;
+        line-height: 1.55;
+        font-weight: 500;
+        color: var(--on-primary);
+      }
+
+      /* --- Scene 4: Reveal & Deep Dive (Bottom Half Center Focus) --- */
+      .deep-dive-layout {
+        position: absolute;
+        top: 720px; /* Workspace bottom alignment */
+        left: 80px;
+        width: 920px;
+        height: 750px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .dive-card-vertical {
+        position: absolute;
+        width: 100%;
+        max-width: 920px;
+        padding: 40px 48px;
+        border-radius: 24px;
+        background: var(--surface);
+        border: 3px solid var(--surface-border);
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        opacity: 0;
+        transform: scale(0.9);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+      }
+
+      .dive-card-vertical.active-focus {
+        opacity: 1;
+        transform: scale(1.05);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      .dive-card-vertical.correct-card {
+        border-color: var(--accent-green) !important;
+        box-shadow: 0 25px 60px rgba(16, 185, 129, 0.2) !important;
+      }
+
+      .dive-card-vertical.incorrect-card {
+        border-color: var(--accent-red) !important;
+        box-shadow: 0 25px 60px rgba(239, 68, 68, 0.2) !important;
+      }
+
+      .dive-card-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        border-bottom: 2px solid var(--surface-border);
+        padding-bottom: 20px;
+      }
+
+      .dive-card-badge {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .correct-card .dive-card-badge {
+        background: rgba(16, 185, 129, 0.1);
+        border: 3px solid var(--accent-green);
+        color: var(--accent-green);
+      }
+
+      .incorrect-card .dive-card-badge {
+        background: rgba(239, 68, 68, 0.1);
+        border: 3px solid var(--accent-red);
+        color: var(--accent-red);
+      }
+
+      .dive-card-status {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+      }
+
+      .correct-card .dive-card-status { color: var(--accent-green); }
+      .incorrect-card .dive-card-status { color: var(--accent-red); }
+
+      .dive-card-option-text {
+        font-size: 20px;
+        line-height: 1.5;
+        color: var(--muted);
+        font-style: italic;
+        padding-left: 15px;
+        border-left: 3px solid var(--surface-border);
+      }
+
+      .dive-card-explanation {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .explanation-point-vertical {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        font-size: 24px;
+        line-height: 1.5;
+        color: var(--on-primary);
+      }
+
+      .point-dot-vertical {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-top: 10px;
+        flex-shrink: 0;
+      }
+
+      .correct-card .point-dot-vertical {
+        background: var(--accent-green);
+        box-shadow: 0 0 10px var(--accent-green);
+      }
+
+      .incorrect-card .point-dot-vertical {
+        background: var(--accent-red);
+        box-shadow: 0 0 10px var(--accent-red);
+      }
+
+      /* --- Scene 5: Memory Hook & Outro --- */
+      #scene5 .hook-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 1400px;
+        gap: 60px;
+        padding-top: 150px;
+      }
+
+      #scene5 .hook-card {
+        background: linear-gradient(135deg, rgba(255, 153, 0, 0.08), rgba(0, 161, 201, 0.08));
+        border: 2px solid var(--accent-orange);
+        border-radius: 24px;
+        padding: 60px 48px;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(255, 153, 0, 0.15);
+        width: 100%;
+        max-width: 920px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+      }
+
+      #scene5 .brain-icon {
+        font-size: 100px;
+        line-height: 1;
+      }
+
+      #scene5 .hook-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 42px;
+        font-weight: 700;
+        color: var(--accent-orange);
+        letter-spacing: 0.05em;
+      }
+
+      #scene5 .hook-formula {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 34px;
+        font-weight: 700;
+        line-height: 1.6;
+        color: var(--on-primary);
+      }
+
+      #scene5 .hook-formula span {
+        background: rgba(255, 153, 0, 0.15);
+        color: var(--accent-orange);
+        padding: 4px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 153, 0, 0.3);
+        display: inline-block;
+        margin-top: 10px;
+      }
+
+      #scene5 .hook-outro {
+        font-size: 26px;
+        color: var(--muted);
+        font-weight: 500;
+        text-align: center;
+        line-height: 1.5;
+        padding: 0 20px;
+      }
+
+      /* --- Captions System --- */
+      #caption-wrapper {
+        position: absolute;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 920px;
+        height: 100px;
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 0 40px;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      #caption-box {
+        font-family: 'Space Mono', monospace;
+        color: var(--on-primary);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+        white-space: nowrap;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translate3d(460px, -50%, 0);
+        transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+        will-change: transform;
+      }
+
+      .caption-word {
+        font-size: 38px;
+        font-weight: 500;
+        opacity: 0.3;
+        transition: opacity 0.2s, color 0.2s, transform 0.2s;
+        flex-shrink: 0;
+        display: inline-block;
+      }
+
+      .caption-word.active {
+        opacity: 1;
+        color: var(--accent-orange);
+        font-weight: 700;
+        transform: scale(1.15);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="125.6"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- Background elements (Shared globally under scenes) -->
+      <div class="bg-grid"></div>
+      <div class="bg-glow bg-glow-1"></div>
+      <div class="bg-glow bg-glow-2"></div>
+
+      <!-- Narration Audio Clip -->
+      <audio id="narration" src="narration.wav" data-start="0" data-track-index="0"></audio>
+
+      <!-- Persistent stationary question card at top half of canvas -->
+      <div class="card" id="global-question-card">
+        <p class="question-text">
+          A company collects 500 gigabytes of data daily from sites across multiple continents. Each site has high-speed internet. The goal is to aggregate all data as quickly as possible into a single Amazon S3 bucket with minimum operational complexity. Which solution meets these requirements?
+        </p>
+        <div class="status-bar">
+          <span class="status-dot"></span>
+          <span class="status-lbl">ANALYZING REQUIREMENTS...</span>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 1: TITLE CARD ================= -->
+      <div id="scene1" class="scene clip" data-start="0" data-duration="4.5" data-track-index="1" data-layout-allow-overflow>
+        <div class="title-card-layout">
+          <div class="exam-badge" id="s1-exam-badge">AWS CERTIFIED SOLUTIONS ARCHITECT</div>
+          <div class="exam-code" id="s1-exam-code">SAA-C03</div>
+          <div class="question-num" id="s1-question-num">Question #1</div>
+          <div class="decorative-line" id="s1-line"></div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 2: QUESTION CONTEXT ================= -->
+      <div id="scene2" class="scene clip" data-start="3.7" data-duration="18.5" data-track-index="2" data-layout-allow-overflow>
+        <div class="scene-header" id="s2-header">
+          <span class="header-badge">AWS SAA-C03</span>
+          <span class="header-info">Topic 1 · Question #1</span>
+        </div>
+        <div class="scene-title" id="s2-title">Question Context</div>
+        
+        <div class="question-visual" id="s2-visual">
+          <div class="network-node-sphere">
+            <div class="network-center-s3">S3</div>
+            <div class="network-outer-node node-na">NA</div>
+            <div class="network-outer-node node-eu">EU</div>
+            <div class="network-outer-node node-as">AS</div>
+            <div class="network-outer-node node-sa">SA</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 3: OPTIONS EVALUATION ================= -->
+      <div id="scene3" class="scene clip" data-start="21.4" data-duration="49.1" data-track-index="1" data-layout-allow-overflow>
+        <div class="scene-header" id="s3-header">
+          <span class="header-badge">PROPOSED OPTIONS</span>
+          <span class="header-info">Evaluating options</span>
+        </div>
+        <div class="scene-title" id="s3-title">Proposed Options</div>
+
+        <div class="options-presentation-layout">
+          <div class="card option-card-vertical" id="s3-optA">
+            <div class="option-badge">A</div>
+            <div class="option-text">Turn on S3 Transfer Acceleration on the destination S3 bucket. Use multipart uploads to directly upload site data to the destination S3 bucket.</div>
+          </div>
+          <div class="card option-card-vertical" id="s3-optB">
+            <div class="option-badge">B</div>
+            <div class="option-text">Upload data from each site to an S3 bucket in the closest Region. Use Cross-Region Replication to copy objects to the destination S3 bucket. Then remove data from the origin S3 bucket.</div>
+          </div>
+          <div class="card option-card-vertical" id="s3-optC">
+            <div class="option-badge">C</div>
+            <div class="option-text">Schedule AWS Snowball Edge Storage Optimized device jobs daily to transfer data from each site to the closest Region. Use Cross-Region Replication to copy objects to the destination S3 bucket.</div>
+          </div>
+          <div class="card option-card-vertical" id="s3-optD">
+            <div class="option-badge">D</div>
+            <div class="option-text">Upload data to an EC2 instance in the closest Region. Store data in an EBS volume, take EBS snapshots at regular intervals, and copy them to the destination Region.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 4: REVEAL & DEEP DIVE ================= -->
+      <div id="scene4" class="scene clip" data-start="69.7" data-duration="44.7" data-track-index="2" data-layout-allow-overflow>
+        <div class="scene-header" id="s4-header">
+          <span class="header-badge">ANSWER DEEP DIVE</span>
+          <span class="header-info">Detailed justifications</span>
+        </div>
+        <div class="scene-title" id="s4-title">Technical Deep Dive</div>
+
+        <div class="deep-dive-layout">
+          <!-- Card A -->
+          <div class="dive-card-vertical correct-card" id="s4-expA">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">A</div>
+              <div class="dive-card-status">CORRECT ANSWER</div>
+            </div>
+            <p class="dive-card-option-text">Turn on S3 Transfer Acceleration and use multipart uploads...</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical">
+                <div class="point-dot-vertical"></div>
+                <div><strong>S3TA:</strong> Routes data over private AWS private backbone via edge locations, bypassing public internet.</div>
+              </div>
+              <div class="explanation-point-vertical">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Multipart Uploads:</strong> Parallelizes transfers of large files (500 GB), maximizing throughput.</div>
+              </div>
+              <div class="explanation-point-vertical">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Serverless:</strong> Configured on S3 directly. Zero active servers, minimizing complexity.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card B -->
+          <div class="dive-card-vertical incorrect-card" id="s4-expB">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">B</div>
+              <div class="dive-card-status">INCORRECT</div>
+            </div>
+            <p class="dive-card-option-text">Upload to local S3 and use Cross-Region Replication (CRR)...</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical">
+                <div class="point-dot-vertical"></div>
+                <div><strong>High overhead:</strong> Requires configuring multiple regional staging buckets.</div>
+              </div>
+              <div class="explanation-point-vertical">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Complexity:</strong> Requires custom logic scripts to delete source objects after copying completes.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card C -->
+          <div class="dive-card-vertical incorrect-card" id="s4-expC">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">C</div>
+              <div class="dive-card-status">INCORRECT</div>
+            </div>
+            <p class="dive-card-option-text">Schedule daily AWS Snowball Edge device jobs...</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Logistical issue:</strong> Shipping, recycling, and provisioning physical devices daily is slow.</div>
+              </div>
+              <div class="explanation-point-vertical">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Unnecessary:</strong> Snowball is designed for one-time migrations, not daily 500 GB internet-connected streams.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card D -->
+          <div class="dive-card-vertical incorrect-card" id="s4-expD">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">D</div>
+              <div class="dive-card-status">INCORRECT</div>
+            </div>
+            <p class="dive-card-option-text">Upload to EC2, take EBS snapshots, copy snapshots...</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Over-engineered:</strong> Introduces virtual servers, storage volumes, and snapshot backup policies.</div>
+              </div>
+              <div class="explanation-point-vertical">
+                <div class="point-dot-vertical"></div>
+                <div><strong>High Maintenance:</strong> Requires active server monitoring, scripting copies, and increases costs.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 5: MEMORY HOOK & OUTRO ================= -->
+      <div id="scene5" class="scene clip" data-start="113.6" data-duration="12.0" data-track-index="1" data-layout-allow-overflow>
+        <div id="s5-content-wrap" style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: flex-start;">
+          <div class="scene-header" id="s5-header">
+            <span class="header-badge">MEMORY HOOK</span>
+            <span class="header-info">Exam Strategy</span>
+          </div>
+          <div class="scene-title" id="s5-title">Key Takeaways</div>
+
+          <div class="hook-container">
+            <div class="hook-card" id="s5-hook-card">
+              <div class="brain-icon" id="s5-brain">🧠</div>
+              <div class="hook-title">AWS S3 Golden Rule:</div>
+              <div class="hook-formula" id="s5-summary-text">
+                Fast Network + Large Files + Distance = <br/>
+                <span>S3TA</span> + <span>Multipart Uploads</span>
+              </div>
+            </div>
+            <div class="hook-outro" id="s5-outro">
+              Avoid CRR, Snowball, or EC2 when minimizing operations is requested!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Synced Captions Box -->
+      <div id="caption-wrapper" data-layout-allow-overflow>
+        <div id="caption-box">Loading captions...</div>
+      </div>
+    </div>
+
+    <!-- GSAP Choreography Script -->
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = tl;
+
+      // Ensure elements start in clean state for "gsap.from" layouts
+      gsap.set("#scene2", { x: "100%" });
+      gsap.set("#scene3", { x: "100%" });
+      gsap.set("#scene4", { x: "100%" });
+      gsap.set("#scene5", { x: "100%" });
+
+      // Ambient background animations
+      tl.to(".bg-glow-1", { x: 100, y: 50, duration: 20, repeat: 6, yoyo: true, ease: "sine.inOut" }, 0);
+      tl.to(".bg-glow-2", { x: -100, y: -50, duration: 25, repeat: 5, yoyo: true, ease: "sine.inOut" }, 0);
+
+      // ================= SCENE 1 ANIMATIONS (0.0s - 4.5s) =================
+      tl.from("#s1-exam-badge", { y: -50, opacity: 0, duration: 0.8, ease: "power3.out" }, 0.2);
+      tl.from("#s1-exam-code", { scale: 0.9, opacity: 0, duration: 1.0, ease: "back.out(1.5)" }, 0.5);
+      tl.from("#s1-question-num", { y: 50, opacity: 0, duration: 0.8, ease: "power3.out" }, 0.8);
+      tl.from("#s1-line", { width: 0, opacity: 0, duration: 0.8, ease: "power2.out" }, 1.2);
+
+      // TRANSITION: Scene 1 -> Scene 2 (at 3.7s)
+      tl.to("#scene1", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 3.7);
+      tl.to("#scene2", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 3.7);
+
+      // ================= STATIONARY QUESTION CARD ANIMATION =================
+      // Fade in at 4.2s (when S2 starts reading question)
+      tl.to("#global-question-card", { opacity: 1, duration: 0.8, ease: "power2.out" }, 4.2);
+      // Fade out at 113.6s (when S5 Hook starts)
+      tl.to("#global-question-card", { opacity: 0, duration: 0.8, ease: "power2.in" }, 113.6);
+
+      // ================= SCENE 2 ANIMATIONS (4.5s - 21.4s) =================
+      tl.from("#s2-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 4.5);
+      tl.from("#s2-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 4.8);
+      tl.from("#s2-visual", { scale: 0.8, opacity: 0, duration: 1.0, ease: "back.out(1.2)" }, 5.2);
+      // Ambient rotation for global network
+      tl.to("#s2-visual .network-node-sphere", { rotation: 360, duration: 30, ease: "none", repeat: 4 }, 5.5);
+
+      // TRANSITION: Scene 2 -> Scene 3 (at 21.4s)
+      tl.to("#scene2", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 21.4);
+      tl.to("#scene3", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 21.4);
+
+      // ================= SCENE 3 ANIMATIONS (21.4s - 69.7s) =================
+      tl.from("#s3-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 22.2);
+      tl.from("#s3-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 22.5);
+
+      // Option A Centered Focus (22.82s - 32.9s)
+      tl.to("#s3-optA", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 22.82);
+      tl.set("#s3-optA", { className: "option-card-vertical active-focus" }, 22.82);
+
+      // Option B Centered Focus (32.9s - 45.7s)
+      tl.to("#s3-optA", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 32.9);
+      tl.set("#s3-optA", { className: "option-card-vertical" }, 33.3);
+      tl.to("#s3-optB", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 33.3);
+      tl.set("#s3-optB", { className: "option-card-vertical active-focus" }, 33.3);
+
+      // Option C Centered Focus (45.7s - 58.62s)
+      tl.to("#s3-optB", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 45.7);
+      tl.set("#s3-optB", { className: "option-card-vertical" }, 46.1);
+      tl.to("#s3-optC", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 46.1);
+      tl.set("#s3-optC", { className: "option-card-vertical active-focus" }, 46.1);
+
+      // Option D Centered Focus (58.62s - 69.7s)
+      tl.to("#s3-optC", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 58.62);
+      tl.set("#s3-optC", { className: "option-card-vertical" }, 59.02);
+      tl.to("#s3-optD", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 59.02);
+      tl.set("#s3-optD", { className: "option-card-vertical active-focus" }, 59.02);
+
+      // TRANSITION: Scene 3 -> Scene 4 (at 69.7s)
+      tl.to("#scene3", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 69.7);
+      tl.to("#scene4", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 69.7);
+
+      // ================= SCENE 4 ANIMATIONS (69.7s - 113.6s) =================
+      tl.from("#s4-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 70.5);
+      tl.from("#s4-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 70.8);
+
+      // Option A correct reveal & deep dive (71.53s - 89.22s)
+      tl.to("#s4-expA", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 71.53);
+      tl.set("#s4-expA", { className: "dive-card-vertical correct-card active-focus" }, 71.53);
+
+      // Option B incorrect deep dive (89.22s - 96.46s)
+      tl.to("#s4-expA", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 89.22);
+      tl.set("#s4-expA", { className: "dive-card-vertical correct-card" }, 89.62);
+      tl.to("#s4-expB", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 89.62);
+      tl.set("#s4-expB", { className: "dive-card-vertical incorrect-card active-focus" }, 89.62);
+
+      // Option C incorrect deep dive (96.46s - 106.1s)
+      tl.to("#s4-expB", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 96.46);
+      tl.set("#s4-expB", { className: "dive-card-vertical incorrect-card" }, 96.86);
+      tl.to("#s4-expC", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 96.86);
+      tl.set("#s4-expC", { className: "dive-card-vertical incorrect-card active-focus" }, 96.86);
+
+      // Option D incorrect deep dive (106.1s - 113.6s)
+      tl.to("#s4-expC", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 106.1);
+      tl.set("#s4-expC", { className: "dive-card-vertical incorrect-card" }, 106.5);
+      tl.to("#s4-expD", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 106.5);
+      tl.set("#s4-expD", { className: "dive-card-vertical incorrect-card active-focus" }, 106.5);
+
+      // TRANSITION: Scene 4 -> Scene 5 (at 113.6s)
+      tl.to("#scene4", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 113.6);
+      tl.to("#scene5", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 113.6);
+
+      // ================= SCENE 5 ANIMATIONS (113.6s - 125.6s) =================
+      tl.from("#s5-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 114.4);
+      tl.from("#s5-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 114.7);
+      tl.from("#s5-hook-card", { scale: 0.85, opacity: 0, duration: 0.8, ease: "elastic.out(1.1, 0.75)" }, 115.1);
+      tl.from("#s5-brain", { scale: 0, rotation: -45, duration: 0.6, ease: "back.out(2.5)" }, 115.5);
+      tl.from("#s5-summary-text", { y: 25, opacity: 0, duration: 0.6, ease: "power2.out" }, 115.9);
+      tl.from("#s5-outro", { opacity: 0, y: 15, duration: 0.6 }, 116.5);
+
+      // Outro Fade Out (Animate inside content wrapper, not clip element)
+      tl.to("#s5-content-wrap", { opacity: 0, duration: 1.2, ease: "power2.in" }, 124.0);
+      tl.to("#caption-wrapper", { opacity: 0, duration: 1.0 }, 124.2);
+      tl.set("#s5-content-wrap", { visibility: "hidden" }, 125.2);
+      tl.set("#caption-wrapper", { visibility: "hidden" }, 125.2);
+
+
+      // ================= CAPTIONS SYNCHRONIZATION SYSTEM =================
+      var TRANSCRIPT = [{"text": "AWS", "start": 0.02, "end": 0.22}, {"text": "Certified", "start": 0.22, "end": 0.86}, {"text": "Solutions", "start": 0.86, "end": 1.52}, {"text": "Architect", "start": 1.52, "end": 2.2}, {"text": "Associate,", "start": 2.2, "end": 3.3}, {"text": "question", "start": 3.3, "end": 3.82}, {"text": "one.", "start": 4.34, "end": 4.36}, {"text": "A", "start": 4.38, "end": 4.41}, {"text": "company", "start": 4.41, "end": 4.8}, {"text": "collects", "start": 4.8, "end": 5.25}, {"text": "500", "start": 5.25, "end": 5.75}, {"text": "gigabytes", "start": 5.75, "end": 6.28}, {"text": "of", "start": 6.28, "end": 6.4}, {"text": "data", "start": 6.4, "end": 6.58}, {"text": "daily", "start": 6.68, "end": 6.98}, {"text": "from", "start": 7.02, "end": 7.24}, {"text": "sites", "start": 7.28, "end": 7.57}, {"text": "across", "start": 7.57, "end": 7.93}, {"text": "multiple", "start": 8.03, "end": 8.46}, {"text": "continents.", "start": 8.46, "end": 9.22}, {"text": "Each", "start": 9.34, "end": 9.59}, {"text": "site", "start": 9.6, "end": 9.88}, {"text": "has", "start": 9.88, "end": 10.01}, {"text": "high", "start": 10.08, "end": 10.37}, {"text": "speed", "start": 10.37, "end": 10.72}, {"text": "internet.", "start": 10.72, "end": 11.5}, {"text": "The", "start": 11.52, "end": 11.7}, {"text": "goal", "start": 11.7, "end": 11.96}, {"text": "is", "start": 11.96, "end": 12.09}, {"text": "to", "start": 12.09, "end": 12.19}, {"text": "aggregate", "start": 12.22, "end": 12.81}, {"text": "all", "start": 12.81, "end": 13.02}, {"text": "data", "start": 13.02, "end": 13.3}, {"text": "as", "start": 13.34, "end": 13.42}, {"text": "quickly", "start": 13.42, "end": 13.72}, {"text": "as", "start": 13.82, "end": 13.93}, {"text": "possible", "start": 13.93, "end": 14.38}, {"text": "into", "start": 14.48, "end": 14.78}, {"text": "a", "start": 14.78, "end": 14.86}, {"text": "single", "start": 14.86, "end": 15.33}, {"text": "Amazon", "start": 15.33, "end": 15.82}, {"text": "S3", "start": 15.82, "end": 16.14}, {"text": "bucket", "start": 16.14, "end": 16.64}, {"text": "with", "start": 16.66, "end": 16.88}, {"text": "minimum", "start": 16.91, "end": 17.33}, {"text": "operational", "start": 17.38, "end": 18.15}, {"text": "complexity.", "start": 18.15, "end": 19.08}, {"text": "Which", "start": 19.1, "end": 19.39}, {"text": "solution", "start": 19.39, "end": 19.88}, {"text": "meets", "start": 19.88, "end": 20.19}, {"text": "these", "start": 20.19, "end": 20.5}, {"text": "requirements?", "start": 20.5, "end": 21.44}, {"text": "Let's", "start": 21.46, "end": 21.68}, {"text": "review", "start": 21.72, "end": 22.06}, {"text": "the", "start": 22.06, "end": 22.23}, {"text": "options.", "start": 22.23, "end": 22.8}, {"text": "Option", "start": 22.82, "end": 23.24}, {"text": "A,", "start": 23.24, "end": 23.43}, {"text": "turn", "start": 23.48, "end": 23.73}, {"text": "on", "start": 23.83, "end": 23.88}, {"text": "S3", "start": 23.88, "end": 24.17}, {"text": "transfer", "start": 24.17, "end": 24.75}, {"text": "acceleration", "start": 24.82, "end": 25.68}, {"text": "on", "start": 25.7, "end": 25.81}, {"text": "the", "start": 25.82, "end": 26.03}, {"text": "destination", "start": 26.03, "end": 26.8}, {"text": "S3", "start": 26.8, "end": 27.08}, {"text": "bucket.", "start": 27.08, "end": 27.72}, {"text": "Use", "start": 27.74, "end": 27.91}, {"text": "multi-part", "start": 27.91, "end": 28.56}, {"text": "uploads", "start": 28.56, "end": 29.01}, {"text": "to", "start": 29.01, "end": 29.14}, {"text": "directly", "start": 29.14, "end": 29.66}, {"text": "upload", "start": 29.66, "end": 30.06}, {"text": "site", "start": 30.06, "end": 30.32}, {"text": "data", "start": 30.32, "end": 30.6}, {"text": "to", "start": 30.66, "end": 30.78}, {"text": "the", "start": 30.79, "end": 31.02}, {"text": "destination", "start": 31.02, "end": 31.85}, {"text": "S3", "start": 31.86, "end": 32.16}, {"text": "bucket.", "start": 32.16, "end": 32.86}, {"text": "Option", "start": 32.9, "end": 33.37}, {"text": "B,", "start": 33.37, "end": 33.57}, {"text": "upload", "start": 33.6, "end": 34.09}, {"text": "data", "start": 34.1, "end": 34.41}, {"text": "from", "start": 34.43, "end": 34.74}, {"text": "each", "start": 34.74, "end": 35.06}, {"text": "site", "start": 35.06, "end": 35.42}, {"text": "to", "start": 35.42, "end": 35.55}, {"text": "an", "start": 35.55, "end": 35.7}, {"text": "S3", "start": 35.7, "end": 35.77}, {"text": "bucket", "start": 36.07, "end": 36.46}, {"text": "in", "start": 36.48, "end": 36.59}, {"text": "the", "start": 36.6, "end": 36.82}, {"text": "closest", "start": 36.82, "end": 37.32}, {"text": "region.", "start": 37.32, "end": 38}, {"text": "Use", "start": 38.02, "end": 38.19}, {"text": "cross-region", "start": 38.19, "end": 38.93}, {"text": "replication", "start": 39.03, "end": 39.68}, {"text": "to", "start": 39.68, "end": 39.8}, {"text": "copy", "start": 39.84, "end": 40.16}, {"text": "objects", "start": 40.16, "end": 40.71}, {"text": "to", "start": 40.74, "end": 40.89}, {"text": "the", "start": 40.89, "end": 41.14}, {"text": "destination", "start": 41.14, "end": 42.08}, {"text": "S3", "start": 42.08, "end": 42.41}, {"text": "bucket.", "start": 42.41, "end": 42.96}, {"text": "Then", "start": 42.98, "end": 43.2}, {"text": "remove", "start": 43.23, "end": 43.59}, {"text": "data", "start": 43.63, "end": 43.89}, {"text": "from", "start": 43.99, "end": 44.16}, {"text": "the", "start": 44.17, "end": 44.37}, {"text": "origin", "start": 44.37, "end": 44.76}, {"text": "S3", "start": 44.8, "end": 45.02}, {"text": "bucket.", "start": 45.07, "end": 45.67}, {"text": "Option", "start": 45.7, "end": 46.2}, {"text": "C,", "start": 46.2, "end": 46.37}, {"text": "schedule", "start": 46.44, "end": 47.15}, {"text": "AWS", "start": 47.15, "end": 47.41}, {"text": "Snowball", "start": 47.41, "end": 48.11}, {"text": "Edge", "start": 48.11, "end": 48.46}, {"text": "Storage", "start": 48.46, "end": 49.12}, {"text": "optimized", "start": 49.14, "end": 49.74}, {"text": "device", "start": 49.74, "end": 50.16}, {"text": "jobs", "start": 50.16, "end": 50.44}, {"text": "daily", "start": 50.44, "end": 50.8}, {"text": "to", "start": 50.8, "end": 50.92}, {"text": "transfer", "start": 50.96, "end": 51.49}, {"text": "data", "start": 51.49, "end": 51.78}, {"text": "from", "start": 51.8, "end": 52.02}, {"text": "each", "start": 52.06, "end": 52.3}, {"text": "site", "start": 52.3, "end": 52.56}, {"text": "to", "start": 52.56, "end": 52.69}, {"text": "the", "start": 52.69, "end": 52.88}, {"text": "closest", "start": 52.88, "end": 53.33}, {"text": "region.", "start": 53.34, "end": 53.96}, {"text": "Use", "start": 53.98, "end": 54.13}, {"text": "cross-region", "start": 54.13, "end": 54.82}, {"text": "replication", "start": 54.82, "end": 55.48}, {"text": "to", "start": 55.48, "end": 55.62}, {"text": "copy", "start": 55.62, "end": 55.9}, {"text": "objects", "start": 55.9, "end": 56.4}, {"text": "to", "start": 56.42, "end": 56.54}, {"text": "the", "start": 56.55, "end": 56.76}, {"text": "destination", "start": 56.76, "end": 57.6}, {"text": "S3", "start": 57.6, "end": 57.89}, {"text": "bucket.", "start": 57.89, "end": 58.6}, {"text": "Option", "start": 58.62, "end": 59.13}, {"text": "D,", "start": 59.13, "end": 59.39}, {"text": "upload", "start": 59.39, "end": 59.91}, {"text": "data", "start": 59.91, "end": 60.27}, {"text": "to", "start": 60.27, "end": 60.4}, {"text": "an", "start": 60.44, "end": 60.55}, {"text": "EC2", "start": 60.62, "end": 61.04}, {"text": "instance", "start": 61.04, "end": 61.82}, {"text": "in", "start": 61.84, "end": 61.96}, {"text": "the", "start": 61.97, "end": 62.18}, {"text": "closest", "start": 62.18, "end": 62.72}, {"text": "region.", "start": 62.72, "end": 63.41}, {"text": "Store", "start": 63.44, "end": 63.91}, {"text": "data", "start": 63.91, "end": 64.29}, {"text": "in", "start": 64.3, "end": 64.49}, {"text": "an", "start": 64.49, "end": 64.65}, {"text": "EBS", "start": 64.69, "end": 64.96}, {"text": "volume,", "start": 64.96, "end": 65.6}, {"text": "take", "start": 65.62, "end": 65.88}, {"text": "EBS", "start": 65.89, "end": 66.1}, {"text": "snapshots", "start": 66.1, "end": 66.76}, {"text": "at", "start": 66.76, "end": 66.9}, {"text": "regular", "start": 66.9, "end": 67.4}, {"text": "intervals", "start": 67.44, "end": 68.12}, {"text": "and", "start": 68.14, "end": 68.29}, {"text": "copy", "start": 68.29, "end": 68.52}, {"text": "them", "start": 68.52, "end": 68.75}, {"text": "to", "start": 68.75, "end": 68.81}, {"text": "the", "start": 68.84, "end": 69.03}, {"text": "destination", "start": 69.03, "end": 69.65}, {"text": "region.", "start": 69.68, "end": 70.26}, {"text": "The", "start": 70.28, "end": 70.47}, {"text": "correct", "start": 70.47, "end": 70.95}, {"text": "answer", "start": 70.98, "end": 71.38}, {"text": "is", "start": 71.38, "end": 71.48}, {"text": "option", "start": 71.53, "end": 71.94}, {"text": "A.", "start": 71.94, "end": 72.21}, {"text": "Option", "start": 72.26, "end": 72.59}, {"text": "A", "start": 72.59, "end": 72.65}, {"text": "is", "start": 72.65, "end": 72.77}, {"text": "correct", "start": 72.77, "end": 73.16}, {"text": "because", "start": 73.27, "end": 73.46}, {"text": "S3", "start": 73.51, "end": 73.88}, {"text": "transfer", "start": 73.88, "end": 74.3}, {"text": "acceleration", "start": 74.35, "end": 75}, {"text": "routes", "start": 75, "end": 75.13}, {"text": "data", "start": 75.34, "end": 75.61}, {"text": "over", "start": 75.62, "end": 75.92}, {"text": "the", "start": 75.92, "end": 76.14}, {"text": "private", "start": 76.14, "end": 76.67}, {"text": "AWS", "start": 76.67, "end": 76.89}, {"text": "backbone", "start": 76.89, "end": 77.52}, {"text": "via", "start": 77.52, "end": 77.8}, {"text": "edge", "start": 77.8, "end": 78.2}, {"text": "locations,", "start": 78.2, "end": 79.08}, {"text": "bypassing", "start": 79.1, "end": 79.65}, {"text": "the", "start": 79.65, "end": 79.77}, {"text": "public", "start": 79.84, "end": 80.22}, {"text": "internet.", "start": 80.22, "end": 80.88}, {"text": "Multi-part", "start": 80.94, "end": 81.47}, {"text": "uploads", "start": 81.47, "end": 81.85}, {"text": "parallelized", "start": 81.95, "end": 82.52}, {"text": "transfer", "start": 82.52, "end": 83.04}, {"text": "of", "start": 83.04, "end": 83.14}, {"text": "large", "start": 83.24, "end": 83.75}, {"text": "files,", "start": 83.75, "end": 84.28}, {"text": "maximizing", "start": 84.3, "end": 84.91}, {"text": "throughput.", "start": 84.95, "end": 85.83}, {"text": "This", "start": 85.86, "end": 86.08}, {"text": "serverless", "start": 86.11, "end": 86.76}, {"text": "route", "start": 86.76, "end": 87.06}, {"text": "requires", "start": 87.11, "end": 87.62}, {"text": "zero", "start": 87.62, "end": 87.88}, {"text": "active", "start": 87.88, "end": 88.28}, {"text": "management.", "start": 88.28, "end": 89.18}, {"text": "Option", "start": 89.22, "end": 89.75}, {"text": "Bis", "start": 89.75, "end": 90.02}, {"text": "incorrect.", "start": 90.02, "end": 91.15}, {"text": "Staging", "start": 91.18, "end": 91.59}, {"text": "regional", "start": 91.59, "end": 92.08}, {"text": "buckets", "start": 92.09, "end": 92.55}, {"text": "and", "start": 92.55, "end": 92.69}, {"text": "managing", "start": 92.72, "end": 93.11}, {"text": "synchronization", "start": 93.18, "end": 93.96}, {"text": "scripts", "start": 93.96, "end": 94.44}, {"text": "adds", "start": 94.46, "end": 94.68}, {"text": "heavy", "start": 94.68, "end": 94.98}, {"text": "operational", "start": 94.98, "end": 95.64}, {"text": "complexity.", "start": 95.64, "end": 96.39}, {"text": "Option", "start": 96.46, "end": 96.94}, {"text": "Cis", "start": 96.94, "end": 97.13}, {"text": "incorrect.", "start": 97.17, "end": 98.19}, {"text": "Daily", "start": 98.22, "end": 98.44}, {"text": "shipping", "start": 98.47, "end": 98.89}, {"text": "and", "start": 98.92, "end": 99.06}, {"text": "recycling", "start": 99.06, "end": 99.56}, {"text": "of", "start": 99.56, "end": 99.67}, {"text": "physical", "start": 99.67, "end": 100.14}, {"text": "Snowball", "start": 100.14, "end": 100.6}, {"text": "devices", "start": 100.6, "end": 101.03}, {"text": "for", "start": 101.06, "end": 101.24}, {"text": "500", "start": 101.24, "end": 101.85}, {"text": "gigabytes", "start": 101.85, "end": 102.45}, {"text": "of", "start": 102.45, "end": 102.57}, {"text": "data", "start": 102.61, "end": 102.84}, {"text": "is", "start": 102.88, "end": 102.99}, {"text": "extremely", "start": 103.06, "end": 103.82}, {"text": "slow", "start": 103.82, "end": 103.93}, {"text": "and", "start": 104.2, "end": 104.4}, {"text": "logistically", "start": 104.4, "end": 105.3}, {"text": "complex.", "start": 105.3, "end": 106.08}, {"text": "Option", "start": 106.1, "end": 106.54}, {"text": "Dis", "start": 106.54, "end": 106.71}, {"text": "incorrect.", "start": 106.76, "end": 107.72}, {"text": "Running", "start": 107.74, "end": 108.25}, {"text": "EC2", "start": 108.25, "end": 108.62}, {"text": "instances,", "start": 108.62, "end": 109.47}, {"text": "EBS", "start": 109.49, "end": 109.78}, {"text": "volumes", "start": 109.83, "end": 110.6}, {"text": "and", "start": 110.62, "end": 110.79}, {"text": "scheduling", "start": 110.79, "end": 111.42}, {"text": "snapshot", "start": 111.42, "end": 111.91}, {"text": "copies", "start": 111.91, "end": 112.32}, {"text": "is", "start": 112.34, "end": 112.45}, {"text": "over-engineered", "start": 112.46, "end": 113.51}, {"text": "and", "start": 113.51, "end": 113.72}, {"text": "costly.", "start": 113.72, "end": 114.38}, {"text": "Here", "start": 114.42, "end": 114.64}, {"text": "is", "start": 114.68, "end": 114.79}, {"text": "your", "start": 114.79, "end": 115.03}, {"text": "memory", "start": 115.08, "end": 115.44}, {"text": "hook.", "start": 115.44, "end": 115.92}, {"text": "Fast", "start": 115.94, "end": 116.2}, {"text": "network", "start": 116.21, "end": 116.73}, {"text": "plus", "start": 116.73, "end": 117.02}, {"text": "large", "start": 117.02, "end": 117.39}, {"text": "files", "start": 117.39, "end": 117.78}, {"text": "plus", "start": 117.78, "end": 117.98}, {"text": "distance", "start": 118.03, "end": 118.48}, {"text": "equals", "start": 118.5, "end": 118.92}, {"text": "S3", "start": 118.92, "end": 119.17}, {"text": "transfer", "start": 119.2, "end": 119.79}, {"text": "acceleration", "start": 119.79, "end": 120.7}, {"text": "and", "start": 120.8, "end": 120.9}, {"text": "multi-part", "start": 120.9, "end": 121.37}, {"text": "uploads.", "start": 121.67, "end": 122.12}, {"text": "Avoid", "start": 122.14, "end": 122.43}, {"text": "cross-region", "start": 122.43, "end": 123.17}, {"text": "replication,", "start": 123.17, "end": 124}, {"text": "Snowball", "start": 124, "end": 124.68}, {"text": "or", "start": 124.68, "end": 124.84}, {"text": "EC2.", "start": 124.84, "end": 125.56}];
+
+      function initCaptionsDOM() {
+        const box = document.getElementById("caption-box");
+        box.innerHTML = ''; // Clear loading text
+        
+        TRANSCRIPT.forEach((wordObj, idx) => {
+          const span = document.createElement("span");
+          span.className = "caption-word";
+          span.id = `w-${idx}`;
+          span.textContent = wordObj.text;
+          box.appendChild(span);
+        });
+      }
+
+      // Automatically run caption initialization
+      if (typeof TRANSCRIPT !== 'undefined') {
+        initCaptionsDOM();
+      }
+
+      // Hook dynamic caption updating directly to the timeline update callback
+      // This makes the captions 100% deterministic and scrub-friendly!
+      tl.eventCallback("onUpdate", () => {
+        const t = tl.time();
+        if (typeof TRANSCRIPT === 'undefined' || TRANSCRIPT.length === 0) return;
+
+        let activeIdx = -1;
+
+        // Find current words falling within active timing
+        TRANSCRIPT.forEach((wordObj, idx) => {
+          const span = document.getElementById(`w-${idx}`);
+          if (!span) return;
+
+          if (t >= wordObj.start && t <= wordObj.end) {
+            span.className = "caption-word active";
+            activeIdx = idx;
+          } else {
+            span.className = "caption-word";
+          }
+        });
+
+        // Slide the caption track so the active word is centered horizontally
+        if (activeIdx !== -1) {
+          const activeSpan = document.getElementById(`w-${activeIdx}`);
+          const box = document.getElementById("caption-box");
+          const wrapper = document.getElementById("caption-wrapper");
+          if (activeSpan && box && wrapper) {
+            const wrapperCenter = (wrapper.offsetWidth || 920) / 2;
+            const activeCenter = activeSpan.offsetLeft + activeSpan.offsetWidth / 2;
+            const shift = wrapperCenter - activeCenter;
+            box.style.transform = `translate3d(${shift}px, -50%, 0)`;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

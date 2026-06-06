@@ -1,0 +1,175 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AWSSaaC03VideoSpec",
+  "description": "Standardized schema to automate the generation of consistent English AWS SAA-C03 question-solving videos in HyperFrames.",
+  "type": "OBJECT",
+  "properties": {
+    "video_metadata": {
+      "type": "OBJECT",
+      "description": "Technical specifications for the video rendering.",
+      "properties": {
+        "width": { "type": "INTEGER", "default": 1080 },
+        "height": { "type": "INTEGER", "default": 1920 },
+        "fps": { "type": "INTEGER", "default": 30 },
+        "audio_voice": { "type": "STRING", "default": "am_adam", "description": "Speech voice ID from Kokoro TTS." },
+        "audio_speed": { "type": "NUMBER", "default": 1.0 }
+      },
+      "required": ["width", "height", "fps", "audio_voice"]
+    },
+    "design_system": {
+      "type": "OBJECT",
+      "description": "Branding design tokens for video styling (AWS Tech Dark).",
+      "properties": {
+        "colors": {
+          "type": "OBJECT",
+          "properties": {
+            "primary": { "type": "STRING", "default": "#0F172A", "description": "Primary slate background color." },
+            "on_primary": { "type": "STRING", "default": "#F8FAFC", "description": "Primary text color." },
+            "accent_orange": { "type": "STRING", "default": "#FF9900", "description": "AWS Orange color accent." },
+            "accent_blue": { "type": "STRING", "default": "#00A1C9", "description": "AWS Blue color accent." },
+            "accent_green": { "type": "STRING", "default": "#10B981", "description": "Emerald Green for correct options." },
+            "accent_red": { "type": "STRING", "default": "#EF4444", "description": "Crimson Red for incorrect options." },
+            "surface": { "type": "STRING", "default": "#1E293B", "description": "Surface card background color." }
+          }
+        },
+        "fonts": {
+          "type": "OBJECT",
+          "properties": {
+            "headline": { "type": "STRING", "default": "Space Grotesk", "description": "Display font family for headlines." },
+            "body": { "type": "STRING", "default": "Space Mono", "description": "Monospace font family for descriptions and logs." }
+          }
+        }
+      }
+    },
+    "scene_flow": {
+      "type": "ARRAY",
+      "description": "The 5-scene timeline choreography flow.",
+      "items": {
+        "type": "OBJECT",
+        "properties": {
+          "scene_index": { "type": "INTEGER" },
+          "name": { "type": "STRING" },
+          "description": { "type": "STRING" },
+          "transition_duration": { "type": "NUMBER", "default": 0.8, "description": "Overlay duration for slide transition in seconds." }
+        }
+      }
+    },
+    "variables": {
+      "type": "OBJECT",
+      "description": "Dynamic content variables extracted from SAA-C03 question markdown files.",
+      "properties": {
+        "exam_code": {
+          "type": "STRING",
+          "default": "SAA-C03",
+          "description": "The target exam code displayed on the Title Card."
+        },
+        "question_number": {
+          "type": "STRING",
+          "example": "Question #1",
+          "description": "The question number displayed prominently on the Title Card."
+        },
+        "question_id": {
+          "type": "STRING",
+          "example": "Question #1 - Topic 1",
+          "description": "Unique question identifier displayed on the header badge of subsequent scenes."
+        },
+        "question_context": {
+          "type": "STRING",
+          "example": "A company collects data for temperature, humidity, and atmospheric pressure in cities across multiple continents...",
+          "description": "VERBATIM English question text displayed in Scene 2."
+        },
+        "keywords": {
+          "type": "ARRAY",
+          "description": "Constraints analysis list displayed in Scene 3 (Exactly 3 cards).",
+          "maxItems": 3,
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "index": { "type": "STRING", "example": "01" },
+              "title": { "type": "STRING", "example": "500 GB Daily + High-Speed Internet" },
+              "desc": { "type": "STRING", "example": "Large data volume but good transfer speeds. Physical transits are not necessary." }
+            },
+            "required": ["index", "title", "desc"]
+          }
+        },
+        "options": {
+          "type": "OBJECT",
+          "description": "VERBATIM multiple choice options from the SAA-C03 dump.",
+          "properties": {
+            "A": { "type": "STRING" },
+            "B": { "type": "STRING" },
+            "C": { "type": "STRING" },
+            "D": { "type": "STRING" }
+          },
+          "required": ["A", "B", "C", "D"]
+        },
+        "correct_option": {
+          "type": "STRING",
+          "enum": ["A", "B", "C", "D"],
+          "description": "Correct answer key, used to dynamically highlight the option card green in Scene 4."
+        },
+        "explanations": {
+          "type": "OBJECT",
+          "description": "Technical analysis of correct and incorrect choices in Scene 4.",
+          "properties": {
+            "A": {
+              "type": "OBJECT",
+              "properties": {
+                "status": { "type": "STRING", "enum": ["Correct", "Incorrect"] },
+                "points": { "type": "ARRAY", "items": { "type": "STRING" } }
+              },
+              "required": ["status", "points"]
+            },
+            "B": {
+              "type": "OBJECT",
+              "properties": {
+                "status": { "type": "STRING", "enum": ["Correct", "Incorrect"] },
+                "points": { "type": "ARRAY", "items": { "type": "STRING" } }
+              },
+              "required": ["status", "points"]
+            },
+            "C": {
+              "type": "OBJECT",
+              "properties": {
+                "status": { "type": "STRING", "enum": ["Correct", "Incorrect"] },
+                "points": { "type": "ARRAY", "items": { "type": "STRING" } }
+              },
+              "required": ["status", "points"]
+            },
+            "D": {
+              "type": "OBJECT",
+              "properties": {
+                "status": { "type": "STRING", "enum": ["Correct", "Incorrect"] },
+                "points": { "type": "ARRAY", "items": { "type": "STRING" } }
+              },
+              "required": ["status", "points"]
+            }
+          },
+          "required": ["A", "B", "C", "D"]
+        },
+        "memory_hook": {
+          "type": "OBJECT",
+          "description": "Quick exam memorization tip displayed in Scene 5.",
+          "properties": {
+            "title": { "type": "STRING", "default": "AWS S3 Golden Rule:" },
+            "formula": { "type": "STRING", "example": "Fast Network + Large Files + Distance = S3TA + Multipart Uploads" },
+            "note": { "type": "STRING", "example": "Avoid CRR, Snowball, or EC2 when minimizing operations is requested." }
+          },
+          "required": ["title", "formula", "note"]
+        }
+      },
+      "required": [
+        "exam_code",
+        "question_number",
+        "question_id",
+        "question_context",
+        "keywords",
+        "options",
+        "correct_option",
+        "explanations",
+        "memory_hook"
+      ]
+    }
+  },
+  "required": ["video_metadata", "design_system", "scene_flow", "variables"]
+}
