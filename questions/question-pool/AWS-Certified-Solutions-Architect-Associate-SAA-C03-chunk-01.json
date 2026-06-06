@@ -1,0 +1,2732 @@
+[
+    {
+        "id": 1,
+        "content": "Which set of Amazon S3 features helps to prevent and recover from accidental data loss?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon S3 provides scalable object storage with features like versioning, lifecycle management, and various storage classes.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Object lifecycle and service access logging.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Object versioning and Multi-factor authentication.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Access controls and server-side encryption.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Website hosting and Amazon S3 policies.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "content": "What is the minimum time interval for the data that Amazon CloudWatch receives and aggregates?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon CloudWatch is a monitoring and observability service built for DevOps engineers.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "One second.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Five seconds.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "One minute.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Three minutes.",
+                "correct": false
+            },
+            {
+                "id": 5,
+                "content": "Five minutes.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "content": "A user has launched an EC2 instance. The instance got terminated as soon as it was launched. Which of the below mentioned options is not a possible reason for this?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "The user account has reached the maximum volume limit.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "The AMI is missing. It is the required part.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "The snapshot is corrupt.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "The user account has reached the maximum EC2 instance limit.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "content": "Your website is serving on-demand training videos to your workforce. Videos are uploaded monthly in high resolution MP4 format. Your workforce is distributed globally often on the move and using company-provided tablets that require the HTTP Live Streaming (HLS) protocol to watch a video. Your company has no video transcoding expertise and it required you may need to pay for a consultant. How do you implement the most cost-efficient architecture without compromising high availability and quality of video delivery?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. AWS offers various cost optimization options including Reserved Instances, Spot Instances, and lifecycle policies.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "A video transcoding pipeline running on EC2 using SQS to distribute tasks and Auto Scaling to adjust the number of nodes depending on the length of the queue. EBS volumes to host videos and EBS snapshots to incrementally backup original files after a few days. CloudFront to serve HLS transcoded videos from EC2.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Elastic Transcoder to transcode original high-resolution MP4 videos to HLS. EBS volumes to host videos and EBS snapshots to incrementally backup original files after a few days. CloudFront to serve HLS transcoded videos from EC2.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Elastic Transcoder to transcode original high-resolution MP4 videos to HLS. S3 to host videos with Lifecycle Management to archive original files to Glacier after a few days. CloudFront to serve HLS transcoded videos from S3.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "A video transcoding pipeline running on EC2 using SQS to distribute tasks and Auto Scaling to adjust the number of nodes depending on the length of the queue. S3 to host videos with Lifecycle Management to archive all files to Glacier after a few days. CloudFront to serve HLS transcoded videos from Glacier.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "content": "You are designing an intrusion detection prevention (IDS/IPS) solution for a customer web application in a single VPC. You are considering the options for implementing IOS IPS protection for traffic coming from the Internet. Which of the following options would you consider? (Choose 2 answers)",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon VPC allows you to provision a logically isolated section of the AWS Cloud.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Implement IDS/IPS agents on each Instance running in VPC.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Configure an instance in each subnet to switch its network interface card to promiscuous mode and analyze network traffic.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Implement Elastic Load Balancing with SSL listeners in front of the web applications.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Implement a reverse proxy layer in front of web servers and configure IDS/ IPS agents on each reverse proxy server.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "content": "Which of the following are valid statements about Amazon S3? (Choose 2 answers)",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon S3 provides scalable object storage with features like versioning, lifecycle management, and various storage classes.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Amazon S3 provides read-after-write consistency for any type of PUT or DELETE.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Consistency is not guaranteed for any type of PUT or DELETE.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "A successful response to a PUT request only occurs when a complete object is saved.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Partially saved objects are immediately readable with a GET after an overwrite PU.",
+                "correct": false
+            },
+            {
+                "id": 5,
+                "content": "S3 provides eventual consistency for overwrite PUTS and DELETE.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "content": "How can the domain's zone apex, for example, 'myzoneapexdomain.com', be pointed towards an Elastic Load Balancer?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "By using an Amazon Route 53 Alias record.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "By using an AAAA record.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "By using an Amazon Route 53 CNAME record.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "By using an A record.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "content": "When should I choose Provisioned IOPS over Standard RDS storage?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "If you have batch-oriented workloads.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "If you use production online transaction processing (OLTP) workloads.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "If you have workloads that are not sensitive to consistent performance.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 9,
+        "content": "Your department creates regular analytics reports from your company's log files All log data is collected in Amazon S3 and processed by daily Amazon Elastic MapReduce (EMR) jobs that generate daily PDF reports and aggregated tables in CSV format for an Amazon Redshift data warehouse. Which of the following alternatives will lower costs without compromising average performance of the system or data integrity for the raw data?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon S3 provides scalable object storage with features like versioning, lifecycle management, and various storage classes.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Use reduced redundancy storage (RRS) for all data in S3. Use a combination of Spot Instances and Reserved Instances for Amazon EMR jobs. Use Reserved Instances for Amazon Redshift.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Use reduced redundancy storage (RRS) for PDF and .csv data in S3. Add Spot Instances to EMR jobs. Use Spot Instances for Amazon Redshift.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Use reduced redundancy storage (RRS) for PDF and .csv data in Amazon S3. Add Spot Instances to Amazon EMR jobs. Use Reserved Instances for Amazon Redshift.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Use reduced redundancy storage (RRS) for all data in Amazon S3. Add Spot Instances to Amazon EMR jobs. Use Reserved Instances for Amazon Redshift.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 10,
+        "content": "Because of the extensibility limitations of striped storage attached to Windows Server, Amazon RDS does not currently support increasing storage on a [...] DB Instance.",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "SQL Server.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "MySQL.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Oracle.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 11,
+        "content": "In regards to IAM you can edit user properties later, but you cannot use the console to change the [...].",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "user name.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "password.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "default group.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 12,
+        "content": "In Amazon EC2 Container Service, are other container types supported?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Yes, EC2 Container Service supports any container service you need.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Yes, EC2 Container Service also supports Microsoft container service.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "No, Docker is the only container platform supported by EC2 Container Service presently.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Yes, EC2 Container Service supports Microsoft container service and Openstack.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 13,
+        "content": "Content and Media Server is the latest requirement that you need to meet for a client. The client has been very specific about his requirements such as low latency, high availability, durability, and access control. Potentially there will be millions of views on this server and because of 'spiky' usage patterns, operations teams will need to provision static hardware, network, and management resources to support the maximum expected need. The Customer base will be initially low but is expected to grow and become more geographically distributed. Which of the following would be a good solution for content distribution?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. AWS services are designed for high availability and fault tolerance across multiple Availability Zones.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Amazon S3 as both the origin server and for caching.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "AWS Storage Gateway as the origin server and Amazon EC2 for caching.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "AWS CloudFront as both the origin server and for caching.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Amazon S3 as the origin server and Amazon CloudFront for caching.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 14,
+        "content": "Name the disk storage supported by Amazon Elastic Compute Cloud (EC2)",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "None of these.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Amazon AppStream store.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Amazon SNS store.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Amazon Instance Store.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 15,
+        "content": "After an Amazon VPC instance is launched, can I change the VPC security groups it belongs to?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon VPC allows you to provision a logically isolated section of the AWS Cloud.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Only if the tag 'VPC_Change_Group' is true.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Yes. You can.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "No. You cannot.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Only if the tag 'VPC Change Group' is true.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 16,
+        "content": "If I want an instance to have a public IP address, which IP address should I use?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Elastic IP Address.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Class B IP Address.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Class A IP Address.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Dynamic IP Address.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 17,
+        "content": "Amazon RDS supports SOAP only through [...].",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "HTTP or HTTPS.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "TCP/IP.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "HTTP.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "HTTPS.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 18,
+        "content": "Which of the following services natively encrypts data at rest within an AWS region? (Choose 2 answers)",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "AWS Storage Gateway.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Amazon DynamoDB.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Amazon CloudFront.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Amazon Glacier.",
+                "correct": true
+            },
+            {
+                "id": 5,
+                "content": "Amazon Simple Queue Service.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 19,
+        "content": "Which one of the following can't be used as an origin server with Amazon CloudFront?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon CloudFront is a global content delivery network (CDN) that accelerates delivery of web content.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "A web server running in your infrastructure.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Amazon S3.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Amazon Glacier.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "A web server running on Amazon EC2 instances.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 20,
+        "content": "Select the most correct The device name /dev/sdal (within Amazon EC2) is [...].",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "possible for EBS volumes.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "reserved for the root device.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "recommended for EBS volumes.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "recommended for instance store volumes.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 21,
+        "content": "How can I change the security group membership for interfaces owned by other AWS, such as Elastic Load Balancing?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. AWS provides multiple layers of security including network, application, and data protection.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "By using the service specific console or APICLI commands.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "None of these.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Using Amazon EC2 API/CLI.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Using all these methods.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 22,
+        "content": "You have created a Route 53 latency record set from your domain to a machine in Northern Virginia and a similar record to a machine in Sydney. When a user located in US visits your domain he will be routed to",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon Route 53 is a scalable Domain Name System (DNS) web service.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Northern Virginia.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Sydney.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Both, Northern Virginia and Sydney.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Depends on the Weighted Resource Record Sets.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 23,
+        "content": "In the context of MySQL, version numbers are organized as MySQL version = X.Y.Z. What does X denote here?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Release level.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Minor version.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Version number.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Major version.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 24,
+        "content": "Which one of the below doesn't affect Amazon CloudFront billing?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon CloudFront is a global content delivery network (CDN) that accelerates delivery of web content.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Distribution Type.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Data Transfer Out.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Dedicated IP SSL Certificates.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Requests.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 25,
+        "content": "Just when you thought you knew every possible storage option on AWS you hear someone mention Reduced Redundancy Storage (RRS) within Amazon S3. What is the ideal scenario to use Reduced Redundancy Storage (RRS)?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon S3 provides scalable object storage with features like versioning, lifecycle management, and various storage classes.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Huge volumes of data.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Sensitive data.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Non-critical or reproducible data.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Critical data.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 26,
+        "content": "Which of the following AWS CLI commands is syntactically incorrect?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "`$ aws ec2 describe-instances`.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "`$ aws ec2 start-instances --instance-ids i-1348636c`.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "`$ aws sns publish --topic-arn arn:aws:sns:us-east-1:546419318123:OperationsError -message \"Script Failure\"`.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "`$ aws sqs receive-message --queue-url https://queue.amazonaws.com/546419318123/Test`.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 27,
+        "content": "When running my DB Instance as a Multi-AZ deployment, can I use the standby for read or write operations?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Yes.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Only with MSSQL based RDS.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Only for Oracle RDS instances.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "No.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 28,
+        "content": "In the Launch Db Instance Wizard, where can I select the backup and maintenance options?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. AWS provides comprehensive backup and disaster recovery solutions across multiple services.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Under DB INSTANCE DETAILS.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Under REVI EW.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Under MANAGEMENT OPTIONS.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Under ENGINE SELECTION.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 29,
+        "content": "What is the network performance offered by the c4.8xlarge instance in Amazon EC2?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "20 Gigabit.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "10 Gigabit.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Very High but variable.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "5 Gigabit.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 30,
+        "content": "In Amazon EC2, if your EBS volume stays in the detaching state, you can force the detachment by clicking [...].",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Force Detach.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Detach Instance.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "AttachVolume.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "AttachInstance.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 31,
+        "content": "What does Amazon DynamoDB provide?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon DynamoDB is a key-value and document database that delivers single-digit millisecond performance at any scale.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "A predictable and scalable MySQL database.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "A fast and reliable PL/SQL database cluster.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "A standalone Cassandra database, managed by Amazon Web Services.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "A fast, highly scalable managed NoSQL database service.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 32,
+        "content": "Security groups act like a firewall at the instance level, whereas [...] are an additional layer of security that act at the subnet level.",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. AWS provides multiple layers of security including network, application, and data protection.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "DB Security Groups.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "VPC Security Groups.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "network ACLs.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 33,
+        "content": "You have been asked to tighten up the password policies in your organization after a serious security breach, so you need to consider every possible security measure. Which of the following is not an account password policy for IAM Users that can be set?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. AWS IAM enables you to manage access to AWS services and resources securely.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Force IAM users to contact an account administrator when the user has allowed his or her password to expire.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "A minimum password length.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Force IAM users to contact an account administrator when the user has entered his password incorrectly.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Prevent IAM users from reusing previous passwords.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 34,
+        "content": "Multi-AZ deployment [...] supported for Microsoft SQL Server DB Instances.",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "is not currently.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "is as of 2013.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "is planned to be in 2014.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "will never be.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 35,
+        "content": "What does Amazon Elastic Beanstalk provide?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "A scalable storage appliance on top of Amazon Web Services.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "An application container on top of Amazon Web Services.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "A service by this name doesn't exist.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "A scalable cluster of EC2 instances.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 36,
+        "content": "You need to quickly set up an email-sending service because a client needs to start using it in the next hour. Amazon Simple Email Service (Amazon SES) seems to be the logical choice but there are several options available to set it up. Which of the following options to set up SES would best meet the needs of the client?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Amazon SES console.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "AWS CloudFormation.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "SMTP Interface.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "AWS Elastic Beanstalk.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 37,
+        "content": "A user is observing the EC2 CPU utilization metric on CloudWatch. The user has observed some interesting patterns while filtering over the 1 week period for a particular hour. The user wants to zoom that data point to a more granular period. How can the user do that easily with CloudWatch?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "The user can zoom a particular period by selecting that period with the mouse and then releasing the mouse.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "The user can zoom a particular period by specifying the aggregation data for that period.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "The user can zoom a particular period by double clicking on that period with the mouse.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "The user can zoom a particular period by specifying the period in the Time Range.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 38,
+        "content": "A company is running a batch analysis every hour on their main transactional DB, running on an RDS MySQL instance to populate their central Data Warehouse running on Redshift. During the execution of the batch their transactional applications are very slow. When the batch completes they need to update the top management dashboard with the new data. The dashboard is produced by another system running on-premises that is currently started when a manually-sent email notifies that an update is required. The on-premises system cannot be modified because it is managed by another team. How would you optimize this scenario to solve performance issues and automate the process as much as possible?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Replace RDS with Redshift for the batch analysis and SNS to notify the on-premises system to update the dashboard.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Replace RDS with Redshift for the batch analysis and SQS to send a message to the on-premises system to update the dashboard.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Create an RDS Read Replica for the batch analysis and SNS to notify the on-premises system to update the dashboard.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Create an RDS Read Replica for the batch analysis and SQS to send a message to the on-premises system to update the dashboard.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 39,
+        "content": "You are configuring a new VPC for one of your clients for a cloud migration project, and only a public VPN will be in place. After you created your VPC, you created a new subnet, a new internet gateway, and attached your internet gateway to your VPC. When you launched your first instance into your VPC, you realized that you aren't able to connect to the instance, even if it is configured with an elastic IP. What should be done to access the instance?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon VPC allows you to provision a logically isolated section of the AWS Cloud.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "A route should be created as 0.0.0.0/0 and your internet gateway as target.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Attach another ENI to the instance and connect via new ENI.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "A NAT instance should be created and all traffic should be forwarded to NAT instance.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "A NACL should be created that allows all outbound traffic.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 40,
+        "content": "You have been asked to build a database warehouse using Amazon Redshift. You know a little about it, including that it is a SQL data warehouse solution, and uses industry standard ODBC and JDBC connections and PostgreSQL drivers. However, you are not sure about what sort of storage it uses for database tables. What sort of storage does Amazon Redshift use for database tables?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "InnoDB Tables.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "NDB data storage.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Columnar data storage.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "NDB CLUSTER Storage.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 41,
+        "content": "A user has attached 1 EBS volume to a VPC instance. The user wants to achieve the best fault tolerance of data possible. Which of the below mentioned options can help achieve fault tolerance?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon VPC allows you to provision a logically isolated section of the AWS Cloud.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Attach one more volume with RAID 1 configuration.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Attach one more volume with RAID 0 configuration.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Connect multiple volumes and stripe them with RAID.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Use the EBS volume as a root device.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 42,
+        "content": "Which features can be used to restrict access to data in S3? (Choose 2 answers)",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon S3 provides scalable object storage with features like versioning, lifecycle management, and various storage classes.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Set an S3 ACL on the bucket or the object.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Create a CloudFront distribution for the bucket.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Set an S3 bucket policy.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Enable IAM Identity Federation.",
+                "correct": false
+            },
+            {
+                "id": 5,
+                "content": "Use S3 Virtual Hosting.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 43,
+        "content": "You are in the process of creating a Route 53 DNS failover to direct traffic to two EC2 zones. Obviously, if one fails, you would like Route 53 to direct traffic to the other region. Each region has an ELB with some instances being distributed. What is the best way for you to configure the Route 53 health check?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Route 53 doesn't support ELB with an internal health check. You need to create your own Route 53 health check of the ELB.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Route 53 natively supports ELB with an internal health check. Turn 'Evaluate target health' off and 'Associate with Health Check' on and R53 will use the ELB's internal health check.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Route 53 doesn't support ELB with an internal health check. You need to associate your resource record set for the ELB with your own health check.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Route 53 natively supports ELB with an internal health check. Turn 'Evaluate target health' on and 'Associate with Health Check' off and R53 will use the ELB's internal health check.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 44,
+        "content": "For each DB Instance class, what is the maximum size of associated storage capacity?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "5GB.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "1TB.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "2TB.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "500GB.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 45,
+        "content": "A user is planning a highly available application deployment with EC2. Which of the below mentioned options will not help to achieve HA?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Elastic IP address.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "PIOPS.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "AMI.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Availability Zones.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 46,
+        "content": "What does specifying the mapping /dev/sdc=none when launching an instance do?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Prevents /dev/sdc from creating the instance.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Prevents /dev/sdc from deleting the instance.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Set the value of /dev/sdc to 'zero'.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Prevents /dev/sdc from attaching to the instance.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 47,
+        "content": "Which of the following statements is true of tagging an Amazon EC2 resource?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "You don't need to specify the resource identifier while terminating a resource.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "You can terminate, stop, or delete a resource based solely on its tags.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "You can't terminate, stop, or delete a resource based solely on its tags.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "You don't need to specify the resource identifier while stopping a resource.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 48,
+        "content": "You are deploying an application to collect votes for a very popular television show. Millions of users will submit votes using mobile devices. The votes must be collected into a durable, scalable, and highly available data store for real-time public tabulation. Which service should you use?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Amazon DynamoDB.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Amazon Redshift.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Amazon Kinesis.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Amazon Simple Queue Service.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 49,
+        "content": "Are Reserved Instances available for Multi-AZ Deployments?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Only for Cluster Compute instances.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Yes for all instance types.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Only for M3 instance types.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "No.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 50,
+        "content": "A [...] for a VPC is a collection of subnets (typically private) that you may want to designate for your backend RDS DB Instances.",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "DB Subnet Set.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "RDS Subnet Group.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "DB Subnet Group.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "DB Subnet Collection.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 51,
+        "content": "An instance is launched into a VPC subnet with the network ACL configured to allow all inbound traffic and deny all outbound traffic. The instance's security group is configured to allow SSH from any IP address and deny all outbound traffic. What changes need to be made to allow SSH access to the instance?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon VPC allows you to provision a logically isolated section of the AWS Cloud.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "The outbound security group needs to be modified to allow outbound traffic.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "The outbound network ACL needs to be modified to allow outbound traffic.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Nothing, it can be accessed from any IP address using S3.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Both the outbound security group and outbound network ACL need to be modified to allow outbound traffic.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 52,
+        "content": "You can modify the backup retention period; valid values are 0 (for no backup retention) to a maximum of [...] days.",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. AWS provides comprehensive backup and disaster recovery solutions across multiple services.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "45.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "35.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "15.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "5.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 53,
+        "content": "To serve Web traffic for a popular product your chief financial officer and IT director have purchased 10 ml large heavy utilization Reserved Instances (RIs) evenly spread across two Availability Zones. Route 53 is used to deliver the traffic to an Elastic Load Balancer (ELB). After several months, the product grows even more popular and you need additional capacity. As a result, your company purchases two C3.2xlarge medium utilization RIs. You register the two c3 2xlarge instances with your ELB and quickly find that the ml large instances are at 100% of capacity and the c3 2xlarge instances have significant capacity that's unused. Which option is the most cost effective and uses EC2 capacity most effectively?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Use a separate ELB for each instance type and distribute load to ELBs with Route 53 weighted round robin.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Configure Autoscaling group and Launch Configuration with ELB to add up to 10 more on-demand ml large instances when triggered by Cloudwatch. Shut off c3 2xlarge instances.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Route traffic to EC2 ml large and c3 2xlarge instances directly using Route 53 latency based routing and health checks. Shut off ELB.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Configure ELB with two c3 2xlarge Instances and use on-demand Autoscaling group for up to two additional c3.2xlarge instances. Shut off m1.large instances.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 54,
+        "content": "An existing application stores sensitive information on a non-boot Amazon EBS data volume attached to an Amazon Elastic Compute Cloud instance. Which of the following approaches would protect the sensitive data on an Amazon EBS volume?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Upload your customer keys to AWS CloudHS.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Associate the Amazon EBS volume with AWS CloudHS.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Re-mount the Amazon EBS volume.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Create and mount a new, encrypted Amazon EBS volume. Move the data to the new volume. Delete the old Amazon EBS volume.",
+                "correct": true
+            },
+            {
+                "id": 5,
+                "content": "Unmount the EBS volume. Toggle the encryption attribute to True. Re-mount the Amazon EBS volume.",
+                "correct": false
+            },
+            {
+                "id": 6,
+                "content": "Snapshot the current Amazon EBS volume. Restore the snapshot to a new, encrypted Amazon EBS volume. Mount the Amazon EBS volume.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 55,
+        "content": "A user has launched one EC2 instance in the US West region. The user wants to access the RDS instance launched in the US East region from that EC2 instance. How can the user configure the access for that EC2 instance?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Configure the IP range of the US West region instance as the ingress security rule of RDS.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "It is not possible to access RDS of the US East region from the US West region.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Open the security group of the US West region in the RDS security group's ingress rule.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Create an IAM role which has access to RDS and launch an instance in the US West region with it.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 56,
+        "content": "You have been asked to build AWS infrastructure for disaster recovery for your local applications and within that you should use an AWS Storage Gateway as part of the solution. Which of the following best describes the function of an AWS Storage Gateway?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. AWS provides comprehensive backup and disaster recovery solutions across multiple services.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Accelerates transferring large amounts of data between the AWS cloud and portable storage devices .",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "A web service that speeds up distribution of your static and dynamic web content.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Connects an on-premises software appliance with cloud-based storage to provide seamless and secure integration between your on-premises IT environment and AWS's storage infrastructure.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Is a storage service optimized for infrequently used data, or 'cold data'.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 57,
+        "content": "While creating an Amazon RDS DB, your first task is to set up a DB [...] that controls which IP address or EC2 instance can access your DB Instance.",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "security token pool.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "security token.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "security pool.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "security group.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 58,
+        "content": "You need to import several hundred megabytes of data from a local Oracle database to an Amazon RDS DB instance. What does AWS recommend you use to accomplish this?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Oracle export/import utilities.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Oracle SQL Developer.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Oracle Data Pump.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "DBMS_FILE_TRANSFER.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 59,
+        "content": "In the context of AWS support, why must an EC2 instance be unreachable for 20 minutes rather than allowing customers to open tickets immediately?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Because most reachability issues are resolved by automated processes in less than 20 minutes.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Because all EC2 instances are unreachable for 20 minutes every day when AWS does routine maintenance.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Because all EC2 instances are unreachable for 20 minutes when first launched.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Because of all the reasons listed here.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 60,
+        "content": "HTTP Query-based requests are HTTP requests that use the HTTP verb GET or POST and a Query parameter named [...].",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Action.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Value.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Reset.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Retrieve.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 61,
+        "content": "A friend tells you he is being charged $100 a month to host his WordPress website, and you tell him you can move it to AWS for him and he will only pay a fraction of that, which makes him very happy. He then tells you he is being charged $50 a month for the domain, which is registered with the same people that set it up, and he asks if it's possible to move that to AWS as well. You tell him you aren't sure, but will look into it. Which of the following statements is true in regards to transferring domain names to AWS?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "You can't transfer existing domains to AWS.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "You can transfer existing domains into Amazon Route 53's management.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "You can transfer existing domains via AWS Direct Connect.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "You can transfer existing domains via AWS Import/Export.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 62,
+        "content": "While creating the snapshots using the command line tools, which command should I be using?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "ec2-deploy-snapshot.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "ec2-fresh-snapshot.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "ec2-create-snapshot.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "ec2-new-snapshot.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 63,
+        "content": "All Amazon EC2 instances are assigned two IP addresses at launch, out of which one can only be reached from within the Amazon EC2 network?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Multiple IP address.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Public IP address.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Private IP address.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Elastic IP Address.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 64,
+        "content": "When an EC2 instance that is backed by an S3-based AMI is terminated, what happens to the data on the root volume?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon S3 provides scalable object storage with features like versioning, lifecycle management, and various storage classes.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Data is automatically saved as an EBS snapshot.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Data is automatically saved as an EBS volume.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Data is unavailable until the instance is restarted.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Data is automatically deleted.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 65,
+        "content": "You've created your first load balancer and have registered your EC2 instances with the load balancer. Elastic Load Balancing routinely performs health checks on all the registered EC2 instances and automatically distributes all incoming requests to the DNS name of your load balancer across your registered, healthy EC2 instances. By default, the load balancer uses the [...] protocol for checking the health of your instances.",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "HTTPS.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "HTTP.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "ICMP.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "IPv6.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 66,
+        "content": "Amazon Elastic Load Balancing is used to manage traffic on a fleet of Amazon EC2 instances, distributing traffic to instances across all Availability Zones within a region. Elastic Load Balancing has all the advantages of an on-premises load balancer, plus several security benefits. Which of the following is not an advantage of ELB over an on-premise load balancer?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "ELB uses a four-tier, key-based architecture for encryption.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "ELB offers clients a single point of contact, and can also serve as the first line of defense against attacks on your network.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "ELB takes over the encryption and decryption work from the Amazon EC2 instances and manages it centrally on the load balancer.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "ELB supports end-to-end traffic encryption using TLS (previously SSL) on those networks that use secure HTTP (HTTPS) connections.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 67,
+        "content": "A web company is looking to implement an external payment service into their highly available application deployed in a VPC. Their application EC2 instances are behind a public facing ELB. Auto scaling is used to add additional instances as traffic increases. Under normal load the application runs 2 instances in the Auto Scaling group but at peak it can scale 3x in size. The application instances need to communicate with the payment service over the Internet which requires whitelisting of all public IP addresses used to communicate with it. A maximum of 4 whitelisting IP addresses are allowed at a time and can be added through an API. How should they architect their solution?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Route payment requests through two NAT instances setup for High Availability and whitelist the Elastic IP addresses attached to the NAT instances.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Whitelist the VPC Internet Gateway Public IP and route payment requests through the Internet Gateway.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Whitelist the ELB IP addresses and route payment requests from the Application servers through the ELB.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Automatically assign public IP addresses to the application instances in the Auto Scaling group and run a script on boot that adds each instance's public IP address to the payment validation whitelist API.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 68,
+        "content": "You are using Amazon SES as an email solution but are unsure of what its limitations are. Which statement below is correct in regards to that?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "New Amazon SES users who have received production access can send up to 1,000 emails per 24-hour period, at a maximum rate of 10 emails per second.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Every Amazon SES sender has a the same set of sending limits.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Sending limits are based on messages rather than on recipients.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Every Amazon SES sender has a unique set of sending limits.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 69,
+        "content": "Your company is getting ready to do a major public announcement of a social media site on AWS. The website is running on EC2 instances deployed across multiple Availability Zones with a Multi-AZ RDS MySQL Extra Large DB Instance. The site performs a high number of small reads and writes per second and relies on an eventual consistency model. After comprehensive tests you discover that there is read contention on RDS MySQL. Which are the best approaches to meet these requirements? (Choose 2 answers)",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Deploy ElasticCache in-memory cache running in each Availability Zone.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Implement sharding to distribute load to multiple RDS MySQL instances.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Increase the RDS MySQL Instance size and Implement provisioned IOPS.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Add an RDS MySQL read replica in each Availability Zone.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 70,
+        "content": "What does a 'Domain' refer to in Amazon SWF?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "A security group in which only tasks inside can communicate with each other.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "A special type of worker.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "A collection of related Workflows.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "The DNS record for the Amazon SWF service.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 71,
+        "content": "The SQL Server [...] feature is an efficient means of copying data from a source database to your DB Instance. It writes the data that you specify to a data file, such as an ASCII file.",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "bulk copy.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "group copy.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "dual copy.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "mass copy.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 72,
+        "content": "Any person or application that interacts with AWS requires security credentials. AWS uses these credentials to identify who is making the call and whether to allow the requested access. You have just set up a VPC network for a client and you are now thinking about the best way to secure this network. You set up a security group called vpcsecuritygroup. Which following statement is true in respect to the initial settings that will be applied to this security group if you choose to use the default settings for this group?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon VPC allows you to provision a logically isolated section of the AWS Cloud.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Allow all inbound traffic and allow no outbound traffic.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Allow no inbound traffic and allow all outbound traffic.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Allow inbound traffic on port 80 only and allow all outbound traffic.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Allow all inbound traffic and allow all outbound traffic.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 73,
+        "content": "Which one of the below is not an AWS Storage Service?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Amazon S3.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Amazon Glacier.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Amazon CloudFront.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Amazon EBS.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 74,
+        "content": "You are trying to launch an EC2 instance, however the instance seems to go into a terminated status immediately. What would probably not be a reason that this is happening?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "The AMI is missing a required part.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "The snapshot is corrupt.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "You need to create storage in EBS first.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "You've reached your volume limit.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 75,
+        "content": "A company is building software on AWS that requires access to various AWS services. Which configuration should be used to ensure that AWS credentials (i.e., Access Key ID/Secret Access Key combination) are not compromised?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Enable Multi-Factor Authentication for your AWS root account.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Assign an IAM role to the Amazon EC2 instance.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Store the AWS Access Key ID/Secret Access Key combination in software comments.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Assign an IAM user to the Amazon EC2 Instance.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 76,
+        "content": "Can we attach an EBS volume to more than one EC2 instance at the same time?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Yes.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "No.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Only EC2-optimized EBS volumes.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Only in read mode.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 77,
+        "content": "You need to measure the performance of your EBS volumes as they seem to be under performing. You have come up with a measurement of 1,024 KB I/O but your colleague tells you that EBS volume performance is measured in IOPS. How many IOPS is equal to 1,024 KB I/O?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "16.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "256.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "8.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "4.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 78,
+        "content": "Your company produces customer commissioned one-of-a-kind skiing helmets combining high fashion with custom technical enhancements. Customers can show off their Individuality on the ski slopes and have access to head-up-displays. GPS rear-view cams and any other technical innovation they wish to embed in the helmet. The current manufacturing process is data rich and complex including assessments to ensure that the custom electronics and materials used to assemble the helmets are to the highest standards. Assessments are a mixture of human and automated assessments you need to add a new set of assessment to model the failure modes of the custom electronics using GPUs with CUDA, across a cluster of servers with low latency networking. What architecture would allow you to automate the existing process using a hybrid approach and ensure that the architecture can support the evolution of processes over time?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Use AWS Data Pipeline to manage movement of data & meta-data and assessments Use an autoscaling group of G2 instances in a placement group.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Use Amazon Simple Workflow (SWF) to manages assessments, movement of data & meta-data Use an auto-scaling group of G2 instances in a placement group.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Use Amazon Simple Workflow (SWF) to manages assessments movement of data & meta-data Use an auto-scaling group of C3 instances with SR-IOV (Single Root 1/0 Virtualization).",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Use AWS data Pipeline to manage movement of data & meta-data and assessments use autoscaling group of C3 with SR-IOV (Single Root 1/0 virtualization).",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 79,
+        "content": "You are designing Internet connectivity for your VPC. The Web servers must be available on the Internet. The application must have a highly available architecture. Which alternatives should you consider? (Choose 2 answers)",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon VPC allows you to provision a logically isolated section of the AWS Cloud.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Configure a NAT instance in your VPC Create a default route via the NAT instance and associate it with all subnets Configure a DNS A record that points to the NAT instance public IP address.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Configure a CloudFront distribution and configure the origin to point to the private IP addresses of your Web servers Configure a Route 53 CNAME record to your CloudFront distribution.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Place all your web servers behind EL8 Configure a Route 53 CNAME to point to the ELB DNS name.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Assign EIPs to all web servers. Configure a Route 53 record set with all EIPs. With health checks and DNS failover.",
+                "correct": true
+            },
+            {
+                "id": 5,
+                "content": "Configure ELB with an EIP Place all your Web servers behind ELB Configure a Route 53 A record that points to the EIP.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 80,
+        "content": "You need to configure an Amazon S3 bucket to serve static assets for your public-facing web application. Which methods ensure that all objects uploaded to the bucket are set to public read? (Choose 2 answers)",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon S3 provides scalable object storage with features like versioning, lifecycle management, and various storage classes.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Set permissions on the object to public read during upload.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Configure the bucket ACL to set all objects to public read.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Configure the bucket policy to set all objects to public read.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Use AWS Identity and Access Management roles to set the bucket to public read.",
+                "correct": false
+            },
+            {
+                "id": 5,
+                "content": "Amazon S3 objects default to public read, so no action is needed.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 81,
+        "content": "A major customer has asked you to set up his AWS infrastructure so that it will be easy to recover in the case of a disaster of some sort. Which of the following is important when thinking about being able to quickly launch resources in AWS to ensure business continuity in case of a disaster?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Create and maintain AMIs of key servers where fast recovery is required.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Regularly run your servers, test them, and apply any software updates and configuration changes.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "All items listed here are important when thinking about disaster recovery.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Ensure that you have all supporting custom software packages available in AWS.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 82,
+        "content": "You are developing a new mobile application and are considering storing user preferences in AWS. This would provide a more uniform cross-device experience to users using multiple mobile devices to access the application. The preference data for each user is estimated to be 50KB in size. Additionally, 5 million customers are expected to use the application on a regular basis. The solution needs to be cost-effective, highly available, scalable and secure. How would you design a solution to meet the above requirements?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. AWS offers various cost optimization options including Reserved Instances, Spot Instances, and lifecycle policies.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Setup an RDS MySQL instance in 2 Availability Zones to store the user preference data. Deploy a public facing application on a server in front of the database to manage security and access credentials.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Setup a DynamoDB table with an item for each user having the necessary attributes to hold the user preferences. The mobile application will query the user preferences directly from the DynamoDB table. Utilize STS, Web Identity Federation, and DynamoDB Fine Grained Access Control to authenticate and authorize access.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Setup an RDS MySQL instance with multiple read replicas in 2 Availability Zones to store the user preference data. The mobile application will query the user preferences from the read replicas. Leverage the MySQL user management and access privilege system to manage security and access credentials.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Store the user preference data in S3. Setup a DynamoDB table with an item for each user and an item attribute pointing to the user's S3 object. The mobile application will retrieve the S3 URL from DynamoDB and then access the S3 object directly. Utilize STS, Web identity Federation, and S3 ACLs to authenticate and authorize access.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 83,
+        "content": "In the Amazon RDS which uses the SQL Server engine, what is the maximum size for a Microsoft SQL Server DB Instance with SQL Server Express edition?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "10GB per DB.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "100GB per DB.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "2TB per DB.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "1TB per DB.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 84,
+        "content": "You have deployed a web application targeting a global audience across multiple AWS Regions under the domain name.example.com. You decide to use Route 53 Latency-Based Routing to serve web requests to users from the region closest to the user. To provide business continuity in the event of server downtime you configure weighted record sets associated with two web servers in separate Availability Zones per region. During a DR test you notice that when you disable all web servers in one of the regions Route 53 does not automatically direct all users to the other region. What could be happening? (Choose 2 answers)",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon Route 53 is a scalable Domain Name System (DNS) web service.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Latency resource record sets cannot be used in combination with weighted resource record sets.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "You did not setup an HTTP health check for one or more of the weighted resource record sets associated with the disabled web servers.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "The value of the weight associated with the latency alias resource record set in the region with the disabled servers is higher than the weight for the other region.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "One of the two working web servers in the other region did not pass its HTTP health check.",
+                "correct": false
+            },
+            {
+                "id": 5,
+                "content": "You did not set 'Evaluate Target Health' to 'Yes' on the latency alias resource record set associated with example com in the region where you disabled the servers.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 85,
+        "content": "Amazon EBS provides the ability to create backups of any Amazon EC2 volume into what is known as [...].",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "snapshots.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "images.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "instance backups.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "mirrors.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 86,
+        "content": "You've been hired to enhance the overall security posture for a very large e-commerce site. They have a well architected multi-tier application running in a VPC that uses ELBs in front of both the web and the app tier with static assets served directly from S3. They are using a combination of RDS and DynamoDB for their dynamic data and then archiving nightly into S3 for further processing with EMR. They are concerned because they found questionable log entries and suspect someone is attempting to gain unauthorized access. Which approach provides a cost effective scalable mitigation to this kind of attack?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon S3 provides scalable object storage with features like versioning, lifecycle management, and various storage classes.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Recommend that they lease space at a DirectConnect partner location and establish a 1G DirectConnect connection to their VPC. They would then establish Internet connectivity into their space, filter the traffic in hardware Web Application Firewall (WAF), and then pass the traffic through the DirectConnect connection into their application running in their VPC.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Add previously identified hostile source IPs as an explicit INBOUND DENY NACL to the web tier sub net.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Add a WAF tier by creating a new ELB and an AutoScaling group of EC2 Instances running a host based WAF. They would redirect Route 53 to resolve to the new WAF tier ELB. The WAF tier would then pass the traffic to the current web tier. The web tier Security Groups would be updated to only allow traffic from the WAF tier Security Group.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Remove all but TLS 1.2 from the web tier ELB and enable Advanced Protocol Filtering. This will enable the ELB itself to perform WAF functionality.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 87,
+        "content": "You are designing the network infrastructure for an application server in Amazon VPC. Users will access all the application instances from the Internet as well as from an on-premises network. The on-premises network is connected to your VPC over an AWS Direct Connect link. How would you design routing to meet the above requirements?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon VPC allows you to provision a logically isolated section of the AWS Cloud.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Configure a single routing Table with a default route via the Internet gateway. Propagate a default route via BGP on the AWS Direct Connect customer router. Associate the routing table with all VPC subnets.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Configure a single routing table with a default route via the internet gateway. Propagate specific routes for the on-premises networks via BGP on the AWS Direct Connect customer router. Associate the routing table with all VPC subnets.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Configure a single routing table with two default routes: one to the internet via an Internet gateway, the other to the on-premises network via the VPN gateway. Use this routing table across all subnets in your VPC.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Configure two routing tables: one that has a default route via the Internet gateway and another that has a default route via the VPN gateway. Associate both routing tables with each VPC subnet.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 88,
+        "content": "You have multiple VPN connections and want to provide secure communication between sites using the AWS VPN CloudHub. Which statement is the most accurate in describing what you must do to set this up correctly?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Create a virtual private gateway with multiple customer gateways, each with unique Border Gateway Protocol (BGP) Autonomous System Numbers (ASNs).",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Create a virtual private gateway with multiple customer gateways, each with a unique set of keys.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Create a virtual public gateway with multiple customer gateways, each with a unique Private subnet.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Create a virtual private gateway with multiple customer gateways, each with unique subnet id.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 89,
+        "content": "A user is aware that a huge download is occurring on his instance. He has already set the Auto Scaling policy to increase the instance count when the network I/O increases beyond a certain limit. How can the user ensure that this temporary event does not result in scaling?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Auto Scaling helps maintain application availability and allows you to scale your applications automatically.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "The network I/O are not affected during data download.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "The policy cannot be set on the network I/O.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "There is no way the user can stop scaling as it is already configured.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Suspend scaling.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 90,
+        "content": "The Amazon EC2 web service can be accessed using the [...] web services messaging protocol. This interface is described by a Web Services Description Language (WSDL) document.",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon EC2 provides scalable compute capacity in the cloud with various instance types and configurations.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "SOAP.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "DCOM.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "CORBA.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "XML-RPC.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 91,
+        "content": "Which of the following are true regarding encrypted Amazon Elastic Block Store (EBS) volumes? (Choose 2 answers)",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Supported on all Amazon EBS volume types.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Snapshots are automatically encrypted.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Available to all instance types.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Existing volumes can be encrypted.",
+                "correct": false
+            },
+            {
+                "id": 5,
+                "content": "Shared volumes can be encrypted.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 92,
+        "content": "Is Federated Storage Engine currently supported by Amazon RDS for MySQL?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Only for Oracle RDS instances.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Yes.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "No.",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Only in VPC.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 93,
+        "content": "While creating the snapshots using the API, which Action should I be using?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "MakeSnapShot.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "FreshSnapshot.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "DeploySnapshot.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "CreateSnapshot.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 94,
+        "content": "A customer needs to capture all client connection information from their load balancer every five minutes. The company wants to use this data for analyzing traffic patterns and troubleshooting their applications. Which of the following options meets the customer requirements?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Elastic Load Balancing automatically distributes incoming application traffic across multiple targets.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Enable AWS CloudTrail for the load balancer.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Enable access logs on the load balancer.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Install the Amazon CloudWatch Logs agent on the load balancer.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Enable Amazon CloudWatch metrics on the load balancer.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 95,
+        "content": "Will my standby RDS instance be in the same Region as my primary?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Only for Oracle RDS types.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Yes.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Only if configured at launch.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "No.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 96,
+        "content": "If I want my instance to run on a single-tenant hardware, which value do I have to set the instance's tenancy attribute to?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Dedicated.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Isolated.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "One.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Reserved.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 97,
+        "content": "Can the string value of 'Key' be prefixed with :aws:'?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Only in GovCloud.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Only for S3 not EC2.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Yes.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "No.",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 98,
+        "content": "A user wants to increase the durability and availability of the EBS volume. Which of the below mentioned actions should he perform?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Take regular snapshots.",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Create an AM.",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Create EBS with higher capacity.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Access EBS regularly.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 99,
+        "content": "What does Amazon RDS stand for?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon RDS provides managed relational database services with automated backups and scaling.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Regional Data Server.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Relational Database Service.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Nothing.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Regional Database Service.",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 100,
+        "content": "You have been asked to set up monitoring of your network and you have decided that Cloudwatch would be the best service to use. Amazon CloudWatch monitors your Amazon Web Services (AWS) resources and the applications you run on AWS in real-time. You can use CloudWatch to collect and track metrics, which are the variables you want to measure for your resources and applications. Which of the following items listed can AWS Cloudwatch monitor?",
+        "reason": "This is the correct answer based on AWS best practices and service capabilities. Amazon CloudWatch is a monitoring and observability service built for DevOps engineers.",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Log files your applications generate.",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "All of the items listed on this page.",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "System-wide visibility into resource utilization, application performance, and operational health.",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Custom metrics generated by your applications and services.",
+                "correct": false
+            }
+        ]
+    }
+]

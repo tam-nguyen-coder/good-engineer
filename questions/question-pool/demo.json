@@ -1,0 +1,137 @@
+[
+    {
+        "id": 1,
+        "content": "Đây là câu hỏi demo số 1?",
+        "reason": "Đây là lý do cho câu trả lời",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Đáp án A",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Đáp án B",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Đáp án C",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Đáp án D",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "content": "Đây là câu hỏi demo số 2?",
+        "reason": "Đây là lý do cho câu trả lời",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Đáp án A",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Đáp án B",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Đáp án C",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Đáp án D",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "content": "Đây là câu hỏi demo số 3?",
+        "reason": "Đây là lý do cho câu trả lời",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Đáp án A",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Đáp án B",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Đáp án C",
+                "correct": true
+            },
+            {
+                "id": 4,
+                "content": "Đáp án D",
+                "correct": false
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "content": "Đây là câu hỏi demo số 4?",
+        "reason": "Đây là lý do cho câu trả lời",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Đáp án A",
+                "correct": false
+            },
+            {
+                "id": 2,
+                "content": "Đáp án B",
+                "correct": false
+            },
+            {
+                "id": 3,
+                "content": "Đáp án C",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Đáp án D",
+                "correct": true
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "content": "Đây là câu hỏi demo số 5 (nhiều đáp án đúng)?",
+        "reason": "Đây là lý do cho câu trả lời",
+        "answers": [
+            {
+                "id": 1,
+                "content": "Đáp án A",
+                "correct": true
+            },
+            {
+                "id": 2,
+                "content": "Đáp án B",
+                "correct": true
+            },
+            {
+                "id": 3,
+                "content": "Đáp án C",
+                "correct": false
+            },
+            {
+                "id": 4,
+                "content": "Đáp án D",
+                "correct": false
+            }
+        ]
+    }
+]
