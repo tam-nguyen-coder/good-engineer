@@ -36,15 +36,15 @@ The vertical canvas is strict **1080px wide by 1920px high**. To optimize space 
 ```mermaid
 rect/anchor coordinates
 +---------------------------------------------------+  Y: 0px
-|                     HEADER ZONE                   |  Y: 120px - 220px
+|                     HEADER ZONE                   |  Y: 70px - 150px
 +---------------------------------------------------+
 |                                                   |
-|             PERSISTENT QUESTION CARD              |  Y: 260px - 700px
-|                                                   |  (Height: 440px)
+|             PERSISTENT QUESTION CARD              |  Y: 180px - 720px
+|                                                   |  (Height: 540px)
 +---------------------------------------------------+
 |                                                   |
 |                                                   |
-|                DYNAMIC WORKSPACE                  |  Y: 720px - 1670px
+|                DYNAMIC WORKSPACE                  |  Y: 740px - 1690px
 |             (Diagrams / Focused Cards)             |  (Height: 950px)
 |                                                   |
 |                                                   |
@@ -54,12 +54,12 @@ rect/anchor coordinates
 ```
 
 ### Layout Coordinates
-*   **Header Zone** (`Y: 120px - 220px`): Renders the exam name (e.g. AWS SAA-C03) and the Topic/Question identifier inside a pill-shaped badge.
-*   **Persistent Question Card** (`Y: 260px - 700px`, Height: `440px`): Positioned absolutely as a global element. It must stay persistently visible during Scenes 2, 3, and 4 to ensure the user can read the context while evaluating choices.
-*   **Dynamic Workspace** (`Y: 720px - 1670px`): Reserved for scene-specific content:
-    *   *Scene 2*: Network or service flow architecture diagram.
-    *   *Scene 3*: Centered, scaled option cards (one active at a time).
-    *   *Scene 4*: Detailed technical justification cards with Correct/Incorrect status.
+*   **Header Zone** (`Y: 70px - 150px`): Renders the exam name (e.g. AWS SAA-C03) and the Topic/Question identifier inside a pill-shaped badge (height reduced to fit mobile screen top margins).
+*   **Persistent Question Card** (`Y: 180px - 720px`, Height: `540px`): Positioned absolutely as a global element. It stays persistently visible during Scenes 2, 3, and 4. The increased height ensures text does not overflow at larger font sizes.
+*   **Dynamic Workspace** (`Y: 740px - 1690px`): Reserved for scene-specific content (shifted down to prevent overlapping the expanded question card):
+    *   *Scene 2*: Network or service flow architecture diagram (diagram absolute `top: 780px`).
+    *   *Scene 3*: Centered, scaled option cards (layout absolute `top: 740px`).
+    *   *Scene 4*: Detailed technical justification cards with Correct/Incorrect status (layout absolute `top: 740px`).
 *   **Horizontal Caption Track** (`Y: 1740px - 1840px`, Height: `100px`): Center-scrolling word-by-word player.
 
 ---
@@ -86,6 +86,15 @@ The layout adopts the **AWS Tech Dark** theme, optimized for contrast, readabili
 ### Typography Rules
 *   **Headings & Accents**: Use `Space Grotesk` (weights 400, 700). Applicable to headers, scene titles, badges, and card option markers.
 *   **Paragraphs, Code & Logs**: Use `Space Mono` (weights 400, 700). Applicable to the persistent question card, code/config snippets, and captions.
+
+### Sizing and Font Scale Rules
+To ensure optimal mobile legibility, adhere to the following strict font size scaling:
+*   **Question Context text** (`.question-text`): `34px` (previously `28px`)
+*   **Multiple-Choice Option text** (`.option-text`): `34px` (previously `28px`)
+*   **Explanation Point text** (`.explanation-point-vertical`): `30px` (previously `24px`)
+*   **Explanation Option Snippet text** (`.dive-card-option-text`): `24px` (previously `20px`)
+*   **Header Badges / Status Labels** (`.header-badge`, `.dive-card-status`): `24px` - `32px`
+*   **Scrolling Word Captions** (`.caption-word`): `38px`
 
 ---
 
