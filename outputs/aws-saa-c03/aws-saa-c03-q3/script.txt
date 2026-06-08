@@ -1,0 +1,16 @@
+AWS Certified Solutions Architect Associate, question three. A company uses AWS Organizations to manage multiple AWS accounts for different departments. The management account has an Amazon S3 bucket that contains project reports. The company wants to limit access to this S3 bucket to only users of accounts within the organization. Which solution meets these requirements with the LEAST amount of operational overhead?
+
+Let's review the options.
+Option A: Add the aws PrincipalOrgID global condition key with a reference to the organization ID to the S3 bucket policy.
+Option B: Create an organizational unit for each department. Add the aws PrincipalOrgPaths global condition key to the S3 bucket policy.
+Option C: Use AWS CloudTrail to monitor account events. Update the S3 bucket policy accordingly.
+Option D: Tag each user that needs access to the S3 bucket. Add the aws PrincipalTag global condition key to the S3 bucket policy.
+
+The correct answer is Option A.
+Option A is correct because the aws PrincipalOrgID global condition key in the S3 bucket policy automatically restricts access to principals belonging to the specified organization. This covers current and future accounts with zero policy maintenance, minimizing operational overhead.
+
+Option B is incorrect. PrincipalOrgPaths restricts access based on organizational units and path complexity, which is unnecessary when allowing the entire organization.
+Option C is incorrect. Using CloudTrail events to trigger bucket policy updates is highly complex, over-engineered, and introduces high operational overhead.
+Option D is incorrect. Tagging individual users across multiple accounts and managing PrincipalTag keys is not scalable and requires continuous manual tagging effort.
+
+Here is your memory hook. Restricting resource access to an entire organization with the least overhead equals aws PrincipalOrgID. Avoid PrincipalOrgPaths, CloudTrail automation, or PrincipalTag.

@@ -1,0 +1,1477 @@
+[
+  {
+    "text": "AWS",
+    "start": 0.04,
+    "end": 0.25
+  },
+  {
+    "text": "Certified",
+    "start": 0.25,
+    "end": 1.01
+  },
+  {
+    "text": "Solutions",
+    "start": 1.01,
+    "end": 1.77
+  },
+  {
+    "text": "Architect",
+    "start": 1.77,
+    "end": 2.56
+  },
+  {
+    "text": "Associate,",
+    "start": 2.56,
+    "end": 3.62
+  },
+  {
+    "text": "Question",
+    "start": 3.62,
+    "end": 4.13
+  },
+  {
+    "text": "3.",
+    "start": 4.74,
+    "end": 4.76
+  },
+  {
+    "text": "A",
+    "start": 4.8,
+    "end": 4.85
+  },
+  {
+    "text": "company",
+    "start": 4.85,
+    "end": 5.45
+  },
+  {
+    "text": "uses",
+    "start": 5.48,
+    "end": 5.78
+  },
+  {
+    "text": "AWS",
+    "start": 5.88,
+    "end": 6.09
+  },
+  {
+    "text": "organizations",
+    "start": 6.12,
+    "end": 7.28
+  },
+  {
+    "text": "to",
+    "start": 7.28,
+    "end": 7.41
+  },
+  {
+    "text": "manage",
+    "start": 7.41,
+    "end": 7.8
+  },
+  {
+    "text": "multiple",
+    "start": 7.8,
+    "end": 8.36
+  },
+  {
+    "text": "AWS",
+    "start": 8.36,
+    "end": 8.89
+  },
+  {
+    "text": "accounts",
+    "start": 9.54,
+    "end": 9.59
+  },
+  {
+    "text": "for",
+    "start": 9.64,
+    "end": 9.72
+  },
+  {
+    "text": "different",
+    "start": 9.72,
+    "end": 10.34
+  },
+  {
+    "text": "departments.",
+    "start": 10.34,
+    "end": 11.31
+  },
+  {
+    "text": "The",
+    "start": 11.36,
+    "end": 11.55
+  },
+  {
+    "text": "management",
+    "start": 11.55,
+    "end": 12.32
+  },
+  {
+    "text": "account",
+    "start": 12.32,
+    "end": 12.85
+  },
+  {
+    "text": "has",
+    "start": 12.86,
+    "end": 13.09
+  },
+  {
+    "text": "an",
+    "start": 13.09,
+    "end": 13.23
+  },
+  {
+    "text": "Amazon",
+    "start": 13.24,
+    "end": 13.68
+  },
+  {
+    "text": "S3",
+    "start": 13.77,
+    "end": 14
+  },
+  {
+    "text": "bucket",
+    "start": 14,
+    "end": 14.36
+  },
+  {
+    "text": "that",
+    "start": 14.36,
+    "end": 14.81
+  },
+  {
+    "text": "contains",
+    "start": 14.81,
+    "end": 15.39
+  },
+  {
+    "text": "project",
+    "start": 15.39,
+    "end": 15.49
+  },
+  {
+    "text": "reports.",
+    "start": 16.1,
+    "end": 16.76
+  },
+  {
+    "text": "The",
+    "start": 16.82,
+    "end": 16.96
+  },
+  {
+    "text": "company",
+    "start": 16.97,
+    "end": 17.42
+  },
+  {
+    "text": "wants",
+    "start": 17.42,
+    "end": 17.74
+  },
+  {
+    "text": "to",
+    "start": 17.74,
+    "end": 17.8
+  },
+  {
+    "text": "limit",
+    "start": 17.9,
+    "end": 18.19
+  },
+  {
+    "text": "access",
+    "start": 18.19,
+    "end": 18.58
+  },
+  {
+    "text": "to",
+    "start": 18.58,
+    "end": 18.69
+  },
+  {
+    "text": "this",
+    "start": 18.75,
+    "end": 18.97
+  },
+  {
+    "text": "S3",
+    "start": 18.97,
+    "end": 19.15
+  },
+  {
+    "text": "bucket",
+    "start": 19.26,
+    "end": 19.61
+  },
+  {
+    "text": "to",
+    "start": 19.61,
+    "end": 19.74
+  },
+  {
+    "text": "only",
+    "start": 19.74,
+    "end": 19.84
+  },
+  {
+    "text": "users",
+    "start": 20.23,
+    "end": 20.32
+  },
+  {
+    "text": "of",
+    "start": 20.32,
+    "end": 20.41
+  },
+  {
+    "text": "accounts",
+    "start": 20.48,
+    "end": 20.91
+  },
+  {
+    "text": "within",
+    "start": 20.97,
+    "end": 20.99
+  },
+  {
+    "text": "the",
+    "start": 21.46,
+    "end": 21.58
+  },
+  {
+    "text": "organization,",
+    "start": 21.58,
+    "end": 22.33
+  },
+  {
+    "text": "which",
+    "start": 22.33,
+    "end": 22.6
+  },
+  {
+    "text": "solution",
+    "start": 22.6,
+    "end": 23.02
+  },
+  {
+    "text": "meets",
+    "start": 23.03,
+    "end": 23.3
+  },
+  {
+    "text": "these",
+    "start": 23.3,
+    "end": 23.51
+  },
+  {
+    "text": "requirements",
+    "start": 23.59,
+    "end": 24.22
+  },
+  {
+    "text": "with",
+    "start": 24.22,
+    "end": 24.43
+  },
+  {
+    "text": "the",
+    "start": 24.43,
+    "end": 24.48
+  },
+  {
+    "text": "least",
+    "start": 24.48,
+    "end": 24.91
+  },
+  {
+    "text": "amount",
+    "start": 24.91,
+    "end": 25.18
+  },
+  {
+    "text": "of",
+    "start": 25.18,
+    "end": 25.28
+  },
+  {
+    "text": "operational",
+    "start": 25.28,
+    "end": 25.59
+  },
+  {
+    "text": "overhead.",
+    "start": 25.96,
+    "end": 26.92
+  },
+  {
+    "text": "Let's",
+    "start": 26.96,
+    "end": 27.21
+  },
+  {
+    "text": "review",
+    "start": 27.25,
+    "end": 27.66
+  },
+  {
+    "text": "the",
+    "start": 27.66,
+    "end": 27.86
+  },
+  {
+    "text": "options.",
+    "start": 27.86,
+    "end": 28.58
+  },
+  {
+    "text": "Option",
+    "start": 28.62,
+    "end": 29.32
+  },
+  {
+    "text": "A,",
+    "start": 29.32,
+    "end": 29.6
+  },
+  {
+    "text": "add",
+    "start": 29.7,
+    "end": 30.05
+  },
+  {
+    "text": "the",
+    "start": 30.05,
+    "end": 30.42
+  },
+  {
+    "text": "AUS",
+    "start": 30.42,
+    "end": 30.67
+  },
+  {
+    "text": "Principal",
+    "start": 30.67,
+    "end": 31.08
+  },
+  {
+    "text": "Org",
+    "start": 31.08,
+    "end": 31.2
+  },
+  {
+    "text": "ID",
+    "start": 31.21,
+    "end": 31.3
+  },
+  {
+    "text": "Global",
+    "start": 31.3,
+    "end": 31.56
+  },
+  {
+    "text": "Condition",
+    "start": 31.56,
+    "end": 31.64
+  },
+  {
+    "text": "Key",
+    "start": 32.07,
+    "end": 32.11
+  },
+  {
+    "text": "with",
+    "start": 32.11,
+    "end": 32.29
+  },
+  {
+    "text": "a",
+    "start": 32.29,
+    "end": 32.33
+  },
+  {
+    "text": "reference",
+    "start": 32.33,
+    "end": 32.71
+  },
+  {
+    "text": "to",
+    "start": 32.74,
+    "end": 32.75
+  },
+  {
+    "text": "the",
+    "start": 32.75,
+    "end": 33.36
+  },
+  {
+    "text": "organization",
+    "start": 33.36,
+    "end": 33.56
+  },
+  {
+    "text": "ID",
+    "start": 33.6,
+    "end": 33.79
+  },
+  {
+    "text": "to",
+    "start": 33.79,
+    "end": 34.02
+  },
+  {
+    "text": "the",
+    "start": 34.02,
+    "end": 34.33
+  },
+  {
+    "text": "S3",
+    "start": 34.35,
+    "end": 34.81
+  },
+  {
+    "text": "bucket",
+    "start": 34.81,
+    "end": 35.47
+  },
+  {
+    "text": "policy.",
+    "start": 35.53,
+    "end": 36.56
+  },
+  {
+    "text": "Option",
+    "start": 36.6,
+    "end": 36.99
+  },
+  {
+    "text": "B,",
+    "start": 36.99,
+    "end": 37.2
+  },
+  {
+    "text": "create",
+    "start": 37.2,
+    "end": 37.58
+  },
+  {
+    "text": "an",
+    "start": 37.68,
+    "end": 37.77
+  },
+  {
+    "text": "organizational",
+    "start": 37.77,
+    "end": 38.77
+  },
+  {
+    "text": "unit",
+    "start": 38.77,
+    "end": 39.05
+  },
+  {
+    "text": "for",
+    "start": 39.05,
+    "end": 39.26
+  },
+  {
+    "text": "each",
+    "start": 39.26,
+    "end": 39.54
+  },
+  {
+    "text": "department.",
+    "start": 39.54,
+    "end": 40.52
+  },
+  {
+    "text": "Add",
+    "start": 40.56,
+    "end": 40.73
+  },
+  {
+    "text": "the",
+    "start": 40.73,
+    "end": 40.94
+  },
+  {
+    "text": "AUS",
+    "start": 40.94,
+    "end": 41.15
+  },
+  {
+    "text": "Principal",
+    "start": 41.15,
+    "end": 41.78
+  },
+  {
+    "text": "Org",
+    "start": 41.78,
+    "end": 41.99
+  },
+  {
+    "text": "Paths",
+    "start": 41.99,
+    "end": 42.34
+  },
+  {
+    "text": "Global",
+    "start": 42.34,
+    "end": 42.73
+  },
+  {
+    "text": "Condition",
+    "start": 42.77,
+    "end": 43.38
+  },
+  {
+    "text": "Key",
+    "start": 43.38,
+    "end": 43.58
+  },
+  {
+    "text": "to",
+    "start": 43.58,
+    "end": 43.795
+  },
+  {
+    "text": "the",
+    "start": 43.795,
+    "end": 44.01
+  },
+  {
+    "text": "S3",
+    "start": 44.01,
+    "end": 44.23
+  },
+  {
+    "text": "bucket",
+    "start": 44.23,
+    "end": 44.64
+  },
+  {
+    "text": "policy.",
+    "start": 44.64,
+    "end": 45.32
+  },
+  {
+    "text": "Option",
+    "start": 45.36,
+    "end": 45.84
+  },
+  {
+    "text": "C,",
+    "start": 45.84,
+    "end": 46.09
+  },
+  {
+    "text": "use",
+    "start": 46.09,
+    "end": 46.34
+  },
+  {
+    "text": "AWS",
+    "start": 46.44,
+    "end": 46.61
+  },
+  {
+    "text": "CloudTrail",
+    "start": 46.61,
+    "end": 47.41
+  },
+  {
+    "text": "to",
+    "start": 47.48,
+    "end": 47.64
+  },
+  {
+    "text": "monitor",
+    "start": 47.64,
+    "end": 48.25
+  },
+  {
+    "text": "account",
+    "start": 48.25,
+    "end": 48.86
+  },
+  {
+    "text": "events.",
+    "start": 48.86,
+    "end": 49.49
+  },
+  {
+    "text": "Update",
+    "start": 49.72,
+    "end": 50.1
+  },
+  {
+    "text": "the",
+    "start": 50.1,
+    "end": 50.31
+  },
+  {
+    "text": "S3",
+    "start": 50.31,
+    "end": 50.59
+  },
+  {
+    "text": "bucket",
+    "start": 50.59,
+    "end": 51
+  },
+  {
+    "text": "policy",
+    "start": 51.04,
+    "end": 51.43
+  },
+  {
+    "text": "accordingly.",
+    "start": 51.43,
+    "end": 52.45
+  },
+  {
+    "text": "Option",
+    "start": 52.5,
+    "end": 52.93
+  },
+  {
+    "text": "D,",
+    "start": 52.93,
+    "end": 53.14
+  },
+  {
+    "text": "tag",
+    "start": 53.15,
+    "end": 53.38
+  },
+  {
+    "text": "each",
+    "start": 53.38,
+    "end": 53.69
+  },
+  {
+    "text": "user",
+    "start": 53.69,
+    "end": 53.99
+  },
+  {
+    "text": "that",
+    "start": 53.99,
+    "end": 54.31
+  },
+  {
+    "text": "needs",
+    "start": 54.31,
+    "end": 54.67
+  },
+  {
+    "text": "access",
+    "start": 54.71,
+    "end": 55.17
+  },
+  {
+    "text": "to",
+    "start": 55.17,
+    "end": 55.31
+  },
+  {
+    "text": "the",
+    "start": 55.31,
+    "end": 55.52
+  },
+  {
+    "text": "S3",
+    "start": 55.62,
+    "end": 55.85
+  },
+  {
+    "text": "bucket.",
+    "start": 55.95,
+    "end": 56.59
+  },
+  {
+    "text": "Add",
+    "start": 56.7,
+    "end": 56.87
+  },
+  {
+    "text": "the",
+    "start": 56.87,
+    "end": 57.08
+  },
+  {
+    "text": "AUS",
+    "start": 57.08,
+    "end": 57.29
+  },
+  {
+    "text": "Principal",
+    "start": 57.29,
+    "end": 57.93
+  },
+  {
+    "text": "Tag",
+    "start": 57.93,
+    "end": 58.14
+  },
+  {
+    "text": "Global",
+    "start": 58.14,
+    "end": 58.55
+  },
+  {
+    "text": "Condition",
+    "start": 58.55,
+    "end": 59.19
+  },
+  {
+    "text": "Key",
+    "start": 59.2,
+    "end": 59.41
+  },
+  {
+    "text": "to",
+    "start": 59.41,
+    "end": 59.55
+  },
+  {
+    "text": "the",
+    "start": 59.55,
+    "end": 59.72
+  },
+  {
+    "text": "S3",
+    "start": 59.83,
+    "end": 60.04
+  },
+  {
+    "text": "bucket",
+    "start": 60.15,
+    "end": 60.46
+  },
+  {
+    "text": "policy.",
+    "start": 60.46,
+    "end": 61.16
+  },
+  {
+    "text": "The",
+    "start": 61.2,
+    "end": 61.32
+  },
+  {
+    "text": "correct",
+    "start": 61.34,
+    "end": 61.74
+  },
+  {
+    "text": "answer",
+    "start": 61.74,
+    "end": 62.09
+  },
+  {
+    "text": "is",
+    "start": 62.09,
+    "end": 62.18
+  },
+  {
+    "text": "Option",
+    "start": 62.28,
+    "end": 62.55
+  },
+  {
+    "text": "A.",
+    "start": 62.55,
+    "end": 62.82
+  },
+  {
+    "text": "Option",
+    "start": 62.82,
+    "end": 63.15
+  },
+  {
+    "text": "A",
+    "start": 63.15,
+    "end": 63.2
+  },
+  {
+    "text": "is",
+    "start": 63.2,
+    "end": 63.25
+  },
+  {
+    "text": "correct",
+    "start": 63.32,
+    "end": 63.68
+  },
+  {
+    "text": "because",
+    "start": 63.69,
+    "end": 64.07
+  },
+  {
+    "text": "the",
+    "start": 64.07,
+    "end": 64.22
+  },
+  {
+    "text": "AUS",
+    "start": 64.22,
+    "end": 64.39
+  },
+  {
+    "text": "Principal",
+    "start": 64.61,
+    "end": 64.92
+  },
+  {
+    "text": "Org",
+    "start": 64.92,
+    "end": 65.24
+  },
+  {
+    "text": "ID",
+    "start": 65.24,
+    "end": 65.33
+  },
+  {
+    "text": "Global",
+    "start": 65.94,
+    "end": 65.99
+  },
+  {
+    "text": "Condition",
+    "start": 66.06,
+    "end": 66.62
+  },
+  {
+    "text": "Key",
+    "start": 66.62,
+    "end": 66.8
+  },
+  {
+    "text": "in",
+    "start": 66.81,
+    "end": 66.95
+  },
+  {
+    "text": "the",
+    "start": 66.95,
+    "end": 67.15
+  },
+  {
+    "text": "S3",
+    "start": 67.15,
+    "end": 67.41
+  },
+  {
+    "text": "bucket",
+    "start": 67.41,
+    "end": 67.81
+  },
+  {
+    "text": "policy",
+    "start": 67.81,
+    "end": 68.21
+  },
+  {
+    "text": "automatically",
+    "start": 68.21,
+    "end": 69.06
+  },
+  {
+    "text": "restricts",
+    "start": 69.47,
+    "end": 69.66
+  },
+  {
+    "text": "access",
+    "start": 69.72,
+    "end": 70.08
+  },
+  {
+    "text": "to",
+    "start": 70.08,
+    "end": 70.15
+  },
+  {
+    "text": "principals",
+    "start": 70.8,
+    "end": 70.85
+  },
+  {
+    "text": "belonging",
+    "start": 70.9,
+    "end": 71.46
+  },
+  {
+    "text": "to",
+    "start": 71.47,
+    "end": 71.68
+  },
+  {
+    "text": "the",
+    "start": 71.72,
+    "end": 71.92
+  },
+  {
+    "text": "specified",
+    "start": 71.92,
+    "end": 72.65
+  },
+  {
+    "text": "organization.",
+    "start": 72.65,
+    "end": 73.89
+  },
+  {
+    "text": "This",
+    "start": 73.96,
+    "end": 74.17
+  },
+  {
+    "text": "covers",
+    "start": 74.17,
+    "end": 74.54
+  },
+  {
+    "text": "current",
+    "start": 74.54,
+    "end": 74.94
+  },
+  {
+    "text": "and",
+    "start": 75.04,
+    "end": 75.15
+  },
+  {
+    "text": "future",
+    "start": 75.15,
+    "end": 75.52
+  },
+  {
+    "text": "accounts",
+    "start": 75.52,
+    "end": 76.01
+  },
+  {
+    "text": "with",
+    "start": 76.01,
+    "end": 76.26
+  },
+  {
+    "text": "zero",
+    "start": 76.26,
+    "end": 76.51
+  },
+  {
+    "text": "policy",
+    "start": 76.51,
+    "end": 76.88
+  },
+  {
+    "text": "maintenance,",
+    "start": 76.88,
+    "end": 77.68
+  },
+  {
+    "text": "minimizing",
+    "start": 77.68,
+    "end": 78.09
+  },
+  {
+    "text": "operational",
+    "start": 78.7,
+    "end": 79.04
+  },
+  {
+    "text": "overhead.",
+    "start": 79.08,
+    "end": 80.44
+  },
+  {
+    "text": "Option",
+    "start": 80.48,
+    "end": 81.02
+  },
+  {
+    "text": "Bis",
+    "start": 81.02,
+    "end": 81.29
+  },
+  {
+    "text": "incorrect.",
+    "start": 81.29,
+    "end": 82.48
+  },
+  {
+    "text": "Principal",
+    "start": 82.52,
+    "end": 83.01
+  },
+  {
+    "text": "Org",
+    "start": 83.01,
+    "end": 83.16
+  },
+  {
+    "text": "Paths",
+    "start": 83.17,
+    "end": 83.45
+  },
+  {
+    "text": "restricts",
+    "start": 83.45,
+    "end": 83.97
+  },
+  {
+    "text": "access",
+    "start": 83.98,
+    "end": 84.33
+  },
+  {
+    "text": "based",
+    "start": 84.33,
+    "end": 84.57
+  },
+  {
+    "text": "on",
+    "start": 84.65,
+    "end": 84.69
+  },
+  {
+    "text": "organizational",
+    "start": 84.73,
+    "end": 85.52
+  },
+  {
+    "text": "units",
+    "start": 85.52,
+    "end": 85.55
+  },
+  {
+    "text": "and",
+    "start": 85.97,
+    "end": 86.01
+  },
+  {
+    "text": "path",
+    "start": 86.01,
+    "end": 86.24
+  },
+  {
+    "text": "complexity,",
+    "start": 86.24,
+    "end": 87
+  },
+  {
+    "text": "which",
+    "start": 87.04,
+    "end": 87.32
+  },
+  {
+    "text": "is",
+    "start": 87.33,
+    "end": 87.46
+  },
+  {
+    "text": "unnecessary",
+    "start": 87.46,
+    "end": 88.19
+  },
+  {
+    "text": "when",
+    "start": 88.2,
+    "end": 88.47
+  },
+  {
+    "text": "allowing",
+    "start": 88.47,
+    "end": 89.01
+  },
+  {
+    "text": "the",
+    "start": 89.01,
+    "end": 89.21
+  },
+  {
+    "text": "entire",
+    "start": 89.21,
+    "end": 89.61
+  },
+  {
+    "text": "organization.",
+    "start": 89.61,
+    "end": 90.64
+  },
+  {
+    "text": "Option",
+    "start": 90.7,
+    "end": 91.14
+  },
+  {
+    "text": "Cis",
+    "start": 91.14,
+    "end": 91.35
+  },
+  {
+    "text": "incorrect.",
+    "start": 91.38,
+    "end": 92.36
+  },
+  {
+    "text": "Using",
+    "start": 92.4,
+    "end": 92.65
+  },
+  {
+    "text": "CloudTrail",
+    "start": 92.69,
+    "end": 93.26
+  },
+  {
+    "text": "events",
+    "start": 93.26,
+    "end": 93.62
+  },
+  {
+    "text": "to",
+    "start": 93.62,
+    "end": 93.74
+  },
+  {
+    "text": "trigger",
+    "start": 93.74,
+    "end": 94.16
+  },
+  {
+    "text": "bucket",
+    "start": 94.16,
+    "end": 94.45
+  },
+  {
+    "text": "policy",
+    "start": 94.52,
+    "end": 94.88
+  },
+  {
+    "text": "updates",
+    "start": 94.88,
+    "end": 95.3
+  },
+  {
+    "text": "is",
+    "start": 95.3,
+    "end": 95.42
+  },
+  {
+    "text": "highly",
+    "start": 95.42,
+    "end": 95.85
+  },
+  {
+    "text": "complex,",
+    "start": 95.85,
+    "end": 96.32
+  },
+  {
+    "text": "over-engineered,",
+    "start": 96.32,
+    "end": 97.36
+  },
+  {
+    "text": "and",
+    "start": 97.4,
+    "end": 97.59
+  },
+  {
+    "text": "introduces",
+    "start": 97.59,
+    "end": 98.37
+  },
+  {
+    "text": "high",
+    "start": 98.37,
+    "end": 98.68
+  },
+  {
+    "text": "operational",
+    "start": 98.68,
+    "end": 99.54
+  },
+  {
+    "text": "overhead.",
+    "start": 99.54,
+    "end": 100.4
+  },
+  {
+    "text": "Option",
+    "start": 100.48,
+    "end": 100.93
+  },
+  {
+    "text": "Dis",
+    "start": 100.93,
+    "end": 101.13
+  },
+  {
+    "text": "incorrect.",
+    "start": 101.16,
+    "end": 102.16
+  },
+  {
+    "text": "Tagging",
+    "start": 102.2,
+    "end": 102.59
+  },
+  {
+    "text": "individual",
+    "start": 102.59,
+    "end": 103.18
+  },
+  {
+    "text": "users",
+    "start": 103.28,
+    "end": 103.48
+  },
+  {
+    "text": "across",
+    "start": 103.52,
+    "end": 103.89
+  },
+  {
+    "text": "multiple",
+    "start": 103.89,
+    "end": 104.37
+  },
+  {
+    "text": "accounts",
+    "start": 104.41,
+    "end": 104.87
+  },
+  {
+    "text": "and",
+    "start": 104.87,
+    "end": 105.05
+  },
+  {
+    "text": "managing",
+    "start": 105.05,
+    "end": 105.22
+  },
+  {
+    "text": "principal",
+    "start": 105.65,
+    "end": 106.02
+  },
+  {
+    "text": "tag",
+    "start": 106.11,
+    "end": 106.28
+  },
+  {
+    "text": "keys",
+    "start": 106.28,
+    "end": 106.33
+  },
+  {
+    "text": "is",
+    "start": 106.51,
+    "end": 106.64
+  },
+  {
+    "text": "not",
+    "start": 106.64,
+    "end": 106.81
+  },
+  {
+    "text": "scalable",
+    "start": 106.94,
+    "end": 107.4
+  },
+  {
+    "text": "and",
+    "start": 107.44,
+    "end": 107.61
+  },
+  {
+    "text": "requires",
+    "start": 107.61,
+    "end": 108.17
+  },
+  {
+    "text": "continuous",
+    "start": 108.17,
+    "end": 108.89
+  },
+  {
+    "text": "manual",
+    "start": 108.89,
+    "end": 109.31
+  },
+  {
+    "text": "tagging",
+    "start": 109.31,
+    "end": 109.76
+  },
+  {
+    "text": "effort.",
+    "start": 109.88,
+    "end": 110.44
+  },
+  {
+    "text": "Here",
+    "start": 110.52,
+    "end": 110.7
+  },
+  {
+    "text": "is",
+    "start": 110.7,
+    "end": 110.77
+  },
+  {
+    "text": "your",
+    "start": 110.81,
+    "end": 111.03
+  },
+  {
+    "text": "memory",
+    "start": 111.03,
+    "end": 111.36
+  },
+  {
+    "text": "hook,",
+    "start": 111.36,
+    "end": 111.69
+  },
+  {
+    "text": "restricting",
+    "start": 111.69,
+    "end": 112.3
+  },
+  {
+    "text": "resource",
+    "start": 112.3,
+    "end": 112.69
+  },
+  {
+    "text": "access",
+    "start": 112.73,
+    "end": 113.07
+  },
+  {
+    "text": "to",
+    "start": 113.07,
+    "end": 113.18
+  },
+  {
+    "text": "an",
+    "start": 113.18,
+    "end": 113.29
+  },
+  {
+    "text": "entire",
+    "start": 113.29,
+    "end": 113.52
+  },
+  {
+    "text": "organization",
+    "start": 113.93,
+    "end": 114.28
+  },
+  {
+    "text": "with",
+    "start": 114.28,
+    "end": 114.5
+  },
+  {
+    "text": "the",
+    "start": 114.5,
+    "end": 114.65
+  },
+  {
+    "text": "least",
+    "start": 114.76,
+    "end": 115.19
+  },
+  {
+    "text": "overhead",
+    "start": 115.19,
+    "end": 115.94
+  },
+  {
+    "text": "equals",
+    "start": 115.94,
+    "end": 116.52
+  },
+  {
+    "text": "AUS",
+    "start": 116.52,
+    "end": 116.8
+  },
+  {
+    "text": "Principal",
+    "start": 116.8,
+    "end": 117.65
+  },
+  {
+    "text": "Org",
+    "start": 117.65,
+    "end": 117.93
+  },
+  {
+    "text": "ID.",
+    "start": 118.12,
+    "end": 118.44
+  },
+  {
+    "text": "Avoid",
+    "start": 118.48,
+    "end": 118.81
+  },
+  {
+    "text": "Principal",
+    "start": 118.81,
+    "end": 119.46
+  },
+  {
+    "text": "Org",
+    "start": 119.56,
+    "end": 119.68
+  },
+  {
+    "text": "Paths,",
+    "start": 119.68,
+    "end": 120.18
+  },
+  {
+    "text": "CloudTrail",
+    "start": 120.18,
+    "end": 120.91
+  },
+  {
+    "text": "Automation,",
+    "start": 120.92,
+    "end": 121.79
+  },
+  {
+    "text": "or",
+    "start": 121.79,
+    "end": 121.93
+  },
+  {
+    "text": "Principal",
+    "start": 121.93,
+    "end": 122.57
+  },
+  {
+    "text": "Tag.",
+    "start": 122.58,
+    "end": 123.12
+  }
+]
