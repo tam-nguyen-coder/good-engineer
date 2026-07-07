@@ -1,0 +1,15 @@
+AWS Certified Cloud Practitioner, question two. Which of the following is an example of horizontal scaling in the AWS Cloud?
+Let's review the options.
+Option A: Replacing an existing EC2 instance with a larger, more powerful one.
+Option B: Increasing the compute capacity of a single EC2 instance to address the growing demands of an application.
+Option C: Adding more RAM capacity to an EC2 instance.
+Option D: Adding more EC2 instances of the same size to handle an increase in traffic.
+
+The correct answer is Option D.
+Option D is correct because horizontal scaling, also known as scaling out, means adding more resources of the same size—such as EC2 instances—to distribute the workload. This is a cloud best practice because it enables high availability, fault tolerance, and easily integrates with Auto Scaling and Elastic Load Balancing.
+
+Option A is incorrect. Replacing a smaller instance with a larger one is vertical scaling, or scaling up, not horizontal.
+Option B is incorrect. Increasing the compute capacity of a single instance is vertical scaling.
+Option C is incorrect. Adding more RAM to an instance increases its individual capacity, representing vertical scaling.
+
+Here is your memory hook. Horizontal equals more instances. Vertical equals a larger single instance. More instances, choose horizontal scaling.

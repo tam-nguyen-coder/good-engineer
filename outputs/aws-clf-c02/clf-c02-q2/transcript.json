@@ -1,0 +1,1042 @@
+[
+  {
+    "text": "AWS",
+    "start": 0.03,
+    "end": 0.24
+  },
+  {
+    "text": "Certified",
+    "start": 0.24,
+    "end": 0.94
+  },
+  {
+    "text": "Cloud",
+    "start": 0.95,
+    "end": 1.23
+  },
+  {
+    "text": "Practitioner,",
+    "start": 1.36,
+    "end": 2.45
+  },
+  {
+    "text": "question",
+    "start": 2.45,
+    "end": 3
+  },
+  {
+    "text": "two.",
+    "start": 3,
+    "end": 3.44
+  },
+  {
+    "text": "Which",
+    "start": 3.47,
+    "end": 3.67
+  },
+  {
+    "text": "of",
+    "start": 3.67,
+    "end": 3.76
+  },
+  {
+    "text": "the",
+    "start": 3.76,
+    "end": 3.89
+  },
+  {
+    "text": "following",
+    "start": 3.89,
+    "end": 4.32
+  },
+  {
+    "text": "is",
+    "start": 4.32,
+    "end": 4.39
+  },
+  {
+    "text": "an",
+    "start": 4.49,
+    "end": 4.56
+  },
+  {
+    "text": "example",
+    "start": 4.56,
+    "end": 5.01
+  },
+  {
+    "text": "of",
+    "start": 5.01,
+    "end": 5.02
+  },
+  {
+    "text": "horizontal",
+    "start": 5.12,
+    "end": 5.7
+  },
+  {
+    "text": "scaling",
+    "start": 5.79,
+    "end": 6.2
+  },
+  {
+    "text": "in",
+    "start": 6.27,
+    "end": 6.44
+  },
+  {
+    "text": "the",
+    "start": 6.44,
+    "end": 6.74
+  },
+  {
+    "text": "AWS",
+    "start": 6.74,
+    "end": 6.95
+  },
+  {
+    "text": "cloud?",
+    "start": 7.03,
+    "end": 7.81
+  },
+  {
+    "text": "Let's",
+    "start": 7.87,
+    "end": 8.11
+  },
+  {
+    "text": "review",
+    "start": 8.15,
+    "end": 8.47
+  },
+  {
+    "text": "the",
+    "start": 8.47,
+    "end": 8.55
+  },
+  {
+    "text": "options.",
+    "start": 8.63,
+    "end": 9.24
+  },
+  {
+    "text": "Option",
+    "start": 9.27,
+    "end": 9.78
+  },
+  {
+    "text": "A,",
+    "start": 9.78,
+    "end": 10.06
+  },
+  {
+    "text": "replacing",
+    "start": 10.06,
+    "end": 10.47
+  },
+  {
+    "text": "an",
+    "start": 10.6,
+    "end": 10.72
+  },
+  {
+    "text": "existing",
+    "start": 10.72,
+    "end": 11.2
+  },
+  {
+    "text": "EC2",
+    "start": 11.2,
+    "end": 11.49
+  },
+  {
+    "text": "instance",
+    "start": 11.59,
+    "end": 12
+  },
+  {
+    "text": "with",
+    "start": 12.03,
+    "end": 12.26
+  },
+  {
+    "text": "a",
+    "start": 12.26,
+    "end": 12.32
+  },
+  {
+    "text": "larger,",
+    "start": 12.32,
+    "end": 12.84
+  },
+  {
+    "text": "more",
+    "start": 12.84,
+    "end": 13.1
+  },
+  {
+    "text": "powerful",
+    "start": 13.1,
+    "end": 13.57
+  },
+  {
+    "text": "one.",
+    "start": 13.68,
+    "end": 14.04
+  },
+  {
+    "text": "Option",
+    "start": 14.07,
+    "end": 14.44
+  },
+  {
+    "text": "B,",
+    "start": 14.44,
+    "end": 14.63
+  },
+  {
+    "text": "increasing",
+    "start": 14.63,
+    "end": 15.27
+  },
+  {
+    "text": "the",
+    "start": 15.36,
+    "end": 15.51
+  },
+  {
+    "text": "compute",
+    "start": 15.51,
+    "end": 15.98
+  },
+  {
+    "text": "capacity",
+    "start": 15.98,
+    "end": 16.56
+  },
+  {
+    "text": "of",
+    "start": 16.59,
+    "end": 16.68
+  },
+  {
+    "text": "a",
+    "start": 16.68,
+    "end": 16.75
+  },
+  {
+    "text": "single",
+    "start": 16.75,
+    "end": 17.16
+  },
+  {
+    "text": "EC2",
+    "start": 17.16,
+    "end": 17.49
+  },
+  {
+    "text": "instance",
+    "start": 17.49,
+    "end": 18.08
+  },
+  {
+    "text": "to",
+    "start": 18.08,
+    "end": 18.13
+  },
+  {
+    "text": "address",
+    "start": 18.24,
+    "end": 18.54
+  },
+  {
+    "text": "the",
+    "start": 18.54,
+    "end": 18.68
+  },
+  {
+    "text": "growing",
+    "start": 18.68,
+    "end": 19.02
+  },
+  {
+    "text": "demands",
+    "start": 19.02,
+    "end": 19.44
+  },
+  {
+    "text": "of",
+    "start": 19.47,
+    "end": 19.56
+  },
+  {
+    "text": "an",
+    "start": 19.61,
+    "end": 19.71
+  },
+  {
+    "text": "application.",
+    "start": 19.72,
+    "end": 20.76
+  },
+  {
+    "text": "Option",
+    "start": 20.81,
+    "end": 21.49
+  },
+  {
+    "text": "C,",
+    "start": 21.52,
+    "end": 21.92
+  },
+  {
+    "text": "adding",
+    "start": 21.92,
+    "end": 22.35
+  },
+  {
+    "text": "more",
+    "start": 22.46,
+    "end": 22.8
+  },
+  {
+    "text": "RAM",
+    "start": 22.8,
+    "end": 23.03
+  },
+  {
+    "text": "capacity",
+    "start": 23.13,
+    "end": 23.8
+  },
+  {
+    "text": "to",
+    "start": 23.8,
+    "end": 23.83
+  },
+  {
+    "text": "an",
+    "start": 23.83,
+    "end": 24.22
+  },
+  {
+    "text": "EC2",
+    "start": 24.22,
+    "end": 24.43
+  },
+  {
+    "text": "instance.",
+    "start": 24.43,
+    "end": 25.22
+  },
+  {
+    "text": "Option",
+    "start": 25.25,
+    "end": 25.7
+  },
+  {
+    "text": "D,",
+    "start": 25.71,
+    "end": 25.93
+  },
+  {
+    "text": "adding",
+    "start": 25.95,
+    "end": 26.43
+  },
+  {
+    "text": "more",
+    "start": 26.44,
+    "end": 26.76
+  },
+  {
+    "text": "EC2",
+    "start": 26.76,
+    "end": 27.16
+  },
+  {
+    "text": "instances",
+    "start": 27.16,
+    "end": 27.92
+  },
+  {
+    "text": "of",
+    "start": 27.92,
+    "end": 28.04
+  },
+  {
+    "text": "the",
+    "start": 28.04,
+    "end": 28.22
+  },
+  {
+    "text": "same",
+    "start": 28.22,
+    "end": 28.27
+  },
+  {
+    "text": "size",
+    "start": 28.7,
+    "end": 28.76
+  },
+  {
+    "text": "to",
+    "start": 28.79,
+    "end": 28.88
+  },
+  {
+    "text": "handle",
+    "start": 28.88,
+    "end": 29.24
+  },
+  {
+    "text": "an",
+    "start": 29.25,
+    "end": 29.37
+  },
+  {
+    "text": "increase",
+    "start": 29.37,
+    "end": 29.87
+  },
+  {
+    "text": "in",
+    "start": 29.87,
+    "end": 29.98
+  },
+  {
+    "text": "traffic.",
+    "start": 29.99,
+    "end": 30.53
+  },
+  {
+    "text": "The",
+    "start": 30.67,
+    "end": 30.86
+  },
+  {
+    "text": "correct",
+    "start": 30.86,
+    "end": 31.35
+  },
+  {
+    "text": "answer",
+    "start": 31.38,
+    "end": 31.83
+  },
+  {
+    "text": "is",
+    "start": 31.83,
+    "end": 31.87
+  },
+  {
+    "text": "option",
+    "start": 32,
+    "end": 32.41
+  },
+  {
+    "text": "D.",
+    "start": 32.5,
+    "end": 32.76
+  },
+  {
+    "text": "Option",
+    "start": 32.76,
+    "end": 33.18
+  },
+  {
+    "text": "Dis",
+    "start": 33.25,
+    "end": 33.4
+  },
+  {
+    "text": "correct",
+    "start": 33.4,
+    "end": 33.69
+  },
+  {
+    "text": "because",
+    "start": 33.87,
+    "end": 34.2
+  },
+  {
+    "text": "horizontal",
+    "start": 34.2,
+    "end": 34.72
+  },
+  {
+    "text": "scaling,",
+    "start": 34.72,
+    "end": 35.2
+  },
+  {
+    "text": "also",
+    "start": 35.2,
+    "end": 35.41
+  },
+  {
+    "text": "known",
+    "start": 35.52,
+    "end": 35.8
+  },
+  {
+    "text": "as",
+    "start": 35.8,
+    "end": 35.95
+  },
+  {
+    "text": "scaling",
+    "start": 35.95,
+    "end": 36.48
+  },
+  {
+    "text": "out,",
+    "start": 36.48,
+    "end": 36.72
+  },
+  {
+    "text": "means",
+    "start": 36.75,
+    "end": 37.04
+  },
+  {
+    "text": "adding",
+    "start": 37.04,
+    "end": 37.38
+  },
+  {
+    "text": "more",
+    "start": 37.42,
+    "end": 37.67
+  },
+  {
+    "text": "resources",
+    "start": 37.77,
+    "end": 38.27
+  },
+  {
+    "text": "of",
+    "start": 38.27,
+    "end": 38.41
+  },
+  {
+    "text": "the",
+    "start": 38.41,
+    "end": 38.49
+  },
+  {
+    "text": "same",
+    "start": 38.6,
+    "end": 38.86
+  },
+  {
+    "text": "size,",
+    "start": 38.86,
+    "end": 39.16
+  },
+  {
+    "text": "such",
+    "start": 39.19,
+    "end": 39.48
+  },
+  {
+    "text": "as",
+    "start": 39.48,
+    "end": 39.64
+  },
+  {
+    "text": "EC2",
+    "start": 39.64,
+    "end": 40.04
+  },
+  {
+    "text": "instances,",
+    "start": 40.04,
+    "end": 40.93
+  },
+  {
+    "text": "to",
+    "start": 41.04,
+    "end": 41.09
+  },
+  {
+    "text": "distribute",
+    "start": 41.09,
+    "end": 41.78
+  },
+  {
+    "text": "the",
+    "start": 41.78,
+    "end": 41.98
+  },
+  {
+    "text": "workload.",
+    "start": 41.98,
+    "end": 42.76
+  },
+  {
+    "text": "This",
+    "start": 42.79,
+    "end": 43.02
+  },
+  {
+    "text": "is",
+    "start": 43.02,
+    "end": 43.15
+  },
+  {
+    "text": "a",
+    "start": 43.15,
+    "end": 43.21
+  },
+  {
+    "text": "cloud",
+    "start": 43.21,
+    "end": 43.47
+  },
+  {
+    "text": "best",
+    "start": 43.53,
+    "end": 43.71
+  },
+  {
+    "text": "practice",
+    "start": 43.81,
+    "end": 44.31
+  },
+  {
+    "text": "because",
+    "start": 44.35,
+    "end": 44.71
+  },
+  {
+    "text": "it",
+    "start": 44.71,
+    "end": 44.82
+  },
+  {
+    "text": "enables",
+    "start": 44.82,
+    "end": 45.21
+  },
+  {
+    "text": "high",
+    "start": 45.21,
+    "end": 45.43
+  },
+  {
+    "text": "availability,",
+    "start": 45.43,
+    "end": 46.24
+  },
+  {
+    "text": "fault",
+    "start": 46.24,
+    "end": 46.57
+  },
+  {
+    "text": "tolerance,",
+    "start": 46.67,
+    "end": 47.36
+  },
+  {
+    "text": "and",
+    "start": 47.39,
+    "end": 47.54
+  },
+  {
+    "text": "easily",
+    "start": 47.54,
+    "end": 47.91
+  },
+  {
+    "text": "integrates",
+    "start": 47.91,
+    "end": 48.56
+  },
+  {
+    "text": "with",
+    "start": 48.56,
+    "end": 48.83
+  },
+  {
+    "text": "auto",
+    "start": 48.83,
+    "end": 49.1
+  },
+  {
+    "text": "scaling",
+    "start": 49.1,
+    "end": 49.6
+  },
+  {
+    "text": "and",
+    "start": 49.63,
+    "end": 49.73
+  },
+  {
+    "text": "elastic",
+    "start": 49.77,
+    "end": 50.17
+  },
+  {
+    "text": "load",
+    "start": 50.17,
+    "end": 50.31
+  },
+  {
+    "text": "balancing.",
+    "start": 50.39,
+    "end": 51.12
+  },
+  {
+    "text": "Option",
+    "start": 51.15,
+    "end": 51.56
+  },
+  {
+    "text": "A",
+    "start": 51.56,
+    "end": 51.63
+  },
+  {
+    "text": "is",
+    "start": 51.63,
+    "end": 51.76
+  },
+  {
+    "text": "incorrect.",
+    "start": 51.77,
+    "end": 52.67
+  },
+  {
+    "text": "Replacing",
+    "start": 52.71,
+    "end": 53.16
+  },
+  {
+    "text": "a",
+    "start": 53.16,
+    "end": 53.21
+  },
+  {
+    "text": "smaller",
+    "start": 53.21,
+    "end": 53.58
+  },
+  {
+    "text": "instance",
+    "start": 53.58,
+    "end": 53.91
+  },
+  {
+    "text": "with",
+    "start": 54.04,
+    "end": 54.25
+  },
+  {
+    "text": "a",
+    "start": 54.25,
+    "end": 54.36
+  },
+  {
+    "text": "larger",
+    "start": 54.36,
+    "end": 54.61
+  },
+  {
+    "text": "one",
+    "start": 54.61,
+    "end": 54.78
+  },
+  {
+    "text": "is",
+    "start": 54.81,
+    "end": 54.9
+  },
+  {
+    "text": "vertical",
+    "start": 54.9,
+    "end": 55.43
+  },
+  {
+    "text": "scaling",
+    "start": 55.44,
+    "end": 55.9
+  },
+  {
+    "text": "or",
+    "start": 55.9,
+    "end": 56.01
+  },
+  {
+    "text": "scaling",
+    "start": 56.1,
+    "end": 56.49
+  },
+  {
+    "text": "up,",
+    "start": 56.49,
+    "end": 56.75
+  },
+  {
+    "text": "not",
+    "start": 56.75,
+    "end": 56.94
+  },
+  {
+    "text": "horizontal.",
+    "start": 56.94,
+    "end": 57.83
+  },
+  {
+    "text": "Option",
+    "start": 57.87,
+    "end": 58.28
+  },
+  {
+    "text": "Bis",
+    "start": 58.28,
+    "end": 58.48
+  },
+  {
+    "text": "incorrect.",
+    "start": 58.49,
+    "end": 59.39
+  },
+  {
+    "text": "Increasing",
+    "start": 59.43,
+    "end": 59.94
+  },
+  {
+    "text": "the",
+    "start": 59.94,
+    "end": 60.06
+  },
+  {
+    "text": "compute",
+    "start": 60.1,
+    "end": 60.48
+  },
+  {
+    "text": "capacity",
+    "start": 60.48,
+    "end": 60.92
+  },
+  {
+    "text": "of",
+    "start": 60.95,
+    "end": 61.04
+  },
+  {
+    "text": "a",
+    "start": 61.04,
+    "end": 61.1
+  },
+  {
+    "text": "single",
+    "start": 61.1,
+    "end": 61.46
+  },
+  {
+    "text": "instance",
+    "start": 61.46,
+    "end": 61.87
+  },
+  {
+    "text": "is",
+    "start": 61.97,
+    "end": 62.06
+  },
+  {
+    "text": "vertical",
+    "start": 62.06,
+    "end": 62.49
+  },
+  {
+    "text": "scaling.",
+    "start": 62.6,
+    "end": 63.16
+  },
+  {
+    "text": "Option",
+    "start": 63.19,
+    "end": 63.67
+  },
+  {
+    "text": "Cis",
+    "start": 63.67,
+    "end": 63.87
+  },
+  {
+    "text": "incorrect.",
+    "start": 63.91,
+    "end": 64.93
+  },
+  {
+    "text": "Adding",
+    "start": 64.99,
+    "end": 65.38
+  },
+  {
+    "text": "more",
+    "start": 65.38,
+    "end": 65.62
+  },
+  {
+    "text": "RAM",
+    "start": 65.66,
+    "end": 65.87
+  },
+  {
+    "text": "to",
+    "start": 65.87,
+    "end": 65.91
+  },
+  {
+    "text": "an",
+    "start": 66.01,
+    "end": 66.15
+  },
+  {
+    "text": "instance",
+    "start": 66.15,
+    "end": 66.73
+  },
+  {
+    "text": "increases",
+    "start": 66.77,
+    "end": 67.33
+  },
+  {
+    "text": "its",
+    "start": 67.33,
+    "end": 67.45
+  },
+  {
+    "text": "individual",
+    "start": 67.51,
+    "end": 68.17
+  },
+  {
+    "text": "capacity,",
+    "start": 68.17,
+    "end": 68.72
+  },
+  {
+    "text": "representing",
+    "start": 68.75,
+    "end": 69.38
+  },
+  {
+    "text": "vertical",
+    "start": 69.42,
+    "end": 69.83
+  },
+  {
+    "text": "scaling.",
+    "start": 69.83,
+    "end": 70.29
+  },
+  {
+    "text": "Here",
+    "start": 70.43,
+    "end": 70.65
+  },
+  {
+    "text": "is",
+    "start": 70.65,
+    "end": 70.77
+  },
+  {
+    "text": "your",
+    "start": 70.77,
+    "end": 71.02
+  },
+  {
+    "text": "memory",
+    "start": 71.02,
+    "end": 71.35
+  },
+  {
+    "text": "hook.",
+    "start": 71.45,
+    "end": 71.88
+  },
+  {
+    "text": "Horizontal",
+    "start": 71.91,
+    "end": 72.53
+  },
+  {
+    "text": "equals",
+    "start": 72.54,
+    "end": 72.94
+  },
+  {
+    "text": "more",
+    "start": 72.94,
+    "end": 73.11
+  },
+  {
+    "text": "instances.",
+    "start": 73.2,
+    "end": 74.02
+  },
+  {
+    "text": "Vertical",
+    "start": 74.05,
+    "end": 74.52
+  },
+  {
+    "text": "equals",
+    "start": 74.52,
+    "end": 74.9
+  },
+  {
+    "text": "a",
+    "start": 74.9,
+    "end": 74.96
+  },
+  {
+    "text": "larger",
+    "start": 74.96,
+    "end": 75.25
+  },
+  {
+    "text": "single",
+    "start": 75.34,
+    "end": 75.72
+  },
+  {
+    "text": "instance.",
+    "start": 75.72,
+    "end": 76.44
+  },
+  {
+    "text": "More",
+    "start": 76.47,
+    "end": 76.69
+  },
+  {
+    "text": "instances,",
+    "start": 76.69,
+    "end": 77.38
+  },
+  {
+    "text": "choose",
+    "start": 77.39,
+    "end": 77.67
+  },
+  {
+    "text": "horizontal",
+    "start": 77.8,
+    "end": 78.41
+  },
+  {
+    "text": "scaling.",
+    "start": 78.41,
+    "end": 79.1
+  }
+]

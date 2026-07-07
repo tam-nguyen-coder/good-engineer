@@ -1,0 +1,15 @@
+AWS Certified Cloud Practitioner, question one. AWS allows users to manage their resources using a web based user interface. What is the name of this interface?
+Let's review the options.
+Option A: AWS CLI.
+Option B: AWS API.
+Option C: AWS SDK.
+Option D: AWS Management Console.
+
+The correct answer is Option D.
+Option D is correct because the AWS Management Console is the official web-based user interface that lets you access and manage AWS services through a web browser. It is the most user-friendly way to interact with AWS resources without writing code.
+
+Option A is incorrect. AWS CLI is a command-line tool for running commands in your terminal.
+Option B is incorrect. AWS API is the backend interface for making programmatic HTTP requests.
+Option C is incorrect. AWS SDK provides software development kits for writing code in programming languages.
+
+Here is your memory hook. Web GUI equals Management Console. CLI is command line. SDK and API are for programming. See web-based, choose Management Console.

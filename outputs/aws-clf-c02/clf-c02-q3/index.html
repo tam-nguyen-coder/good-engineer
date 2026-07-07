@@ -1,0 +1,1387 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>AWS Certified Cloud Practitioner (CLF-C02) - Question 3</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      /* --- Local Font Face Definitions --- */
+      @font-face {
+        font-family: 'Space Grotesk';
+        src: url('fonts/space-grotesk-latin-400-normal.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Space Grotesk';
+        src: url('fonts/space-grotesk-latin-700-normal.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Space Mono';
+        src: url('fonts/space-mono-latin-400-normal.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Space Mono';
+        src: url('fonts/space-mono-latin-700-normal.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+      }
+
+      /* --- Design Tokens --- */
+      :root {
+        --primary: #0F172A;         /* Slate 900 (Canvas background) */
+        --surface: #1E293B;         /* Slate 800 (Card background) */
+        --on-primary: #F8FAFC;      /* Slate 50 (Primary high-contrast text) */
+        --muted: #94A3B8;           /* Slate 400 (Secondary descriptive text) */
+        --accent-orange: #FF9900;   /* AWS Orange (Highlighting and memory hooks) */
+        --accent-blue: #00A1C9;     /* AWS Blue (Active borders and badges) */
+        --accent-green: #10B981;    /* Success Green (Correct answer card) */
+        --accent-red: #EF4444;      /* Error Red (Incorrect justifications) */
+        --surface-border: rgba(255, 255, 255, 0.08);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--primary);
+        font-family: 'Space Mono', monospace;
+        color: var(--on-primary);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* --- Global Layout Wrapper --- */
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+      }
+
+      /* --- Background Layer (Global) --- */
+      .bg-grid {
+        position: absolute;
+        inset: 0;
+        background-image: 
+          linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        background-size: 80px 80px;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .bg-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(140px);
+        opacity: 0.12;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .bg-glow-1 {
+        width: 600px;
+        height: 600px;
+        background: var(--accent-orange);
+        top: -100px;
+        left: -100px;
+      }
+
+      .bg-glow-2 {
+        width: 800px;
+        height: 800px;
+        background: var(--accent-blue);
+        bottom: -200px;
+        right: -200px;
+      }
+
+      /* --- Scene Base Styling --- */
+      .scene {
+        position: absolute;
+        width: 1080px;
+        height: 1920px;
+        top: 0;
+        left: 0;
+        padding: 70px 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        z-index: 10;
+        background: var(--primary);
+      }
+
+      /* --- Typography & Headers --- */
+      .scene-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--surface-border);
+        padding-bottom: 16px;
+      }
+
+      .header-badge {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--accent-blue);
+        background: rgba(0, 161, 201, 0.1);
+        padding: 8px 20px;
+        border-radius: 30px;
+        border: 1px solid rgba(0, 161, 201, 0.2);
+      }
+
+      .header-info {
+        font-size: 22px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .scene-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 54px;
+        font-weight: 700;
+        color: var(--on-primary);
+        margin-bottom: 60px;
+        line-height: 1.2;
+        text-align: center;
+      }
+
+      .highlight-orange {
+        color: var(--accent-orange);
+      }
+
+      .highlight-blue {
+        color: var(--accent-blue);
+      }
+
+      .highlight-green {
+        color: var(--accent-green);
+      }
+
+      /* --- Cards and Containers --- */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--surface-border);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      /* --- Scene 1: Title Card --- */
+      .title-card-layout {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        gap: 35px;
+        padding-top: 350px;
+      }
+
+      .exam-badge {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--accent-blue);
+        letter-spacing: 0.15em;
+        background: rgba(0, 161, 201, 0.1);
+        padding: 12px 32px;
+        border-radius: 40px;
+        border: 1px solid rgba(0, 161, 201, 0.2);
+      }
+
+      .exam-code {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 120px;
+        font-weight: 700;
+        color: var(--on-primary);
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+      }
+
+      .question-num {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 54px;
+        font-weight: 700;
+        color: var(--accent-orange);
+      }
+
+      .decorative-line {
+        width: 200px;
+        height: 5px;
+        background: linear-gradient(90deg, var(--accent-blue), var(--accent-orange));
+        border-radius: 2px;
+        margin-top: 10px;
+      }
+
+      /* --- Persistent Question Context Card --- */
+      #global-question-card {
+        position: absolute;
+        top: 180px;
+        left: 80px;
+        width: 920px;
+        height: 540px;
+        border-left: 6px solid var(--accent-orange);
+        opacity: 0;
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        pointer-events: none;
+      }
+
+      .question-text {
+        font-size: 34px;
+        line-height: 1.65;
+        font-weight: 500;
+        color: var(--on-primary);
+        font-family: 'Space Mono', monospace;
+      }
+
+      .status-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 20px;
+        font-family: 'Space Mono', monospace;
+        font-size: 20px;
+        color: var(--muted);
+      }
+
+      .status-dot {
+        width: 12px;
+        height: 12px;
+        background: var(--accent-orange);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--accent-orange);
+      }
+
+      /* --- Scene 2: Question Visual (CloudTrail Dashboard Mockup) --- */
+      #scene2 .question-visual {
+        position: absolute;
+        top: 760px; /* Offset into workspace */
+        left: 80px;
+        width: 920px;
+        height: 600px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .browser-mockup {
+        width: 860px;
+        height: 520px;
+        background: #111827;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      .browser-header {
+        height: 48px;
+        background: #1E293B;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .window-controls {
+        display: flex;
+        gap: 8px;
+      }
+
+      .control-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+
+      .control-dot.red { background: #EF4444; }
+      .control-dot.yellow { background: #F59E0B; }
+      .control-dot.green { background: #10B981; }
+
+      .url-bar {
+        flex-grow: 1;
+        height: 28px;
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        padding-left: 15px;
+        font-size: 14px;
+        color: var(--muted);
+        font-family: 'Space Mono', monospace;
+      }
+
+      .browser-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        background: #0F172A;
+      }
+
+      .aws-navbar {
+        height: 52px;
+        background: #1E293B;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        gap: 16px;
+      }
+
+      .aws-logo {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        font-size: 20px;
+        color: var(--accent-orange);
+        letter-spacing: -0.05em;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .aws-logo span {
+        font-size: 11px;
+        background: var(--accent-orange);
+        color: #000;
+        padding: 1px 4px;
+        border-radius: 3px;
+        font-weight: 700;
+      }
+
+      .aws-search {
+        flex-grow: 1;
+        max-width: 420px;
+        height: 32px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .aws-user-pill {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent-blue);
+      }
+
+      .aws-dashboard {
+        flex-grow: 1;
+        display: flex;
+      }
+
+      .aws-sidebar {
+        width: 170px;
+        background: #1E293B;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        flex-direction: column;
+        padding: 12px;
+        gap: 8px;
+      }
+
+      .sidebar-item {
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted);
+        font-family: 'Space Grotesk', sans-serif;
+      }
+
+      .sidebar-item.active {
+        background: rgba(255, 153, 0, 0.1);
+        color: var(--accent-orange);
+        font-weight: 700;
+      }
+
+      .aws-main {
+        flex-grow: 1;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        position: relative;
+      }
+
+      .console-welcome {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--on-primary);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .console-welcome span {
+        font-size: 12px;
+        color: var(--muted);
+        font-family: 'Space Mono', monospace;
+      }
+
+      /* CloudTrail Table Mockup */
+      .ct-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-family: 'Space Mono', monospace;
+        font-size: 12px;
+      }
+
+      .ct-table th, .ct-table td {
+        padding: 10px 8px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .ct-table th {
+        color: var(--muted);
+        font-weight: 700;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .ct-table tr.highlight-row {
+        transition: background 0.3s, border-color 0.3s;
+      }
+
+      .ct-table tr.highlight-row.highlighted {
+        background: rgba(0, 161, 201, 0.08);
+      }
+
+      .ct-table tr.highlight-row.clicked {
+        background: rgba(255, 153, 0, 0.08);
+        border: 1px solid var(--accent-orange);
+      }
+
+      .ct-badge-event {
+        color: var(--accent-orange);
+        font-weight: 700;
+      }
+
+      .ct-badge-user {
+        color: var(--accent-blue);
+      }
+
+      .aws-console-info-box {
+        background: rgba(0, 161, 201, 0.05);
+        border: 1px solid rgba(0, 161, 201, 0.15);
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--accent-blue);
+        margin-top: auto;
+      }
+
+      /* Popup Alert on click */
+      .console-popup {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        background: #1E293B;
+        border: 2px solid var(--accent-blue);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        border-radius: 12px;
+        padding: 24px;
+        width: 380px;
+        text-align: left;
+        opacity: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .console-popup-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--accent-orange);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 8px;
+      }
+
+      .console-popup-body {
+        font-size: 13px;
+        color: var(--on-primary);
+        line-height: 1.6;
+      }
+
+      /* Virtual Pointer Cursor */
+      .virtual-cursor {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 99;
+        transform: translate3d(700px, 450px, 0);
+        opacity: 0;
+      }
+
+      .click-ripple {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 40px;
+        height: 40px;
+        border: 2px solid var(--accent-blue);
+        background: rgba(0, 161, 201, 0.1);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        pointer-events: none;
+        z-index: 98;
+      }
+
+      /* --- Scene 3: Options Presentation (Workspace Center Focus) --- */
+      .options-presentation-layout {
+        position: absolute;
+        top: 740px; /* Workspace bottom alignment */
+        left: 80px;
+        width: 920px;
+        height: 700px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .option-card-vertical {
+        position: absolute;
+        width: 100%;
+        max-width: 920px;
+        padding: 50px 48px;
+        border-radius: 24px;
+        background: var(--surface);
+        border: 3px solid var(--surface-border);
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+        text-align: center;
+        opacity: 0;
+        transform: scale(0.9);
+        transition: border-color 0.3s, box-shadow 0.3s;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+      }
+
+      .option-card-vertical.active-focus {
+        opacity: 1;
+        transform: scale(1.1);
+        border-color: var(--accent-blue);
+        box-shadow: 0 25px 60px rgba(0, 161, 201, 0.25);
+      }
+
+      .option-card-vertical .option-badge {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(0, 161, 201, 0.1);
+        border: 3px solid var(--accent-blue);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--accent-blue);
+      }
+
+      .option-card-vertical .option-text {
+        font-size: 34px;
+        line-height: 1.55;
+        font-weight: 500;
+        color: var(--on-primary);
+      }
+
+      /* --- Scene 4: Reveal & Deep Dive (Workspace Center Focus) --- */
+      .deep-dive-layout {
+        position: absolute;
+        top: 740px; /* Workspace bottom alignment */
+        left: 80px;
+        width: 920px;
+        height: 750px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .dive-card-vertical {
+        position: absolute;
+        width: 100%;
+        max-width: 920px;
+        padding: 40px 48px;
+        border-radius: 24px;
+        background: var(--surface);
+        border: 3px solid var(--surface-border);
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        opacity: 0;
+        transform: scale(0.9);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+      }
+
+      .dive-card-vertical.active-focus {
+        opacity: 1;
+        transform: scale(1.05);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      .dive-card-vertical.correct-card {
+        border-color: var(--accent-green) !important;
+        box-shadow: 0 25px 60px rgba(16, 185, 129, 0.2) !important;
+      }
+
+      .dive-card-vertical.incorrect-card {
+        border-color: var(--accent-red) !important;
+        box-shadow: 0 25px 60px rgba(239, 68, 68, 0.2) !important;
+      }
+
+      .dive-card-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        border-bottom: 2px solid var(--surface-border);
+        padding-bottom: 20px;
+      }
+
+      .dive-card-badge {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .correct-card .dive-card-badge {
+        background: rgba(16, 185, 129, 0.1);
+        border: 3px solid var(--accent-green);
+        color: var(--accent-green);
+      }
+
+      .incorrect-card .dive-card-badge {
+        background: rgba(239, 68, 68, 0.1);
+        border: 3px solid var(--accent-red);
+        color: var(--accent-red);
+      }
+
+      .dive-card-status {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+      }
+
+      .correct-card .dive-card-status { color: var(--accent-green); }
+      .incorrect-card .dive-card-status { color: var(--accent-red); }
+
+      .dive-card-option-text {
+        font-size: 24px;
+        line-height: 1.5;
+        color: var(--muted);
+        font-style: italic;
+        padding-left: 15px;
+        border-left: 3px solid var(--surface-border);
+      }
+
+      .dive-card-explanation {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .explanation-point-vertical {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        font-size: 30px;
+        line-height: 1.5;
+        color: var(--on-primary);
+        opacity: 0;
+      }
+
+      .point-dot-vertical {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-top: 10px;
+        flex-shrink: 0;
+      }
+
+      .correct-card .point-dot-vertical {
+        background: var(--accent-green);
+        box-shadow: 0 0 10px var(--accent-green);
+      }
+
+      .incorrect-card .point-dot-vertical {
+        background: var(--accent-red);
+        box-shadow: 0 0 10px var(--accent-red);
+      }
+
+      /* --- Scene 5: Memory Hook & Outro --- */
+      #scene5 .hook-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 1400px;
+        gap: 60px;
+        padding-top: 150px;
+      }
+
+      #scene5 .hook-card {
+        background: linear-gradient(135deg, rgba(255, 153, 0, 0.08), rgba(0, 161, 201, 0.08));
+        border: 2px solid var(--accent-orange);
+        border-radius: 24px;
+        padding: 60px 48px;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(255, 153, 0, 0.15);
+        width: 100%;
+        max-width: 920px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        opacity: 0;
+        transform: scale(0.85);
+      }
+
+      #scene5 .brain-icon {
+        font-size: 100px;
+        line-height: 1;
+      }
+
+      #scene5 .hook-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 42px;
+        font-weight: 700;
+        color: var(--accent-orange);
+        letter-spacing: 0.05em;
+      }
+
+      #scene5 .hook-formula {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 34px;
+        font-weight: 700;
+        line-height: 1.65;
+        color: var(--on-primary);
+      }
+
+      #scene5 .hook-formula span {
+        background: rgba(255, 153, 0, 0.15);
+        color: var(--accent-orange);
+        padding: 4px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 153, 0, 0.3);
+        display: inline-block;
+        margin-top: 10px;
+      }
+
+      #scene5 .hook-outro {
+        font-size: 26px;
+        color: var(--muted);
+        font-weight: 500;
+        text-align: center;
+        line-height: 1.5;
+        padding: 0 20px;
+        opacity: 0;
+      }
+
+      /* --- Captions System --- */
+      #caption-wrapper {
+        position: absolute;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 920px;
+        height: 100px;
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 0 40px;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      #caption-box {
+        font-family: 'Space Mono', monospace;
+        color: var(--on-primary);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+        white-space: nowrap;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translate3d(460px, -50%, 0);
+        transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+        will-change: transform;
+      }
+
+      .caption-word {
+        font-size: 38px;
+        font-weight: 500;
+        opacity: 0.3;
+        transition: opacity 0.2s, color 0.2s, transform 0.2s;
+        flex-shrink: 0;
+        display: inline-block;
+      }
+
+      .caption-word.active {
+        opacity: 1;
+        color: var(--accent-orange);
+        font-weight: 700;
+        transform: scale(1.15);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="83.0"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- Background elements (Shared globally under scenes) -->
+      <div class="bg-grid"></div>
+      <div class="bg-glow bg-glow-1"></div>
+      <div class="bg-glow bg-glow-2"></div>
+
+      <!-- Narration Audio Clip -->
+      <audio id="narration" src="narration.wav" data-start="0" data-track-index="0"></audio>
+
+      <!-- Persistent stationary question card at top half of canvas -->
+      <div class="card" id="global-question-card">
+        <p class="question-text">
+          You have noticed that several critical Amazon EC2 instances have been terminated. Which of the following AWS services would help you determine who took this action?
+        </p>
+        <div class="status-bar">
+          <span class="status-dot"></span>
+          <span class="status-lbl">ANALYZING REQUIREMENTS...</span>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 1: TITLE CARD ================= -->
+      <div id="scene1" class="scene clip" data-start="0" data-duration="3.4" data-track-index="1" data-layout-allow-overflow>
+        <div class="title-card-layout">
+          <div class="exam-badge" id="s1-exam-badge">AWS CERTIFIED CLOUD PRACTITIONER</div>
+          <div class="exam-code" id="s1-exam-code">CLF-C02</div>
+          <div class="question-num" id="s1-question-num">Question #3</div>
+          <div class="decorative-line" id="s1-line"></div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 2: QUESTION CONTEXT ================= -->
+      <div id="scene2" class="scene clip" data-start="3.4" data-duration="10.2" data-track-index="2" data-layout-allow-overflow>
+        <div class="scene-header" id="s2-header">
+          <span class="header-badge">AWS CLF-C02</span>
+          <span class="header-info">Topic 1 · Question #3</span>
+        </div>
+        <div class="scene-title" id="s2-title">Question Context</div>
+        
+        <div class="question-visual" id="s2-visual">
+          <div class="browser-mockup" id="s2-browser">
+            <!-- Browser Header Bar -->
+            <div class="browser-header">
+              <div class="window-controls">
+                <span class="control-dot red"></span>
+                <span class="control-dot yellow"></span>
+                <span class="control-dot green"></span>
+              </div>
+              <div class="url-bar">https://console.aws.amazon.com/cloudtrail</div>
+            </div>
+            
+            <!-- AWS Web UI Content -->
+            <div class="browser-content">
+              <!-- AWS Navbar -->
+              <div class="aws-navbar">
+                <div class="aws-logo">
+                  aws<span>CloudTrail</span>
+                </div>
+                <div class="aws-search">Search events, trails, lookup attributes...</div>
+                <div class="aws-user-pill">cloud_admin @ aws</div>
+              </div>
+              
+              <!-- AWS Dashboard Layout -->
+              <div class="aws-dashboard">
+                <!-- Sidebar -->
+                <div class="aws-sidebar">
+                  <div class="sidebar-item">Dashboard</div>
+                  <div class="sidebar-item active" id="s2-sidebar-history">Event history</div>
+                  <div class="sidebar-item">Insights</div>
+                  <div class="sidebar-item">Trails</div>
+                  <div class="sidebar-item">Settings</div>
+                </div>
+                <!-- Main Console Body -->
+                <div class="aws-main">
+                  <div class="console-welcome">
+                    Event history <span>Lookup: TerminateInstances</span>
+                  </div>
+                  
+                  <!-- CloudTrail Events Table -->
+                  <table class="ct-table">
+                    <thead>
+                      <tr>
+                        <th>Event name</th>
+                        <th>Event time</th>
+                        <th>User name</th>
+                        <th>Resource</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr id="ct-row-1" class="highlight-row">
+                        <td><span class="ct-badge-event">TerminateInstances</span></td>
+                        <td>10 mins ago</td>
+                        <td><span class="ct-badge-user">bob-admin</span></td>
+                        <td>i-0abcd1234</td>
+                      </tr>
+                      <tr id="ct-row-2">
+                        <td>RunInstances</td>
+                        <td>1 hour ago</td>
+                        <td>autoscaling</td>
+                        <td>i-0ff2b3c4d</td>
+                      </tr>
+                      <tr id="ct-row-3">
+                        <td>StopInstances</td>
+                        <td>2 hours ago</td>
+                        <td>alice-user</td>
+                        <td>i-011223344</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  
+                  <div class="aws-console-info-box">
+                    CloudTrail records actions taken by a user, role, or AWS service.
+                  </div>
+                  
+                  <!-- Click Detail Popup -->
+                  <div class="console-popup" id="s2-popup">
+                    <div class="console-popup-title">Event details</div>
+                    <div class="console-popup-body">
+                      <strong>Username:</strong> bob-admin<br/>
+                      <strong>Action:</strong> TerminateInstances<br/>
+                      <strong>Source IP:</strong> 198.51.100.45<br/>
+                      <strong>Status:</strong> Success
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Click Indicator Ripple -->
+            <div class="click-ripple" id="s2-click-ripple"></div>
+            <!-- Virtual Cursor -->
+            <div class="virtual-cursor" id="s2-cursor">
+              <svg viewBox="0 0 24 24" width="32" height="32">
+                <path d="M4 3l16 11-8 2 5 7-3 2-5-7-5 3v-18z" fill="#00A1C9" stroke="#F8FAFC" stroke-width="2"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 3: OPTIONS EVALUATION ================= -->
+      <div id="scene3" class="scene clip" data-start="13.6" data-duration="10.5" data-track-index="1" data-layout-allow-overflow>
+        <div class="scene-header" id="s3-header">
+          <span class="header-badge">PROPOSED OPTIONS</span>
+          <span class="header-info">Evaluating options</span>
+        </div>
+        <div class="scene-title" id="s3-title">Proposed Options</div>
+
+        <div class="options-presentation-layout">
+          <div class="card option-card-vertical" id="s3-optA">
+            <div class="option-badge">A</div>
+            <div class="option-text">Amazon Inspector</div>
+          </div>
+          <div class="card option-card-vertical" id="s3-optB">
+            <div class="option-badge">B</div>
+            <div class="option-text">AWS CloudTrail</div>
+          </div>
+          <div class="card option-card-vertical" id="s3-optC">
+            <div class="option-badge">C</div>
+            <div class="option-text">AWS Trusted Advisor</div>
+          </div>
+          <div class="card option-card-vertical" id="s3-optD">
+            <div class="option-badge">D</div>
+            <div class="option-text">EC2 Instance Usage Report</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 4: REVEAL & DEEP DIVE ================= -->
+      <div id="scene4" class="scene clip" data-start="24.1" data-duration="50.0" data-track-index="2" data-layout-allow-overflow>
+        <div class="scene-header" id="s4-header">
+          <span class="header-badge">ANSWER DEEP DIVE</span>
+          <span class="header-info">Detailed justifications</span>
+        </div>
+        <div class="scene-title" id="s4-title">Technical Deep Dive</div>
+
+        <div class="deep-dive-layout">
+          <!-- Card B (Correct - AWS CloudTrail) -->
+          <div class="dive-card-vertical correct-card" id="s4-expB">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">B</div>
+              <div class="dive-card-status">CORRECT ANSWER</div>
+            </div>
+            <p class="dive-card-option-text">AWS CloudTrail</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical" id="s4-expB-p1">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Activity Logging:</strong> Tracks user activity, API calls, and resource mutations within your AWS account.</div>
+              </div>
+              <div class="explanation-point-vertical" id="s4-expB-p2">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Audit Trails:</strong> Log files reveal who called the API (e.g. TerminateInstances), when, and from what IP.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card A (Incorrect - Amazon Inspector) -->
+          <div class="dive-card-vertical incorrect-card" id="s4-expA">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">A</div>
+              <div class="dive-card-status">INCORRECT</div>
+            </div>
+            <p class="dive-card-option-text">Amazon Inspector</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical" id="s4-expA-p1">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Vulnerability Scans:</strong> Scans operating systems and EC2 packages for known security flaws, not user actions.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card C (Incorrect - AWS Trusted Advisor) -->
+          <div class="dive-card-vertical incorrect-card" id="s4-expC">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">C</div>
+              <div class="dive-card-status">INCORRECT</div>
+            </div>
+            <p class="dive-card-option-text">AWS Trusted Advisor</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical" id="s4-expC-p1">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Optimization Advisor:</strong> Advises on security, cost, performance, and limits, but does not provide event logs.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card D (Incorrect - EC2 Instance Usage Report) -->
+          <div class="dive-card-vertical incorrect-card" id="s4-expD">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">D</div>
+              <div class="dive-card-status">INCORRECT</div>
+            </div>
+            <p class="dive-card-option-text">EC2 Instance Usage Report</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical" id="s4-expD-p1">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Cost & Usage Metrics:</strong> Aggregates historical runtime hours and billing calculations, not audit tracking.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 5: MEMORY HOOK & OUTRO ================= -->
+      <div id="scene5" class="scene clip" data-start="74.1" data-duration="8.9" data-track-index="1" data-layout-allow-overflow>
+        <div id="s5-content-wrap" style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: flex-start;">
+          <div class="scene-header" id="s5-header">
+            <span class="header-badge">MEMORY HOOK</span>
+            <span class="header-info">Exam Strategy</span>
+          </div>
+          <div class="scene-title" id="s5-title">Key Takeaways</div>
+
+          <div class="hook-container">
+            <div class="hook-card" id="s5-hook-card">
+              <div class="brain-icon" id="s5-brain">🧠</div>
+              <div class="hook-title">Auditing & Security Hook:</div>
+              <div class="hook-formula" id="s5-summary-text">
+                Who did what & when? = <span>CloudTrail</span><br/>
+                Software Vulnerabilities = Inspector<br/>
+                AWS Best Practices = Trusted Advisor
+              </div>
+            </div>
+            <div class="hook-outro" id="s5-outro">
+              Track API actions with AWS CloudTrail!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Synced Captions Box -->
+      <div id="caption-wrapper" data-layout-allow-overflow>
+        <div id="caption-box">Loading captions...</div>
+      </div>
+    </div>
+
+    <!-- GSAP Choreography Script -->
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = tl;
+
+      // Ensure elements start in clean state for "gsap.from" layouts
+      gsap.set("#scene2", { x: "100%" });
+      gsap.set("#scene3", { x: "100%" });
+      gsap.set("#scene4", { x: "100%" });
+      gsap.set("#scene5", { x: "100%" });
+
+      // Ambient background animations
+      tl.to(".bg-glow-1", { x: 100, y: 50, duration: 20, repeat: 3, yoyo: true, ease: "sine.inOut" }, 0);
+      tl.to(".bg-glow-2", { x: -100, y: -50, duration: 25, repeat: 2, yoyo: true, ease: "sine.inOut" }, 0);
+
+      // ================= SCENE 1 ANIMATIONS (0.0s - 3.4s) =================
+      tl.from("#s1-exam-badge", { y: -50, opacity: 0, duration: 0.8, ease: "power3.out" }, 0.2);
+      tl.from("#s1-exam-code", { scale: 0.9, opacity: 0, duration: 1.0, ease: "back.out(1.5)" }, 0.5);
+      tl.from("#s1-question-num", { y: 50, opacity: 0, duration: 0.8, ease: "power3.out" }, 0.8);
+      tl.from("#s1-line", { width: 0, opacity: 0, duration: 0.8, ease: "power2.out" }, 1.2);
+
+      // TRANSITION: Scene 1 -> Scene 2 (at 3.4s)
+      tl.to("#scene1", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 3.4);
+      tl.to("#scene2", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 3.4);
+
+      // ================= STATIONARY QUESTION CARD ANIMATION =================
+      // Fade in at 3.8s (when S2 starts reading question)
+      tl.to("#global-question-card", { opacity: 1, duration: 0.8, ease: "power2.out" }, 3.8);
+      // Fade out at 74.1s (when S5 Hook starts)
+      tl.to("#global-question-card", { opacity: 0, duration: 0.8, ease: "power2.in" }, 74.1);
+
+      // ================= SCENE 2 ANIMATIONS (3.4s - 13.6s) =================
+      tl.from("#s2-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 3.8);
+      tl.from("#s2-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 4.1);
+      
+      // Browser Mockup animations
+      tl.to("#s2-browser", { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.2)" }, 4.5);
+      
+      // Cursor move and click sequence (Starts around 6.0s, clicks around 8.0s)
+      tl.to("#s2-cursor", { opacity: 1, duration: 0.3 }, 5.8);
+      tl.to("#s2-cursor", { 
+        x: 350, 
+        y: 220, 
+        duration: 1.8, 
+        ease: "power2.inOut" 
+      }, 6.0);
+
+      // Click highlight action
+      tl.to("#s2-cursor", { scale: 0.8, duration: 0.1, yoyo: true, repeat: 1 }, 7.8);
+      tl.to("#s2-click-ripple", { 
+        x: 350, 
+        y: 220, 
+        scale: 1.5, 
+        opacity: 1, 
+        duration: 0.1 
+      }, 7.8);
+      tl.to("#s2-click-ripple", { 
+        scale: 3, 
+        opacity: 0, 
+        duration: 0.4, 
+        ease: "power1.out" 
+      }, 7.9);
+      
+      // Row Highlight
+      tl.to("#ct-row-1", { className: "highlight-row clicked", duration: 0.3 }, 7.9);
+      
+      // Popup display
+      tl.to("#s2-popup", { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.5)" }, 8.1);
+
+      // TRANSITION: Scene 2 -> Scene 3 (at 13.6s)
+      tl.to("#scene2", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 13.6);
+      tl.to("#scene3", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 13.6);
+
+      // ================= SCENE 3 ANIMATIONS (13.6s - 24.1s) =================
+      tl.from("#s3-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 13.9);
+      tl.from("#s3-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 14.2);
+
+      // Option A Centered Focus (13.67s - 15.67s)
+      tl.to("#s3-optA", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 13.67);
+      tl.set("#s3-optA", { className: "option-card-vertical active-focus" }, 13.67);
+
+      // Option B Centered Focus (15.67s - 18.05s)
+      tl.to("#s3-optA", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 15.67);
+      tl.set("#s3-optA", { className: "option-card-vertical" }, 15.67);
+      tl.to("#s3-optB", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 15.67);
+      tl.set("#s3-optB", { className: "option-card-vertical active-focus" }, 15.67);
+
+      // Option C Centered Focus (18.05s - 21.01s)
+      tl.to("#s3-optB", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 18.05);
+      tl.set("#s3-optB", { className: "option-card-vertical" }, 18.05);
+      tl.to("#s3-optC", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 18.05);
+      tl.set("#s3-optC", { className: "option-card-vertical active-focus" }, 18.05);
+
+      // Option D Centered Focus (21.01s - 24.1s)
+      tl.to("#s3-optC", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 21.01);
+      tl.set("#s3-optC", { className: "option-card-vertical" }, 21.01);
+      tl.to("#s3-optD", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 21.01);
+      tl.set("#s3-optD", { className: "option-card-vertical active-focus" }, 21.01);
+
+      // TRANSITION: Scene 3 -> Scene 4 (at 24.1s)
+      tl.to("#scene3", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 24.1);
+      tl.to("#scene4", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 24.1);
+
+      // ================= SCENE 4 ANIMATIONS (24.1s - 74.1s) =================
+      tl.from("#s4-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 24.4);
+      tl.from("#s4-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 24.7);
+
+      // Option B correct reveal & deep dive (24.1s - 46.51s)
+      tl.to("#s4-expB", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 24.2);
+      tl.set("#s4-expB", { className: "dive-card-vertical correct-card active-focus" }, 24.2);
+      // Option B bullet points timing
+      tl.to("#s4-expB-p1", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 27.14);
+      tl.to("#s4-expB-p2", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 37.31);
+
+      // Option A incorrect deep dive (46.51s - 55.75s)
+      tl.to("#s4-expB", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 46.51);
+      tl.set("#s4-expB", { className: "dive-card-vertical correct-card" }, 46.51);
+      tl.to("#s4-expA", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 46.51);
+      tl.set("#s4-expA", { className: "dive-card-vertical incorrect-card active-focus" }, 46.51);
+      // Option A bullet points timing
+      tl.to("#s4-expA-p1", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 47.91);
+
+      // Option C incorrect deep dive (55.75s - 66.15s)
+      tl.to("#s4-expA", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 55.75);
+      tl.set("#s4-expA", { className: "dive-card-vertical incorrect-card" }, 55.75);
+      tl.to("#s4-expC", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 55.75);
+      tl.set("#s4-expC", { className: "dive-card-vertical incorrect-card active-focus" }, 55.75);
+      // Option C bullet points timing
+      tl.to("#s4-expC-p1", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 57.53);
+
+      // Option D incorrect deep dive (66.15s - 74.1s)
+      tl.to("#s4-expC", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 66.15);
+      tl.set("#s4-expC", { className: "dive-card-vertical incorrect-card" }, 66.15);
+      tl.to("#s4-expD", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 66.15);
+      tl.set("#s4-expD", { className: "dive-card-vertical incorrect-card active-focus" }, 66.15);
+      // Option D bullet points timing
+      tl.to("#s4-expD-p1", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 67.93);
+
+      // TRANSITION: Scene 4 -> Scene 5 (at 74.1s)
+      tl.to("#scene4", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 74.1);
+      tl.to("#scene5", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 74.1);
+
+      // ================= SCENE 5 ANIMATIONS (74.1s - 83.0s) =================
+      tl.from("#s5-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 74.4);
+      tl.from("#s5-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 74.7);
+      
+      tl.to("#s5-hook-card", { scale: 1, opacity: 1, duration: 0.8, ease: "elastic.out(1.1, 0.75)" }, 74.9);
+      tl.from("#s5-brain", { scale: 0, rotation: -45, duration: 0.6, ease: "back.out(2.5)" }, 75.3);
+      tl.from("#s5-summary-text", { y: 25, opacity: 0, duration: 0.6, ease: "power2.out" }, 75.6);
+      tl.to("#s5-outro", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 78.7);
+
+      // Outro Fade Out to Black
+      tl.to("#s5-content-wrap", { opacity: 0, duration: 1.2, ease: "power2.in" }, 81.5);
+      tl.to("#caption-wrapper", { opacity: 0, duration: 1.0 }, 81.5);
+      tl.set("#s5-content-wrap", { visibility: "hidden" }, 82.8);
+      tl.set("#caption-wrapper", { visibility: "hidden" }, 82.8);
+
+      // ================= CAPTIONS SYNCHRONIZATION SYSTEM =================
+      var TRANSCRIPT = [{"text": "AWS", "start": 0.03, "end": 0.22}, {"text": "Certified", "start": 0.22, "end": 0.89}, {"text": "Cloud", "start": 0.89, "end": 1.23}, {"text": "Practitioner,", "start": 1.36, "end": 2.34}, {"text": "question", "start": 2.34, "end": 2.89}, {"text": "three.", "start": 2.89, "end": 3.39}, {"text": "You", "start": 3.39, "end": 3.54}, {"text": "have", "start": 3.54, "end": 3.78}, {"text": "noticed", "start": 3.78, "end": 4.2}, {"text": "that", "start": 4.2, "end": 4.28}, {"text": "several", "start": 4.28, "end": 4.44}, {"text": "critical", "start": 4.44, "end": 4.88}, {"text": "Amazon", "start": 4.88, "end": 5.4}, {"text": "EC2", "start": 5.4, "end": 5.99}, {"text": "instances", "start": 6.05, "end": 6.28}, {"text": "have", "start": 6.67, "end": 6.87}, {"text": "been", "start": 6.87, "end": 7.1}, {"text": "terminated.", "start": 7.1, "end": 7.87}, {"text": "Which", "start": 7.91, "end": 8.23}, {"text": "of", "start": 8.23, "end": 8.37}, {"text": "the", "start": 8.37, "end": 8.54}, {"text": "following", "start": 8.57, "end": 9.11}, {"text": "AWS", "start": 9.24, "end": 9.42}, {"text": "services", "start": 9.42, "end": 10}, {"text": "would", "start": 10.03, "end": 10.24}, {"text": "help", "start": 10.24, "end": 10.43}, {"text": "you", "start": 10.43, "end": 10.57}, {"text": "determine", "start": 10.57, "end": 10.95}, {"text": "who", "start": 11.05, "end": 11.14}, {"text": "took", "start": 11.14, "end": 11.23}, {"text": "this", "start": 11.36, "end": 11.52}, {"text": "action?", "start": 11.52, "end": 12}, {"text": "Let's", "start": 12.03, "end": 12.33}, {"text": "review", "start": 12.33, "end": 12.71}, {"text": "the", "start": 12.74, "end": 12.94}, {"text": "options.", "start": 12.94, "end": 13.58}, {"text": "Option", "start": 13.67, "end": 14.14}, {"text": "A,", "start": 14.14, "end": 14.35}, {"text": "Amazon", "start": 14.37, "end": 14.87}, {"text": "Inspector.", "start": 15, "end": 15.64}, {"text": "Option", "start": 15.67, "end": 16.21}, {"text": "B,", "start": 16.21, "end": 16.49}, {"text": "AWS", "start": 16.49, "end": 16.77}, {"text": "CloudTrail.", "start": 16.77, "end": 18}, {"text": "Option", "start": 18.05, "end": 18.63}, {"text": "C,", "start": 18.63, "end": 18.93}, {"text": "AWS", "start": 18.93, "end": 19.23}, {"text": "Trusted", "start": 19.23, "end": 19.9}, {"text": "Advisor.", "start": 19.93, "end": 20.92}, {"text": "Option", "start": 21.01, "end": 21.5}, {"text": "D,", "start": 21.5, "end": 21.69}, {"text": "EC2", "start": 21.75, "end": 22.17}, {"text": "Instance", "start": 22.17, "end": 22.75}, {"text": "Usage", "start": 22.86, "end": 23.28}, {"text": "Report.", "start": 23.28, "end": 23.9}, {"text": "The", "start": 24.13, "end": 24.29}, {"text": "correct", "start": 24.29, "end": 24.75}, {"text": "answer", "start": 24.75, "end": 25.05}, {"text": "is", "start": 25.15, "end": 25.27}, {"text": "option", "start": 25.27, "end": 25.65}, {"text": "B.", "start": 25.66, "end": 25.87}, {"text": "Option", "start": 25.99, "end": 26.4}, {"text": "Bis", "start": 26.4, "end": 26.61}, {"text": "correct", "start": 26.61, "end": 27.14}, {"text": "because", "start": 27.14, "end": 27.4}, {"text": "AWS", "start": 27.4, "end": 27.72}, {"text": "CloudTrail", "start": 27.72, "end": 28.8}, {"text": "monitors", "start": 28.8, "end": 28.88}, {"text": "and", "start": 29.29, "end": 29.44}, {"text": "logs", "start": 29.44, "end": 29.68}, {"text": "account", "start": 29.68, "end": 30.1}, {"text": "activity", "start": 30.1, "end": 30.49}, {"text": "across", "start": 30.62, "end": 31.03}, {"text": "your", "start": 31.14, "end": 31.42}, {"text": "AWS", "start": 31.42, "end": 31.66}, {"text": "infrastructure,", "start": 31.66, "end": 32.84}, {"text": "recording", "start": 32.87, "end": 33.33}, {"text": "details", "start": 33.33, "end": 33.71}, {"text": "such", "start": 33.71, "end": 33.93}, {"text": "as", "start": 33.93, "end": 34.04}, {"text": "who", "start": 34.04, "end": 34.07}, {"text": "made", "start": 34.2, "end": 34.43}, {"text": "the", "start": 34.52, "end": 34.79}, {"text": "API", "start": 34.79, "end": 35.14}, {"text": "call,", "start": 35.14, "end": 35.6}, {"text": "when", "start": 35.63, "end": 35.95}, {"text": "and", "start": 35.95, "end": 36.21}, {"text": "from", "start": 36.21, "end": 36.55}, {"text": "where.", "start": 36.65, "end": 37.18}, {"text": "When", "start": 37.31, "end": 37.56}, {"text": "an", "start": 37.59, "end": 37.71}, {"text": "EC2", "start": 37.71, "end": 37.99}, {"text": "instance", "start": 38.05, "end": 38.65}, {"text": "is", "start": 38.65, "end": 38.79}, {"text": "terminated,", "start": 38.79, "end": 39.56}, {"text": "CloudTrail", "start": 39.59, "end": 40.16}, {"text": "captures", "start": 40.16, "end": 40.64}, {"text": "the", "start": 40.64, "end": 40.81}, {"text": "terminate", "start": 40.88, "end": 41.33}, {"text": "instances", "start": 41.44, "end": 41.92}, {"text": "API", "start": 41.92, "end": 42.37}, {"text": "event,", "start": 42.37, "end": 43.12}, {"text": "allowing", "start": 43.15, "end": 43.73}, {"text": "you", "start": 43.73, "end": 43.95}, {"text": "to", "start": 43.95, "end": 44.07}, {"text": "trace", "start": 44.17, "end": 44.35}, {"text": "it", "start": 44.48, "end": 44.63}, {"text": "to", "start": 44.63, "end": 44.69}, {"text": "a", "start": 44.8, "end": 44.85}, {"text": "specific", "start": 44.85, "end": 45.46}, {"text": "user", "start": 45.46, "end": 45.76}, {"text": "or", "start": 45.85, "end": 45.91}, {"text": "role.", "start": 45.91, "end": 46.48}, {"text": "Option", "start": 46.51, "end": 46.87}, {"text": "A", "start": 46.87, "end": 46.93}, {"text": "is", "start": 46.93, "end": 47.06}, {"text": "incorrect.", "start": 47.06, "end": 47.88}, {"text": "Amazon", "start": 47.91, "end": 48.31}, {"text": "Inspector", "start": 48.31, "end": 48.96}, {"text": "scans", "start": 48.96, "end": 49.32}, {"text": "EC2", "start": 49.32, "end": 49.65}, {"text": "instances", "start": 49.76, "end": 50.29}, {"text": "for", "start": 50.39, "end": 50.49}, {"text": "software", "start": 50.53, "end": 50.91}, {"text": "vulnerabilities", "start": 50.91, "end": 51.59}, {"text": "and", "start": 51.72, "end": 51.83}, {"text": "unintended", "start": 51.83, "end": 52.36}, {"text": "network", "start": 52.36, "end": 52.76}, {"text": "exposure", "start": 52.76, "end": 53.26}, {"text": "rather", "start": 53.63, "end": 53.99}, {"text": "than", "start": 53.99, "end": 54.25}, {"text": "auditing", "start": 54.25, "end": 54.77}, {"text": "user", "start": 54.77, "end": 55.03}, {"text": "actions.", "start": 55.03, "end": 55.72}, {"text": "Option", "start": 55.75, "end": 56.22}, {"text": "Cis", "start": 56.22, "end": 56.43}, {"text": "incorrect.", "start": 56.46, "end": 57.49}, {"text": "AWS", "start": 57.53, "end": 57.7}, {"text": "Trusted", "start": 57.7, "end": 58.15}, {"text": "Advisor", "start": 58.16, "end": 58.63}, {"text": "provides", "start": 58.63, "end": 59.08}, {"text": "recommendations", "start": 59.18, "end": 60.14}, {"text": "to", "start": 60.23, "end": 60.32}, {"text": "optimize", "start": 60.32, "end": 60.86}, {"text": "cost,", "start": 60.9, "end": 61.27}, {"text": "security", "start": 61.27, "end": 61.78}, {"text": "performance", "start": 61.88, "end": 62.6}, {"text": "and", "start": 62.6, "end": 62.75}, {"text": "fault", "start": 62.75, "end": 63}, {"text": "tolerance,", "start": 63, "end": 63.84}, {"text": "but", "start": 63.87, "end": 64.1}, {"text": "does", "start": 64.1, "end": 64.45}, {"text": "not", "start": 64.45, "end": 64.71}, {"text": "track", "start": 64.71, "end": 65.07}, {"text": "API", "start": 65.2, "end": 65.39}, {"text": "calls.", "start": 65.39, "end": 66.12}, {"text": "Option", "start": 66.15, "end": 66.62}, {"text": "Dis", "start": 66.62, "end": 66.83}, {"text": "incorrect.", "start": 66.86, "end": 67.89}, {"text": "EC2", "start": 67.93, "end": 68.27}, {"text": "Instance", "start": 68.28, "end": 68.85}, {"text": "Usage", "start": 68.95, "end": 69.29}, {"text": "Report", "start": 69.29, "end": 69.78}, {"text": "shows", "start": 69.8, "end": 70.08}, {"text": "instance", "start": 70.17, "end": 70.53}, {"text": "usage", "start": 70.61, "end": 70.82}, {"text": "and", "start": 70.82, "end": 71.31}, {"text": "costs,", "start": 71.31, "end": 71.72}, {"text": "not", "start": 71.75, "end": 71.91}, {"text": "user", "start": 71.91, "end": 72.16}, {"text": "activities", "start": 72.16, "end": 72.8}, {"text": "or", "start": 72.8, "end": 72.93}, {"text": "termination", "start": 72.93, "end": 73.64}, {"text": "logs.", "start": 73.64, "end": 74.12}, {"text": "Here", "start": 74.15, "end": 74.37}, {"text": "is", "start": 74.37, "end": 74.49}, {"text": "your", "start": 74.49, "end": 74.74}, {"text": "memory", "start": 74.74, "end": 75.07}, {"text": "hook.", "start": 75.17, "end": 75.6}, {"text": "Need", "start": 75.63, "end": 75.81}, {"text": "to", "start": 75.81, "end": 75.9}, {"text": "find", "start": 75.91, "end": 76.12}, {"text": "who", "start": 76.12, "end": 76.26}, {"text": "did", "start": 76.3, "end": 76.44}, {"text": "what", "start": 76.44, "end": 76.55}, {"text": "and", "start": 76.65, "end": 76.81}, {"text": "when?", "start": 76.81, "end": 77.18}, {"text": "Think", "start": 77.23, "end": 77.61}, {"text": "CloudTrail.", "start": 77.61, "end": 78.68}, {"text": "To", "start": 78.71, "end": 78.8}, {"text": "scan", "start": 78.8, "end": 79.04}, {"text": "for", "start": 79.04, "end": 79.22}, {"text": "security", "start": 79.22, "end": 79.63}, {"text": "vulnerabilities,", "start": 79.73, "end": 80.76}, {"text": "think", "start": 80.76, "end": 81.04}, {"text": "Inspector.", "start": 81.06, "end": 81.8}];
+
+      function initCaptionsDOM() {
+        const box = document.getElementById("caption-box");
+        box.innerHTML = ''; // Clear loading text
+        
+        TRANSCRIPT.forEach((wordObj, idx) => {
+          const span = document.createElement("span");
+          span.className = "caption-word";
+          span.id = `w-${idx}`;
+          span.textContent = wordObj.text;
+          box.appendChild(span);
+        });
+      }
+
+      // Automatically run caption initialization
+      if (typeof TRANSCRIPT !== 'undefined') {
+        initCaptionsDOM();
+      }
+
+      // Hook dynamic caption updating directly to the timeline update callback
+      // This makes the captions 100% deterministic and scrub-friendly!
+      tl.eventCallback("onUpdate", () => {
+        const t = tl.time();
+        if (typeof TRANSCRIPT === 'undefined' || TRANSCRIPT.length === 0) return;
+
+        let activeIdx = -1;
+
+        // Find current words falling within active timing
+        TRANSCRIPT.forEach((wordObj, idx) => {
+          const span = document.getElementById(`w-${idx}`);
+          if (!span) return;
+
+          if (t >= wordObj.start && t <= wordObj.end) {
+            span.className = "caption-word active";
+            activeIdx = idx;
+          } else {
+            span.className = "caption-word";
+          }
+        });
+
+        // Slide the caption track so the active word is centered horizontally
+        if (activeIdx !== -1) {
+          const activeSpan = document.getElementById(`w-${activeIdx}`);
+          const box = document.getElementById("caption-box");
+          const wrapper = document.getElementById("caption-wrapper");
+          if (activeSpan && box && wrapper) {
+            const wrapperCenter = (wrapper.offsetWidth || 920) / 2;
+            const activeCenter = activeSpan.offsetLeft + activeSpan.offsetWidth / 2;
+            const shift = wrapperCenter - activeCenter;
+            box.style.transform = `translate3d(${shift}px, -50%, 0)`;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,802 @@
+[
+  {
+    "text": "AWS",
+    "start": 0.03,
+    "end": 0.21
+  },
+  {
+    "text": "Certified",
+    "start": 0.21,
+    "end": 0.89
+  },
+  {
+    "text": "Cloud",
+    "start": 0.89,
+    "end": 1.18
+  },
+  {
+    "text": "Practitioner",
+    "start": 1.27,
+    "end": 2.16
+  },
+  {
+    "text": "Question",
+    "start": 2.16,
+    "end": 2.89
+  },
+  {
+    "text": "1.",
+    "start": 2.89,
+    "end": 3.44
+  },
+  {
+    "text": "AWS",
+    "start": 3.47,
+    "end": 3.7
+  },
+  {
+    "text": "allows",
+    "start": 3.71,
+    "end": 4.26
+  },
+  {
+    "text": "users",
+    "start": 4.26,
+    "end": 4.62
+  },
+  {
+    "text": "to",
+    "start": 4.75,
+    "end": 4.9
+  },
+  {
+    "text": "manage",
+    "start": 4.9,
+    "end": 5.47
+  },
+  {
+    "text": "their",
+    "start": 5.48,
+    "end": 5.62
+  },
+  {
+    "text": "resources",
+    "start": 5.71,
+    "end": 6.35
+  },
+  {
+    "text": "using",
+    "start": 6.39,
+    "end": 6.71
+  },
+  {
+    "text": "a",
+    "start": 6.71,
+    "end": 6.78
+  },
+  {
+    "text": "web-based",
+    "start": 6.78,
+    "end": 7.41
+  },
+  {
+    "text": "user",
+    "start": 7.41,
+    "end": 7.69
+  },
+  {
+    "text": "interface.",
+    "start": 7.69,
+    "end": 8.54
+  },
+  {
+    "text": "What",
+    "start": 8.59,
+    "end": 8.75
+  },
+  {
+    "text": "is",
+    "start": 8.75,
+    "end": 8.84
+  },
+  {
+    "text": "the",
+    "start": 8.84,
+    "end": 8.98
+  },
+  {
+    "text": "name",
+    "start": 8.98,
+    "end": 9.17
+  },
+  {
+    "text": "of",
+    "start": 9.17,
+    "end": 9.22
+  },
+  {
+    "text": "this",
+    "start": 9.25,
+    "end": 9.45
+  },
+  {
+    "text": "interface?",
+    "start": 9.45,
+    "end": 10.08
+  },
+  {
+    "text": "Let's",
+    "start": 10.11,
+    "end": 10.41
+  },
+  {
+    "text": "review",
+    "start": 10.41,
+    "end": 10.74
+  },
+  {
+    "text": "the",
+    "start": 10.8,
+    "end": 10.99
+  },
+  {
+    "text": "options.",
+    "start": 11.08,
+    "end": 11.6
+  },
+  {
+    "text": "Option",
+    "start": 11.71,
+    "end": 12.34
+  },
+  {
+    "text": "A,",
+    "start": 12.42,
+    "end": 12.8
+  },
+  {
+    "text": "OzKly.",
+    "start": 12.8,
+    "end": 13.44
+  },
+  {
+    "text": "Option",
+    "start": 13.47,
+    "end": 14.05
+  },
+  {
+    "text": "B,",
+    "start": 14.09,
+    "end": 14.35
+  },
+  {
+    "text": "OzAPI.",
+    "start": 14.44,
+    "end": 15.17
+  },
+  {
+    "text": "Option",
+    "start": 15.31,
+    "end": 16.07
+  },
+  {
+    "text": "C,",
+    "start": 16.07,
+    "end": 16.46
+  },
+  {
+    "text": "OzSDK.",
+    "start": 16.46,
+    "end": 17.46
+  },
+  {
+    "text": "Option",
+    "start": 17.55,
+    "end": 18.07
+  },
+  {
+    "text": "D,",
+    "start": 18.07,
+    "end": 18.34
+  },
+  {
+    "text": "AWS",
+    "start": 18.34,
+    "end": 18.61
+  },
+  {
+    "text": "Management",
+    "start": 18.61,
+    "end": 19.53
+  },
+  {
+    "text": "Console.",
+    "start": 19.53,
+    "end": 20.46
+  },
+  {
+    "text": "The",
+    "start": 20.51,
+    "end": 20.68
+  },
+  {
+    "text": "correct",
+    "start": 20.68,
+    "end": 21.14
+  },
+  {
+    "text": "answer",
+    "start": 21.14,
+    "end": 21.56
+  },
+  {
+    "text": "is",
+    "start": 21.56,
+    "end": 21.67
+  },
+  {
+    "text": "Option",
+    "start": 21.75,
+    "end": 22
+  },
+  {
+    "text": "D.",
+    "start": 22.12,
+    "end": 22.4
+  },
+  {
+    "text": "Option",
+    "start": 22.43,
+    "end": 22.82
+  },
+  {
+    "text": "Dis",
+    "start": 22.82,
+    "end": 23.01
+  },
+  {
+    "text": "correct",
+    "start": 23.04,
+    "end": 23.54
+  },
+  {
+    "text": "because",
+    "start": 23.54,
+    "end": 23.8
+  },
+  {
+    "text": "the",
+    "start": 23.8,
+    "end": 23.91
+  },
+  {
+    "text": "AWS",
+    "start": 23.91,
+    "end": 24.13
+  },
+  {
+    "text": "Management",
+    "start": 24.25,
+    "end": 25.08
+  },
+  {
+    "text": "Console",
+    "start": 25.08,
+    "end": 25.38
+  },
+  {
+    "text": "is",
+    "start": 25.75,
+    "end": 25.83
+  },
+  {
+    "text": "the",
+    "start": 25.84,
+    "end": 26.02
+  },
+  {
+    "text": "official",
+    "start": 26.02,
+    "end": 26.51
+  },
+  {
+    "text": "web-based",
+    "start": 26.51,
+    "end": 27.05
+  },
+  {
+    "text": "user",
+    "start": 27.05,
+    "end": 27.25
+  },
+  {
+    "text": "interface",
+    "start": 27.36,
+    "end": 27.88
+  },
+  {
+    "text": "that",
+    "start": 27.91,
+    "end": 28.18
+  },
+  {
+    "text": "lets",
+    "start": 28.18,
+    "end": 28.48
+  },
+  {
+    "text": "you",
+    "start": 28.48,
+    "end": 28.7
+  },
+  {
+    "text": "access",
+    "start": 28.7,
+    "end": 29.06
+  },
+  {
+    "text": "and",
+    "start": 29.15,
+    "end": 29.37
+  },
+  {
+    "text": "manage",
+    "start": 29.37,
+    "end": 29.82
+  },
+  {
+    "text": "AWS",
+    "start": 29.82,
+    "end": 30.04
+  },
+  {
+    "text": "services",
+    "start": 30.04,
+    "end": 30.68
+  },
+  {
+    "text": "through",
+    "start": 30.71,
+    "end": 31.14
+  },
+  {
+    "text": "a",
+    "start": 31.15,
+    "end": 31.21
+  },
+  {
+    "text": "web",
+    "start": 31.21,
+    "end": 31.34
+  },
+  {
+    "text": "browser.",
+    "start": 31.38,
+    "end": 32.12
+  },
+  {
+    "text": "It",
+    "start": 32.15,
+    "end": 32.22
+  },
+  {
+    "text": "is",
+    "start": 32.22,
+    "end": 32.32
+  },
+  {
+    "text": "the",
+    "start": 32.32,
+    "end": 32.48
+  },
+  {
+    "text": "most",
+    "start": 32.48,
+    "end": 32.69
+  },
+  {
+    "text": "user-friendly",
+    "start": 32.69,
+    "end": 33.3
+  },
+  {
+    "text": "way",
+    "start": 33.43,
+    "end": 33.56
+  },
+  {
+    "text": "to",
+    "start": 33.56,
+    "end": 33.64
+  },
+  {
+    "text": "interact",
+    "start": 33.76,
+    "end": 34.24
+  },
+  {
+    "text": "with",
+    "start": 34.27,
+    "end": 34.56
+  },
+  {
+    "text": "AWS",
+    "start": 34.56,
+    "end": 34.8
+  },
+  {
+    "text": "resources",
+    "start": 34.8,
+    "end": 35.42
+  },
+  {
+    "text": "without",
+    "start": 35.55,
+    "end": 35.97
+  },
+  {
+    "text": "writing",
+    "start": 36.09,
+    "end": 36.64
+  },
+  {
+    "text": "code.",
+    "start": 36.64,
+    "end": 37.18
+  },
+  {
+    "text": "Option",
+    "start": 37.27,
+    "end": 37.74
+  },
+  {
+    "text": "A",
+    "start": 37.74,
+    "end": 37.82
+  },
+  {
+    "text": "is",
+    "start": 37.82,
+    "end": 37.97
+  },
+  {
+    "text": "incorrect.",
+    "start": 37.97,
+    "end": 38.97
+  },
+  {
+    "text": "AWS",
+    "start": 39.03,
+    "end": 39.33
+  },
+  {
+    "text": "CLI",
+    "start": 39.33,
+    "end": 39.61
+  },
+  {
+    "text": "is",
+    "start": 39.65,
+    "end": 39.88
+  },
+  {
+    "text": "a",
+    "start": 39.88,
+    "end": 39.9
+  },
+  {
+    "text": "command",
+    "start": 40,
+    "end": 40.73
+  },
+  {
+    "text": "line",
+    "start": 40.85,
+    "end": 41.18
+  },
+  {
+    "text": "tool",
+    "start": 41.27,
+    "end": 41.68
+  },
+  {
+    "text": "for",
+    "start": 41.71,
+    "end": 41.85
+  },
+  {
+    "text": "running",
+    "start": 41.85,
+    "end": 42.26
+  },
+  {
+    "text": "commands",
+    "start": 42.26,
+    "end": 42.72
+  },
+  {
+    "text": "in",
+    "start": 42.72,
+    "end": 42.84
+  },
+  {
+    "text": "your",
+    "start": 42.84,
+    "end": 43.07
+  },
+  {
+    "text": "terminal.",
+    "start": 43.07,
+    "end": 43.76
+  },
+  {
+    "text": "Option",
+    "start": 43.79,
+    "end": 44.2
+  },
+  {
+    "text": "Bis",
+    "start": 44.2,
+    "end": 44.37
+  },
+  {
+    "text": "incorrect.",
+    "start": 44.4,
+    "end": 45.29
+  },
+  {
+    "text": "AWS",
+    "start": 45.35,
+    "end": 45.58
+  },
+  {
+    "text": "API",
+    "start": 45.59,
+    "end": 45.86
+  },
+  {
+    "text": "is",
+    "start": 45.86,
+    "end": 45.98
+  },
+  {
+    "text": "the",
+    "start": 46.04,
+    "end": 46.23
+  },
+  {
+    "text": "back-end",
+    "start": 46.32,
+    "end": 47.03
+  },
+  {
+    "text": "interface",
+    "start": 47.03,
+    "end": 47.88
+  },
+  {
+    "text": "for",
+    "start": 47.91,
+    "end": 48.1
+  },
+  {
+    "text": "making",
+    "start": 48.12,
+    "end": 48.54
+  },
+  {
+    "text": "programmatic",
+    "start": 48.6,
+    "end": 49.59
+  },
+  {
+    "text": "HTTP",
+    "start": 49.59,
+    "end": 49.91
+  },
+  {
+    "text": "requests.",
+    "start": 49.91,
+    "end": 50.82
+  },
+  {
+    "text": "Option",
+    "start": 50.87,
+    "end": 51.37
+  },
+  {
+    "text": "Cis",
+    "start": 51.37,
+    "end": 51.63
+  },
+  {
+    "text": "incorrect.",
+    "start": 51.63,
+    "end": 52.71
+  },
+  {
+    "text": "AWS",
+    "start": 52.75,
+    "end": 52.94
+  },
+  {
+    "text": "SDK",
+    "start": 52.98,
+    "end": 53.18
+  },
+  {
+    "text": "provides",
+    "start": 53.18,
+    "end": 53.8
+  },
+  {
+    "text": "software",
+    "start": 53.8,
+    "end": 54.42
+  },
+  {
+    "text": "development",
+    "start": 54.42,
+    "end": 55.27
+  },
+  {
+    "text": "kits",
+    "start": 55.27,
+    "end": 55.6
+  },
+  {
+    "text": "for",
+    "start": 55.63,
+    "end": 55.77
+  },
+  {
+    "text": "writing",
+    "start": 55.77,
+    "end": 56.18
+  },
+  {
+    "text": "code",
+    "start": 56.18,
+    "end": 56.41
+  },
+  {
+    "text": "in",
+    "start": 56.41,
+    "end": 56.51
+  },
+  {
+    "text": "programming",
+    "start": 56.6,
+    "end": 57.12
+  },
+  {
+    "text": "languages.",
+    "start": 57.24,
+    "end": 57.72
+  },
+  {
+    "text": "Here",
+    "start": 57.75,
+    "end": 57.94
+  },
+  {
+    "text": "is",
+    "start": 57.97,
+    "end": 58.09
+  },
+  {
+    "text": "your",
+    "start": 58.09,
+    "end": 58.33
+  },
+  {
+    "text": "memory",
+    "start": 58.33,
+    "end": 58.62
+  },
+  {
+    "text": "hook.",
+    "start": 58.72,
+    "end": 59.2
+  },
+  {
+    "text": "Web",
+    "start": 59.23,
+    "end": 59.39
+  },
+  {
+    "text": "GUI",
+    "start": 59.39,
+    "end": 59.58
+  },
+  {
+    "text": "equals",
+    "start": 59.58,
+    "end": 59.97
+  },
+  {
+    "text": "Management",
+    "start": 59.97,
+    "end": 60.62
+  },
+  {
+    "text": "Console.",
+    "start": 60.62,
+    "end": 61.32
+  },
+  {
+    "text": "CLI",
+    "start": 61.35,
+    "end": 61.62
+  },
+  {
+    "text": "is",
+    "start": 61.62,
+    "end": 61.82
+  },
+  {
+    "text": "command",
+    "start": 61.82,
+    "end": 62.49
+  },
+  {
+    "text": "line.",
+    "start": 62.59,
+    "end": 63.24
+  },
+  {
+    "text": "SDK",
+    "start": 63.27,
+    "end": 63.52
+  },
+  {
+    "text": "and",
+    "start": 63.52,
+    "end": 63.8
+  },
+  {
+    "text": "API",
+    "start": 63.8,
+    "end": 64.07
+  },
+  {
+    "text": "are",
+    "start": 64.07,
+    "end": 64.36
+  },
+  {
+    "text": "for",
+    "start": 64.36,
+    "end": 64.64
+  },
+  {
+    "text": "programming.",
+    "start": 64.64,
+    "end": 66
+  },
+  {
+    "text": "See",
+    "start": 66.03,
+    "end": 66.19
+  },
+  {
+    "text": "web-based,",
+    "start": 66.19,
+    "end": 66.87
+  },
+  {
+    "text": "choose",
+    "start": 66.87,
+    "end": 67.18
+  },
+  {
+    "text": "Management",
+    "start": 67.27,
+    "end": 67.87
+  },
+  {
+    "text": "Console.",
+    "start": 67.88,
+    "end": 68.56
+  }
+]

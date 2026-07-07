@@ -1,0 +1,1373 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>AWS Certified Cloud Practitioner (CLF-C02) - Question 1</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      /* --- Local Font Face Definitions --- */
+      @font-face {
+        font-family: 'Space Grotesk';
+        src: url('fonts/space-grotesk-latin-400-normal.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Space Grotesk';
+        src: url('fonts/space-grotesk-latin-700-normal.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Space Mono';
+        src: url('fonts/space-mono-latin-400-normal.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Space Mono';
+        src: url('fonts/space-mono-latin-700-normal.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+      }
+
+      /* --- Design Tokens --- */
+      :root {
+        --primary: #0F172A;         /* Slate 900 (Canvas background) */
+        --surface: #1E293B;         /* Slate 800 (Card background) */
+        --on-primary: #F8FAFC;      /* Slate 50 (Primary high-contrast text) */
+        --muted: #94A3B8;           /* Slate 400 (Secondary descriptive text) */
+        --accent-orange: #FF9900;   /* AWS Orange (Highlighting and memory hooks) */
+        --accent-blue: #00A1C9;     /* AWS Blue (Active borders and badges) */
+        --accent-green: #10B981;    /* Success Green (Correct answer card) */
+        --accent-red: #EF4444;      /* Error Red (Incorrect justifications) */
+        --surface-border: rgba(255, 255, 255, 0.08);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--primary);
+        font-family: 'Space Mono', monospace;
+        color: var(--on-primary);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* --- Global Layout Wrapper --- */
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+      }
+
+      /* --- Background Layer (Global) --- */
+      .bg-grid {
+        position: absolute;
+        inset: 0;
+        background-image: 
+          linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        background-size: 80px 80px;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .bg-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(140px);
+        opacity: 0.12;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .bg-glow-1 {
+        width: 600px;
+        height: 600px;
+        background: var(--accent-orange);
+        top: -100px;
+        left: -100px;
+      }
+
+      .bg-glow-2 {
+        width: 800px;
+        height: 800px;
+        background: var(--accent-blue);
+        bottom: -200px;
+        right: -200px;
+      }
+
+      /* --- Scene Base Styling --- */
+      .scene {
+        position: absolute;
+        width: 1080px;
+        height: 1920px;
+        top: 0;
+        left: 0;
+        padding: 70px 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        z-index: 10;
+        background: var(--primary);
+      }
+
+      /* --- Typography & Headers --- */
+      .scene-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--surface-border);
+        padding-bottom: 16px;
+      }
+
+      .header-badge {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--accent-blue);
+        background: rgba(0, 161, 201, 0.1);
+        padding: 8px 20px;
+        border-radius: 30px;
+        border: 1px solid rgba(0, 161, 201, 0.2);
+      }
+
+      .header-info {
+        font-size: 22px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .scene-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 54px;
+        font-weight: 700;
+        color: var(--on-primary);
+        margin-bottom: 60px;
+        line-height: 1.2;
+        text-align: center;
+      }
+
+      .highlight-orange {
+        color: var(--accent-orange);
+      }
+
+      .highlight-blue {
+        color: var(--accent-blue);
+      }
+
+      .highlight-green {
+        color: var(--accent-green);
+      }
+
+      /* --- Cards and Containers --- */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--surface-border);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      /* --- Scene 1: Title Card --- */
+      .title-card-layout {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        gap: 35px;
+        padding-top: 350px;
+      }
+
+      .exam-badge {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--accent-blue);
+        letter-spacing: 0.15em;
+        background: rgba(0, 161, 201, 0.1);
+        padding: 12px 32px;
+        border-radius: 40px;
+        border: 1px solid rgba(0, 161, 201, 0.2);
+      }
+
+      .exam-code {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 120px;
+        font-weight: 700;
+        color: var(--on-primary);
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+      }
+
+      .question-num {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 54px;
+        font-weight: 700;
+        color: var(--accent-orange);
+      }
+
+      .decorative-line {
+        width: 200px;
+        height: 5px;
+        background: linear-gradient(90deg, var(--accent-blue), var(--accent-orange));
+        border-radius: 2px;
+        margin-top: 10px;
+      }
+
+      /* --- Persistent Question Context Card --- */
+      #global-question-card {
+        position: absolute;
+        top: 180px;
+        left: 80px;
+        width: 920px;
+        height: 540px;
+        border-left: 6px solid var(--accent-orange);
+        opacity: 0;
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        pointer-events: none;
+      }
+
+      .question-text {
+        font-size: 34px;
+        line-height: 1.65;
+        font-weight: 500;
+        color: var(--on-primary);
+        font-family: 'Space Mono', monospace;
+      }
+
+      .status-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 20px;
+        font-family: 'Space Mono', monospace;
+        font-size: 20px;
+        color: var(--muted);
+      }
+
+      .status-dot {
+        width: 12px;
+        height: 12px;
+        background: var(--accent-orange);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--accent-orange);
+      }
+
+      /* --- Scene 2: Question Visual (Web Browser Mockup) --- */
+      #scene2 .question-visual {
+        position: absolute;
+        top: 760px; /* Offset into workspace */
+        left: 80px;
+        width: 920px;
+        height: 600px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .browser-mockup {
+        width: 860px;
+        height: 520px;
+        background: #111827;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      .browser-header {
+        height: 48px;
+        background: #1E293B;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .window-controls {
+        display: flex;
+        gap: 8px;
+      }
+
+      .control-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+
+      .control-dot.red { background: #EF4444; }
+      .control-dot.yellow { background: #F59E0B; }
+      .control-dot.green { background: #10B981; }
+
+      .url-bar {
+        flex-grow: 1;
+        height: 28px;
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        padding-left: 15px;
+        font-size: 14px;
+        color: var(--muted);
+        font-family: 'Space Mono', monospace;
+      }
+
+      .browser-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        background: #0F172A;
+      }
+
+      .aws-navbar {
+        height: 52px;
+        background: #1E293B;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        gap: 16px;
+      }
+
+      .aws-logo {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        font-size: 20px;
+        color: var(--accent-orange);
+        letter-spacing: -0.05em;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .aws-logo span {
+        font-size: 11px;
+        background: var(--accent-orange);
+        color: #000;
+        padding: 1px 4px;
+        border-radius: 3px;
+        font-weight: 700;
+      }
+
+      .aws-search {
+        flex-grow: 1;
+        max-width: 420px;
+        height: 32px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .aws-user-pill {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent-blue);
+      }
+
+      .aws-dashboard {
+        flex-grow: 1;
+        display: flex;
+      }
+
+      .aws-sidebar {
+        width: 170px;
+        background: #1E293B;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        flex-direction: column;
+        padding: 12px;
+        gap: 8px;
+      }
+
+      .sidebar-item {
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted);
+        font-family: 'Space Grotesk', sans-serif;
+      }
+
+      .sidebar-item.active {
+        background: rgba(255, 153, 0, 0.1);
+        color: var(--accent-orange);
+        font-weight: 700;
+      }
+
+      .aws-main {
+        flex-grow: 1;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        position: relative;
+      }
+
+      .console-welcome {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--on-primary);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .console-welcome span {
+        font-size: 12px;
+        color: var(--muted);
+        font-family: 'Space Mono', monospace;
+      }
+
+      .widget-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .console-widget {
+        background: #1E293B;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+
+      .console-widget.highlighted {
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 15px rgba(0, 161, 201, 0.25);
+      }
+
+      .widget-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--accent-orange);
+      }
+
+      .widget-desc {
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+
+      .aws-console-info-box {
+        background: rgba(0, 161, 201, 0.05);
+        border: 1px solid rgba(0, 161, 201, 0.15);
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--accent-blue);
+        margin-top: 5px;
+      }
+
+      /* Popup Alert on click */
+      .console-popup {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        background: #1E293B;
+        border: 2px solid var(--accent-blue);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        border-radius: 12px;
+        padding: 24px;
+        width: 320px;
+        text-align: center;
+        opacity: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        z-index: 10;
+      }
+
+      .console-popup-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--accent-orange);
+      }
+
+      .console-popup-body {
+        font-size: 13px;
+        color: var(--on-primary);
+        line-height: 1.5;
+      }
+
+      /* Virtual Pointer Cursor */
+      .virtual-cursor {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 99;
+        transform: translate3d(700px, 450px, 0);
+        opacity: 0;
+      }
+
+      .click-ripple {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 40px;
+        height: 40px;
+        border: 2px solid var(--accent-blue);
+        background: rgba(0, 161, 201, 0.1);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        pointer-events: none;
+        z-index: 98;
+      }
+
+      /* --- Scene 3: Options Presentation (Workspace Center Focus) --- */
+      .options-presentation-layout {
+        position: absolute;
+        top: 740px; /* Workspace bottom alignment */
+        left: 80px;
+        width: 920px;
+        height: 700px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .option-card-vertical {
+        position: absolute;
+        width: 100%;
+        max-width: 920px;
+        padding: 50px 48px;
+        border-radius: 24px;
+        background: var(--surface);
+        border: 3px solid var(--surface-border);
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+        text-align: center;
+        opacity: 0;
+        transform: scale(0.9);
+        transition: border-color 0.3s, box-shadow 0.3s;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+      }
+
+      .option-card-vertical.active-focus {
+        opacity: 1;
+        transform: scale(1.1);
+        border-color: var(--accent-blue);
+        box-shadow: 0 25px 60px rgba(0, 161, 201, 0.25);
+      }
+
+      .option-card-vertical .option-badge {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(0, 161, 201, 0.1);
+        border: 3px solid var(--accent-blue);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--accent-blue);
+      }
+
+      .option-card-vertical .option-text {
+        font-size: 34px;
+        line-height: 1.55;
+        font-weight: 500;
+        color: var(--on-primary);
+      }
+
+      /* --- Scene 4: Reveal & Deep Dive (Workspace Center Focus) --- */
+      .deep-dive-layout {
+        position: absolute;
+        top: 740px; /* Workspace bottom alignment */
+        left: 80px;
+        width: 920px;
+        height: 750px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .dive-card-vertical {
+        position: absolute;
+        width: 100%;
+        max-width: 920px;
+        padding: 40px 48px;
+        border-radius: 24px;
+        background: var(--surface);
+        border: 3px solid var(--surface-border);
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        opacity: 0;
+        transform: scale(0.9);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+      }
+
+      .dive-card-vertical.active-focus {
+        opacity: 1;
+        transform: scale(1.05);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      .dive-card-vertical.correct-card {
+        border-color: var(--accent-green) !important;
+        box-shadow: 0 25px 60px rgba(16, 185, 129, 0.2) !important;
+      }
+
+      .dive-card-vertical.incorrect-card {
+        border-color: var(--accent-red) !important;
+        box-shadow: 0 25px 60px rgba(239, 68, 68, 0.2) !important;
+      }
+
+      .dive-card-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        border-bottom: 2px solid var(--surface-border);
+        padding-bottom: 20px;
+      }
+
+      .dive-card-badge {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .correct-card .dive-card-badge {
+        background: rgba(16, 185, 129, 0.1);
+        border: 3px solid var(--accent-green);
+        color: var(--accent-green);
+      }
+
+      .incorrect-card .dive-card-badge {
+        background: rgba(239, 68, 68, 0.1);
+        border: 3px solid var(--accent-red);
+        color: var(--accent-red);
+      }
+
+      .dive-card-status {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+      }
+
+      .correct-card .dive-card-status { color: var(--accent-green); }
+      .incorrect-card .dive-card-status { color: var(--accent-red); }
+
+      .dive-card-option-text {
+        font-size: 24px;
+        line-height: 1.5;
+        color: var(--muted);
+        font-style: italic;
+        padding-left: 15px;
+        border-left: 3px solid var(--surface-border);
+      }
+
+      .dive-card-explanation {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .explanation-point-vertical {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        font-size: 30px;
+        line-height: 1.5;
+        color: var(--on-primary);
+        opacity: 0;
+      }
+
+      .point-dot-vertical {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-top: 10px;
+        flex-shrink: 0;
+      }
+
+      .correct-card .point-dot-vertical {
+        background: var(--accent-green);
+        box-shadow: 0 0 10px var(--accent-green);
+      }
+
+      .incorrect-card .point-dot-vertical {
+        background: var(--accent-red);
+        box-shadow: 0 0 10px var(--accent-red);
+      }
+
+      /* --- Scene 5: Memory Hook & Outro --- */
+      #scene5 .hook-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 1400px;
+        gap: 60px;
+        padding-top: 150px;
+      }
+
+      #scene5 .hook-card {
+        background: linear-gradient(135deg, rgba(255, 153, 0, 0.08), rgba(0, 161, 201, 0.08));
+        border: 2px solid var(--accent-orange);
+        border-radius: 24px;
+        padding: 60px 48px;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(255, 153, 0, 0.15);
+        width: 100%;
+        max-width: 920px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        opacity: 0;
+        transform: scale(0.85);
+      }
+
+      #scene5 .brain-icon {
+        font-size: 100px;
+        line-height: 1;
+      }
+
+      #scene5 .hook-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 42px;
+        font-weight: 700;
+        color: var(--accent-orange);
+        letter-spacing: 0.05em;
+      }
+
+      #scene5 .hook-formula {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 34px;
+        font-weight: 700;
+        line-height: 1.65;
+        color: var(--on-primary);
+      }
+
+      #scene5 .hook-formula span {
+        background: rgba(255, 153, 0, 0.15);
+        color: var(--accent-orange);
+        padding: 4px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 153, 0, 0.3);
+        display: inline-block;
+        margin-top: 10px;
+      }
+
+      #scene5 .hook-outro {
+        font-size: 26px;
+        color: var(--muted);
+        font-weight: 500;
+        text-align: center;
+        line-height: 1.5;
+        padding: 0 20px;
+        opacity: 0;
+      }
+
+      /* --- Captions System --- */
+      #caption-wrapper {
+        position: absolute;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 920px;
+        height: 100px;
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 0 40px;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      #caption-box {
+        font-family: 'Space Mono', monospace;
+        color: var(--on-primary);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+        white-space: nowrap;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translate3d(460px, -50%, 0);
+        transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+        will-change: transform;
+      }
+
+      .caption-word {
+        font-size: 38px;
+        font-weight: 500;
+        opacity: 0.3;
+        transition: opacity 0.2s, color 0.2s, transform 0.2s;
+        flex-shrink: 0;
+        display: inline-block;
+      }
+
+      .caption-word.active {
+        opacity: 1;
+        color: var(--accent-orange);
+        font-weight: 700;
+        transform: scale(1.15);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="69.0"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- Background elements (Shared globally under scenes) -->
+      <div class="bg-grid"></div>
+      <div class="bg-glow bg-glow-1"></div>
+      <div class="bg-glow bg-glow-2"></div>
+
+      <!-- Narration Audio Clip -->
+      <audio id="narration" src="narration.wav" data-start="0" data-track-index="0"></audio>
+
+      <!-- Persistent stationary question card at top half of canvas -->
+      <div class="card" id="global-question-card">
+        <p class="question-text">
+          AWS allows users to manage their resources using a web based user interface. What is the name of this interface?
+        </p>
+        <div class="status-bar">
+          <span class="status-dot"></span>
+          <span class="status-lbl">ANALYZING REQUIREMENTS...</span>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 1: TITLE CARD ================= -->
+      <div id="scene1" class="scene clip" data-start="0" data-duration="3.5" data-track-index="1" data-layout-allow-overflow>
+        <div class="title-card-layout">
+          <div class="exam-badge" id="s1-exam-badge">AWS CERTIFIED CLOUD PRACTITIONER</div>
+          <div class="exam-code" id="s1-exam-code">CLF-C02</div>
+          <div class="question-num" id="s1-question-num">Question #1</div>
+          <div class="decorative-line" id="s1-line"></div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 2: QUESTION CONTEXT ================= -->
+      <div id="scene2" class="scene clip" data-start="3.5" data-duration="6.7" data-track-index="2" data-layout-allow-overflow>
+        <div class="scene-header" id="s2-header">
+          <span class="header-badge">AWS CLF-C02</span>
+          <span class="header-info">Topic 1 · Question #1</span>
+        </div>
+        <div class="scene-title" id="s2-title">Question Context</div>
+        
+        <div class="question-visual" id="s2-visual">
+          <div class="browser-mockup" id="s2-browser">
+            <!-- Browser Header Bar -->
+            <div class="browser-header">
+              <div class="window-controls">
+                <span class="control-dot red"></span>
+                <span class="control-dot yellow"></span>
+                <span class="control-dot green"></span>
+              </div>
+              <div class="url-bar">https://console.aws.amazon.com/</div>
+            </div>
+            
+            <!-- AWS Web UI Content -->
+            <div class="browser-content">
+              <!-- AWS Navbar -->
+              <div class="aws-navbar">
+                <div class="aws-logo">
+                  aws<span>Console</span>
+                </div>
+                <div class="aws-search">Search services, features, blogs, docs...</div>
+                <div class="aws-user-pill">cloud_user @ aws</div>
+              </div>
+              
+              <!-- AWS Dashboard Layout -->
+              <div class="aws-dashboard">
+                <!-- Sidebar -->
+                <div class="aws-sidebar">
+                  <div class="sidebar-item active">Console Home</div>
+                  <div class="sidebar-item">Services</div>
+                  <div class="sidebar-item">Recent</div>
+                  <div class="sidebar-item">Settings</div>
+                </div>
+                <!-- Main Console Body -->
+                <div class="aws-main">
+                  <div class="console-welcome">
+                    Console Home <span>N. Virginia (us-east-1)</span>
+                  </div>
+                  <div class="widget-grid">
+                    <div class="console-widget" id="widget-ec2">
+                      <div class="widget-title">EC2</div>
+                      <div class="widget-desc">Virtual Servers in the Cloud</div>
+                    </div>
+                    <div class="console-widget" id="widget-s3">
+                      <div class="widget-title">S3</div>
+                      <div class="widget-desc">Scalable Storage in the Cloud</div>
+                    </div>
+                    <div class="console-widget" id="widget-rds">
+                      <div class="widget-title">RDS</div>
+                      <div class="widget-desc">Managed Relational Database</div>
+                    </div>
+                  </div>
+                  <div class="aws-console-info-box">
+                    Welcome back! Access your resources quickly through the web interface.
+                  </div>
+                  
+                  <!-- Click Alert Popup -->
+                  <div class="console-popup" id="s2-popup">
+                    <div class="console-popup-title">S3 Management Console</div>
+                    <div class="console-popup-body">
+                      Web-based interface loaded. Currently listing buckets in us-east-1.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Click Indicator Ripple -->
+            <div class="click-ripple" id="s2-click-ripple"></div>
+            <!-- Virtual Cursor -->
+            <div class="virtual-cursor" id="s2-cursor">
+              <svg viewBox="0 0 24 24" width="32" height="32">
+                <path d="M4 3l16 11-8 2 5 7-3 2-5-7-5 3v-18z" fill="#00A1C9" stroke="#F8FAFC" stroke-width="2"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 3: OPTIONS EVALUATION ================= -->
+      <div id="scene3" class="scene clip" data-start="10.2" data-duration="10.3" data-track-index="1" data-layout-allow-overflow>
+        <div class="scene-header" id="s3-header">
+          <span class="header-badge">PROPOSED OPTIONS</span>
+          <span class="header-info">Evaluating options</span>
+        </div>
+        <div class="scene-title" id="s3-title">Proposed Options</div>
+
+        <div class="options-presentation-layout">
+          <div class="card option-card-vertical" id="s3-optA">
+            <div class="option-badge">A</div>
+            <div class="option-text">AWS CLI</div>
+          </div>
+          <div class="card option-card-vertical" id="s3-optB">
+            <div class="option-badge">B</div>
+            <div class="option-text">AWS API</div>
+          </div>
+          <div class="card option-card-vertical" id="s3-optC">
+            <div class="option-badge">C</div>
+            <div class="option-text">AWS SDK</div>
+          </div>
+          <div class="card option-card-vertical" id="s3-optD">
+            <div class="option-badge">D</div>
+            <div class="option-text">AWS Management Console</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 4: REVEAL & DEEP DIVE ================= -->
+      <div id="scene4" class="scene clip" data-start="20.5" data-duration="37.2" data-track-index="2" data-layout-allow-overflow>
+        <div class="scene-header" id="s4-header">
+          <span class="header-badge">ANSWER DEEP DIVE</span>
+          <span class="header-info">Detailed justifications</span>
+        </div>
+        <div class="scene-title" id="s4-title">Technical Deep Dive</div>
+
+        <div class="deep-dive-layout">
+          <!-- Card D (Correct - AWS Management Console) -->
+          <div class="dive-card-vertical correct-card" id="s4-expD">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">D</div>
+              <div class="dive-card-status">CORRECT ANSWER</div>
+            </div>
+            <p class="dive-card-option-text">AWS Management Console</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical" id="s4-expD-p1">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Web-Based GUI:</strong> Official portal to manage AWS services through standard browsers.</div>
+              </div>
+              <div class="explanation-point-vertical" id="s4-expD-p2">
+                <div class="point-dot-vertical"></div>
+                <div><strong>User Friendly:</strong> Visual point-and-click interface, great for beginners.</div>
+              </div>
+              <div class="explanation-point-vertical" id="s4-expD-p3">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Zero Coding:</strong> Access resources directly without writing code or terminal commands.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card A (Incorrect - AWS CLI) -->
+          <div class="dive-card-vertical incorrect-card" id="s4-expA">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">A</div>
+              <div class="dive-card-status">INCORRECT</div>
+            </div>
+            <p class="dive-card-option-text">AWS CLI</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical" id="s4-expA-p1">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Command Line:</strong> A command-line tool for executing statements.</div>
+              </div>
+              <div class="explanation-point-vertical" id="s4-expA-p2">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Terminal Only:</strong> Text-based interaction, not a web interface.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card B (Incorrect - AWS API) -->
+          <div class="dive-card-vertical incorrect-card" id="s4-expB">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">B</div>
+              <div class="dive-card-status">INCORRECT</div>
+            </div>
+            <p class="dive-card-option-text">AWS API</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical" id="s4-expB-p1">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Backend Interface:</strong> Programming endpoints used for backend communications.</div>
+              </div>
+              <div class="explanation-point-vertical" id="s4-expB-p2">
+                <div class="point-dot-vertical"></div>
+                <div><strong>HTTP Requests:</strong> Used programmatically, not via a browser UI.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card C (Incorrect - AWS SDK) -->
+          <div class="dive-card-vertical incorrect-card" id="s4-expC">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">C</div>
+              <div class="dive-card-status">INCORRECT</div>
+            </div>
+            <p class="dive-card-option-text">AWS SDK</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical" id="s4-expC-p1">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Software Kits:</strong> Development libraries for specific coding languages.</div>
+              </div>
+              <div class="explanation-point-vertical" id="s4-expC-p2">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Integration:</strong> Used by programmers to build custom applications.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 5: MEMORY HOOK & OUTRO ================= -->
+      <div id="scene5" class="scene clip" data-start="57.7" data-duration="11.3" data-track-index="1" data-layout-allow-overflow>
+        <div id="s5-content-wrap" style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: flex-start;">
+          <div class="scene-header" id="s5-header">
+            <span class="header-badge">MEMORY HOOK</span>
+            <span class="header-info">Exam Strategy</span>
+          </div>
+          <div class="scene-title" id="s5-title">Key Takeaways</div>
+
+          <div class="hook-container">
+            <div class="hook-card" id="s5-hook-card">
+              <div class="brain-icon" id="s5-brain">🧠</div>
+              <div class="hook-title">AWS UI Memory Guide:</div>
+              <div class="hook-formula" id="s5-summary-text">
+                Web GUI = <span>Management Console</span><br/>
+                CLI = Command Line<br/>
+                SDK & API = Coding
+              </div>
+            </div>
+            <div class="hook-outro" id="s5-outro">
+              See web-based, choose Management Console!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Synced Captions Box -->
+      <div id="caption-wrapper" data-layout-allow-overflow>
+        <div id="caption-box">Loading captions...</div>
+      </div>
+    </div>
+
+    <!-- GSAP Choreography Script -->
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = tl;
+
+      // Ensure elements start in clean state for "gsap.from" layouts
+      gsap.set("#scene2", { x: "100%" });
+      gsap.set("#scene3", { x: "100%" });
+      gsap.set("#scene4", { x: "100%" });
+      gsap.set("#scene5", { x: "100%" });
+
+      // Ambient background animations
+      tl.to(".bg-glow-1", { x: 100, y: 50, duration: 20, repeat: 3, yoyo: true, ease: "sine.inOut" }, 0);
+      tl.to(".bg-glow-2", { x: -100, y: -50, duration: 25, repeat: 2, yoyo: true, ease: "sine.inOut" }, 0);
+
+      // ================= SCENE 1 ANIMATIONS (0.0s - 3.5s) =================
+      tl.from("#s1-exam-badge", { y: -50, opacity: 0, duration: 0.8, ease: "power3.out" }, 0.2);
+      tl.from("#s1-exam-code", { scale: 0.9, opacity: 0, duration: 1.0, ease: "back.out(1.5)" }, 0.5);
+      tl.from("#s1-question-num", { y: 50, opacity: 0, duration: 0.8, ease: "power3.out" }, 0.8);
+      tl.from("#s1-line", { width: 0, opacity: 0, duration: 0.8, ease: "power2.out" }, 1.2);
+
+      // TRANSITION: Scene 1 -> Scene 2 (at 3.5s)
+      tl.to("#scene1", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 3.5);
+      tl.to("#scene2", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 3.5);
+
+      // ================= STATIONARY QUESTION CARD ANIMATION =================
+      // Fade in at 3.8s (when S2 starts reading question)
+      tl.to("#global-question-card", { opacity: 1, duration: 0.8, ease: "power2.out" }, 3.8);
+      // Fade out at 57.7s (when S5 Hook starts)
+      tl.to("#global-question-card", { opacity: 0, duration: 0.8, ease: "power2.in" }, 57.7);
+
+      // ================= SCENE 2 ANIMATIONS (3.5s - 10.2s) =================
+      tl.from("#s2-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 3.8);
+      tl.from("#s2-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 4.1);
+      
+      // Browser Mockup animations
+      tl.to("#s2-browser", { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.2)" }, 4.5);
+      
+      // Cursor move and click sequence (Starts around 6.0s, clicks around 7.6s)
+      tl.to("#s2-cursor", { opacity: 1, duration: 0.3 }, 5.8);
+      tl.to("#s2-cursor", { 
+        x: 390, 
+        y: 190, 
+        duration: 1.6, 
+        ease: "power2.inOut" 
+      }, 6.0);
+      
+      // Click highlight action
+      tl.to("#s2-cursor", { scale: 0.8, duration: 0.1, yoyo: true, repeat: 1 }, 7.6);
+      tl.to("#s2-click-ripple", { 
+        x: 390, 
+        y: 190, 
+        scale: 1.5, 
+        opacity: 1, 
+        duration: 0.1 
+      }, 7.6);
+      tl.to("#s2-click-ripple", { 
+        scale: 3, 
+        opacity: 0, 
+        duration: 0.4, 
+        ease: "power1.out" 
+      }, 7.7);
+      
+      // Widget Highlight
+      tl.to("#widget-s3", { className: "console-widget highlighted", duration: 0.3 }, 7.7);
+      
+      // Popup display
+      tl.to("#s2-popup", { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.5)" }, 7.9);
+
+      // TRANSITION: Scene 2 -> Scene 3 (at 10.2s)
+      tl.to("#scene2", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 10.2);
+      tl.to("#scene3", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 10.2);
+
+      // ================= SCENE 3 ANIMATIONS (10.2s - 20.5s) =================
+      tl.from("#s3-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 10.5);
+      tl.from("#s3-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 10.8);
+
+      // Option A Centered Focus (Option A: 11.71s - 13.44s)
+      tl.to("#s3-optA", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 11.71);
+      tl.set("#s3-optA", { className: "option-card-vertical active-focus" }, 11.71);
+
+      // Option B Centered Focus (Option B: 13.47s - 15.17s)
+      tl.to("#s3-optA", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 13.47);
+      tl.set("#s3-optA", { className: "option-card-vertical" }, 13.47);
+      tl.to("#s3-optB", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 13.47);
+      tl.set("#s3-optB", { className: "option-card-vertical active-focus" }, 13.47);
+
+      // Option C Centered Focus (Option C: 15.31s - 17.46s)
+      tl.to("#s3-optB", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 15.31);
+      tl.set("#s3-optB", { className: "option-card-vertical" }, 15.31);
+      tl.to("#s3-optC", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 15.31);
+      tl.set("#s3-optC", { className: "option-card-vertical active-focus" }, 15.31);
+
+      // Option D Centered Focus (Option D: 17.55s - 20.5s)
+      tl.to("#s3-optC", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 17.55);
+      tl.set("#s3-optC", { className: "option-card-vertical" }, 17.55);
+      tl.to("#s3-optD", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 17.55);
+      tl.set("#s3-optD", { className: "option-card-vertical active-focus" }, 17.55);
+
+      // TRANSITION: Scene 3 -> Scene 4 (at 20.5s)
+      tl.to("#scene3", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 20.5);
+      tl.to("#scene4", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 20.5);
+
+      // ================= SCENE 4 ANIMATIONS (20.5s - 57.7s) =================
+      tl.from("#s4-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 20.8);
+      tl.from("#s4-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 21.1);
+
+      // Option D correct reveal & deep dive (20.51s - 37.27s)
+      tl.to("#s4-expD", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 20.51);
+      tl.set("#s4-expD", { className: "dive-card-vertical correct-card active-focus" }, 20.51);
+      // Option D bullet points timing
+      tl.to("#s4-expD-p1", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 22.4);
+      tl.to("#s4-expD-p2", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 26.5);
+      tl.to("#s4-expD-p3", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 32.5);
+
+      // Option A incorrect deep dive (37.27s - 43.79s)
+      tl.to("#s4-expD", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 37.27);
+      tl.set("#s4-expD", { className: "dive-card-vertical correct-card" }, 37.27);
+      tl.to("#s4-expA", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 37.27);
+      tl.set("#s4-expA", { className: "dive-card-vertical incorrect-card active-focus" }, 37.27);
+      // Option A bullet points timing
+      tl.to("#s4-expA-p1", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 39.0);
+      tl.to("#s4-expA-p2", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 41.5);
+
+      // Option B incorrect deep dive (43.79s - 50.87s)
+      tl.to("#s4-expA", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 43.79);
+      tl.set("#s4-expA", { className: "dive-card-vertical incorrect-card" }, 43.79);
+      tl.to("#s4-expB", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 43.79);
+      tl.set("#s4-expB", { className: "dive-card-vertical incorrect-card active-focus" }, 43.79);
+      // Option B bullet points timing
+      tl.to("#s4-expB-p1", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 45.3);
+      tl.to("#s4-expB-p2", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 48.0);
+
+      // Option C incorrect deep dive (50.87s - 57.7s)
+      tl.to("#s4-expB", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 50.87);
+      tl.set("#s4-expB", { className: "dive-card-vertical incorrect-card" }, 50.87);
+      tl.to("#s4-expC", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 50.87);
+      tl.set("#s4-expC", { className: "dive-card-vertical incorrect-card active-focus" }, 50.87);
+      // Option C bullet points timing
+      tl.to("#s4-expC-p1", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 52.7);
+      tl.to("#s4-expC-p2", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 55.5);
+
+      // TRANSITION: Scene 4 -> Scene 5 (at 57.7s)
+      tl.to("#scene4", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 57.7);
+      tl.to("#scene5", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 57.7);
+
+      // ================= SCENE 5 ANIMATIONS (57.7s - 69.0s) =================
+      tl.from("#s5-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 58.0);
+      tl.from("#s5-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 58.3);
+      
+      tl.to("#s5-hook-card", { scale: 1, opacity: 1, duration: 0.8, ease: "elastic.out(1.1, 0.75)" }, 58.5);
+      tl.from("#s5-brain", { scale: 0, rotation: -45, duration: 0.6, ease: "back.out(2.5)" }, 59.2);
+      tl.from("#s5-summary-text", { y: 25, opacity: 0, duration: 0.6, ease: "power2.out" }, 59.8);
+      tl.to("#s5-outro", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 66.0);
+
+      // Outro Fade Out to Black
+      tl.to("#s5-content-wrap", { opacity: 0, duration: 1.2, ease: "power2.in" }, 67.5);
+      tl.to("#caption-wrapper", { opacity: 0, duration: 1.0 }, 67.6);
+      tl.set("#s5-content-wrap", { visibility: "hidden" }, 68.7);
+      tl.set("#caption-wrapper", { visibility: "hidden" }, 68.7);
+
+      // ================= CAPTIONS SYNCHRONIZATION SYSTEM =================
+      var TRANSCRIPT = [{"text": "AWS", "start": 0.03, "end": 0.21}, {"text": "Certified", "start": 0.21, "end": 0.89}, {"text": "Cloud", "start": 0.89, "end": 1.18}, {"text": "Practitioner", "start": 1.27, "end": 2.16}, {"text": "Question", "start": 2.16, "end": 2.89}, {"text": "1.", "start": 2.89, "end": 3.44}, {"text": "AWS", "start": 3.47, "end": 3.7}, {"text": "allows", "start": 3.71, "end": 4.26}, {"text": "users", "start": 4.26, "end": 4.62}, {"text": "to", "start": 4.75, "end": 4.9}, {"text": "manage", "start": 4.9, "end": 5.47}, {"text": "their", "start": 5.48, "end": 5.62}, {"text": "resources", "start": 5.71, "end": 6.35}, {"text": "using", "start": 6.39, "end": 6.71}, {"text": "a", "start": 6.71, "end": 6.78}, {"text": "web-based", "start": 6.78, "end": 7.41}, {"text": "user", "start": 7.41, "end": 7.69}, {"text": "interface.", "start": 7.69, "end": 8.54}, {"text": "What", "start": 8.59, "end": 8.75}, {"text": "is", "start": 8.75, "end": 8.84}, {"text": "the", "start": 8.84, "end": 8.98}, {"text": "name", "start": 8.98, "end": 9.17}, {"text": "of", "start": 9.17, "end": 9.22}, {"text": "this", "start": 9.25, "end": 9.45}, {"text": "interface?", "start": 9.45, "end": 10.08}, {"text": "Let's", "start": 10.11, "end": 10.41}, {"text": "review", "start": 10.41, "end": 10.74}, {"text": "the", "start": 10.8, "end": 10.99}, {"text": "options.", "start": 11.08, "end": 11.6}, {"text": "Option", "start": 11.71, "end": 12.34}, {"text": "A,", "start": 12.42, "end": 12.8}, {"text": "OzKly.", "start": 12.8, "end": 13.44}, {"text": "Option", "start": 13.47, "end": 14.05}, {"text": "B,", "start": 14.09, "end": 14.35}, {"text": "OzAPI.", "start": 14.44, "end": 15.17}, {"text": "Option", "start": 15.31, "end": 16.07}, {"text": "C,", "start": 16.07, "end": 16.46}, {"text": "OzSDK.", "start": 16.46, "end": 17.46}, {"text": "Option", "start": 17.55, "end": 18.07}, {"text": "D,", "start": 18.07, "end": 18.34}, {"text": "AWS", "start": 18.34, "end": 18.61}, {"text": "Management", "start": 18.61, "end": 19.53}, {"text": "Console.", "start": 19.53, "end": 20.46}, {"text": "The", "start": 20.51, "end": 20.68}, {"text": "correct", "start": 20.68, "end": 21.14}, {"text": "answer", "start": 21.14, "end": 21.56}, {"text": "is", "start": 21.56, "end": 21.67}, {"text": "Option", "start": 21.75, "end": 22}, {"text": "D.", "start": 22.12, "end": 22.4}, {"text": "Option", "start": 22.43, "end": 22.82}, {"text": "Dis", "start": 22.82, "end": 23.01}, {"text": "correct", "start": 23.04, "end": 23.54}, {"text": "because", "start": 23.54, "end": 23.8}, {"text": "the", "start": 23.8, "end": 23.91}, {"text": "AWS", "start": 23.91, "end": 24.13}, {"text": "Management", "start": 24.25, "end": 25.08}, {"text": "Console", "start": 25.08, "end": 25.38}, {"text": "is", "start": 25.75, "end": 25.83}, {"text": "the", "start": 25.84, "end": 26.02}, {"text": "official", "start": 26.02, "end": 26.51}, {"text": "web-based", "start": 26.51, "end": 27.05}, {"text": "user", "start": 27.05, "end": 27.25}, {"text": "interface", "start": 27.36, "end": 27.88}, {"text": "that", "start": 27.91, "end": 28.18}, {"text": "lets", "start": 28.18, "end": 28.48}, {"text": "you", "start": 28.48, "end": 28.7}, {"text": "access", "start": 28.7, "end": 29.06}, {"text": "and", "start": 29.15, "end": 29.37}, {"text": "manage", "start": 29.37, "end": 29.82}, {"text": "AWS", "start": 29.82, "end": 30.04}, {"text": "services", "start": 30.04, "end": 30.68}, {"text": "through", "start": 30.71, "end": 31.14}, {"text": "a", "start": 31.15, "end": 31.21}, {"text": "web", "start": 31.21, "end": 31.34}, {"text": "browser.", "start": 31.38, "end": 32.12}, {"text": "It", "start": 32.15, "end": 32.22}, {"text": "is", "start": 32.22, "end": 32.32}, {"text": "the", "start": 32.32, "end": 32.48}, {"text": "most", "start": 32.48, "end": 32.69}, {"text": "user-friendly", "start": 32.69, "end": 33.3}, {"text": "way", "start": 33.43, "end": 33.56}, {"text": "to", "start": 33.56, "end": 33.64}, {"text": "interact", "start": 33.76, "end": 34.24}, {"text": "with", "start": 34.27, "end": 34.56}, {"text": "AWS", "start": 34.56, "end": 34.8}, {"text": "resources", "start": 34.8, "end": 35.42}, {"text": "without", "start": 35.55, "end": 35.97}, {"text": "writing", "start": 36.09, "end": 36.64}, {"text": "code.", "start": 36.64, "end": 37.18}, {"text": "Option", "start": 37.27, "end": 37.74}, {"text": "A", "start": 37.74, "end": 37.82}, {"text": "is", "start": 37.82, "end": 37.97}, {"text": "incorrect.", "start": 37.97, "end": 38.97}, {"text": "AWS", "start": 39.03, "end": 39.33}, {"text": "CLI", "start": 39.33, "end": 39.61}, {"text": "is", "start": 39.65, "end": 39.88}, {"text": "a", "start": 39.88, "end": 39.9}, {"text": "command", "start": 40, "end": 40.73}, {"text": "line", "start": 40.85, "end": 41.18}, {"text": "tool", "start": 41.27, "end": 41.68}, {"text": "for", "start": 41.71, "end": 41.85}, {"text": "running", "start": 41.85, "end": 42.26}, {"text": "commands", "start": 42.26, "end": 42.72}, {"text": "in", "start": 42.72, "end": 42.84}, {"text": "your", "start": 42.84, "end": 43.07}, {"text": "terminal.", "start": 43.07, "end": 43.76}, {"text": "Option", "start": 43.79, "end": 44.2}, {"text": "Bis", "start": 44.2, "end": 44.37}, {"text": "incorrect.", "start": 44.4, "end": 45.29}, {"text": "AWS", "start": 45.35, "end": 45.58}, {"text": "API", "start": 45.59, "end": 45.86}, {"text": "is", "start": 45.86, "end": 45.98}, {"text": "the", "start": 46.04, "end": 46.23}, {"text": "back-end", "start": 46.32, "end": 47.03}, {"text": "interface", "start": 47.03, "end": 47.88}, {"text": "for", "start": 47.91, "end": 48.1}, {"text": "making", "start": 48.12, "end": 48.54}, {"text": "programmatic", "start": 48.6, "end": 49.59}, {"text": "HTTP", "start": 49.59, "end": 49.91}, {"text": "requests.", "start": 49.91, "end": 50.82}, {"text": "Option", "start": 50.87, "end": 51.37}, {"text": "Cis", "start": 51.37, "end": 51.63}, {"text": "incorrect.", "start": 51.63, "end": 52.71}, {"text": "AWS", "start": 52.75, "end": 52.94}, {"text": "SDK", "start": 52.98, "end": 53.18}, {"text": "provides", "start": 53.18, "end": 53.8}, {"text": "software", "start": 53.8, "end": 54.42}, {"text": "development", "start": 54.42, "end": 55.27}, {"text": "kits", "start": 55.27, "end": 55.6}, {"text": "for", "start": 55.63, "end": 55.77}, {"text": "writing", "start": 55.77, "end": 56.18}, {"text": "code", "start": 56.18, "end": 56.41}, {"text": "in", "start": 56.41, "end": 56.51}, {"text": "programming", "start": 56.6, "end": 57.12}, {"text": "languages.", "start": 57.24, "end": 57.72}, {"text": "Here", "start": 57.75, "end": 57.94}, {"text": "is", "start": 57.97, "end": 58.09}, {"text": "your", "start": 58.09, "end": 58.33}, {"text": "memory", "start": 58.33, "end": 58.62}, {"text": "hook.", "start": 58.72, "end": 59.2}, {"text": "Web", "start": 59.23, "end": 59.39}, {"text": "GUI", "start": 59.39, "end": 59.58}, {"text": "equals", "start": 59.58, "end": 59.97}, {"text": "Management", "start": 59.97, "end": 60.62}, {"text": "Console.", "start": 60.62, "end": 61.32}, {"text": "CLI", "start": 61.35, "end": 61.62}, {"text": "is", "start": 61.62, "end": 61.82}, {"text": "command", "start": 61.82, "end": 62.49}, {"text": "line.", "start": 62.59, "end": 63.24}, {"text": "SDK", "start": 63.27, "end": 63.52}, {"text": "and", "start": 63.52, "end": 63.8}, {"text": "API", "start": 63.8, "end": 64.07}, {"text": "are", "start": 64.07, "end": 64.36}, {"text": "for", "start": 64.36, "end": 64.64}, {"text": "programming.", "start": 64.64, "end": 66}, {"text": "See", "start": 66.03, "end": 66.19}, {"text": "web-based,", "start": 66.19, "end": 66.87}, {"text": "choose", "start": 66.87, "end": 67.18}, {"text": "Management", "start": 67.27, "end": 67.87}, {"text": "Console.", "start": 67.88, "end": 68.56}];
+
+      function initCaptionsDOM() {
+        const box = document.getElementById("caption-box");
+        box.innerHTML = ''; // Clear loading text
+        
+        TRANSCRIPT.forEach((wordObj, idx) => {
+          const span = document.createElement("span");
+          span.className = "caption-word";
+          span.id = `w-${idx}`;
+          span.textContent = wordObj.text;
+          box.appendChild(span);
+        });
+      }
+
+      // Automatically run caption initialization
+      if (typeof TRANSCRIPT !== 'undefined') {
+        initCaptionsDOM();
+      }
+
+      // Hook dynamic caption updating directly to the timeline update callback
+      // This makes the captions 100% deterministic and scrub-friendly!
+      tl.eventCallback("onUpdate", () => {
+        const t = tl.time();
+        if (typeof TRANSCRIPT === 'undefined' || TRANSCRIPT.length === 0) return;
+
+        let activeIdx = -1;
+
+        // Find current words falling within active timing
+        TRANSCRIPT.forEach((wordObj, idx) => {
+          const span = document.getElementById(`w-${idx}`);
+          if (!span) return;
+
+          if (t >= wordObj.start && t <= wordObj.end) {
+            span.className = "caption-word active";
+            activeIdx = idx;
+          } else {
+            span.className = "caption-word";
+          }
+        });
+
+        // Slide the caption track so the active word is centered horizontally
+        if (activeIdx !== -1) {
+          const activeSpan = document.getElementById(`w-${activeIdx}`);
+          const box = document.getElementById("caption-box");
+          const wrapper = document.getElementById("caption-wrapper");
+          if (activeSpan && box && wrapper) {
+            const wrapperCenter = (wrapper.offsetWidth || 920) / 2;
+            const activeCenter = activeSpan.offsetLeft + activeSpan.offsetWidth / 2;
+            const shift = wrapperCenter - activeCenter;
+            box.style.transform = `translate3d(${shift}px, -50%, 0)`;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

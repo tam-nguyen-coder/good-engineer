@@ -1,0 +1,1289 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>AWS Certified Cloud Practitioner (CLF-C02) - Question 2</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      /* --- Local Font Face Definitions --- */
+      @font-face {
+        font-family: 'Space Grotesk';
+        src: url('fonts/space-grotesk-latin-400-normal.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Space Grotesk';
+        src: url('fonts/space-grotesk-latin-700-normal.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Space Mono';
+        src: url('fonts/space-mono-latin-400-normal.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Space Mono';
+        src: url('fonts/space-mono-latin-700-normal.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+      }
+
+      /* --- Design Tokens --- */
+      :root {
+        --primary: #0F172A;         /* Slate 900 (Canvas background) */
+        --surface: #1E293B;         /* Slate 800 (Card background) */
+        --on-primary: #F8FAFC;      /* Slate 50 (Primary high-contrast text) */
+        --muted: #94A3B8;           /* Slate 400 (Secondary descriptive text) */
+        --accent-orange: #FF9900;   /* AWS Orange (Highlighting and memory hooks) */
+        --accent-blue: #00A1C9;     /* AWS Blue (Active borders and badges) */
+        --accent-green: #10B981;    /* Success Green (Correct answer card) */
+        --accent-red: #EF4444;      /* Error Red (Incorrect justifications) */
+        --surface-border: rgba(255, 255, 255, 0.08);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--primary);
+        font-family: 'Space Mono', monospace;
+        color: var(--on-primary);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* --- Global Layout Wrapper --- */
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+      }
+
+      /* --- Background Layer (Global) --- */
+      .bg-grid {
+        position: absolute;
+        inset: 0;
+        background-image: 
+          linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        background-size: 80px 80px;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .bg-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(140px);
+        opacity: 0.12;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .bg-glow-1 {
+        width: 600px;
+        height: 600px;
+        background: var(--accent-orange);
+        top: -100px;
+        left: -100px;
+      }
+
+      .bg-glow-2 {
+        width: 800px;
+        height: 800px;
+        background: var(--accent-blue);
+        bottom: -200px;
+        right: -200px;
+      }
+
+      /* --- Scene Base Styling --- */
+      .scene {
+        position: absolute;
+        width: 1080px;
+        height: 1920px;
+        top: 0;
+        left: 0;
+        padding: 70px 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        z-index: 10;
+        background: var(--primary);
+      }
+
+      /* --- Typography & Headers --- */
+      .scene-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--surface-border);
+        padding-bottom: 16px;
+      }
+
+      .header-badge {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--accent-blue);
+        background: rgba(0, 161, 201, 0.1);
+        padding: 8px 20px;
+        border-radius: 30px;
+        border: 1px solid rgba(0, 161, 201, 0.2);
+      }
+
+      .header-info {
+        font-size: 22px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .scene-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 54px;
+        font-weight: 700;
+        color: var(--on-primary);
+        margin-bottom: 60px;
+        line-height: 1.2;
+        text-align: center;
+      }
+
+      .highlight-orange {
+        color: var(--accent-orange);
+      }
+
+      .highlight-blue {
+        color: var(--accent-blue);
+      }
+
+      .highlight-green {
+        color: var(--accent-green);
+      }
+
+      /* --- Cards and Containers --- */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--surface-border);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      /* --- Scene 1: Title Card --- */
+      .title-card-layout {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        gap: 35px;
+        padding-top: 350px;
+      }
+
+      .exam-badge {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--accent-blue);
+        letter-spacing: 0.15em;
+        background: rgba(0, 161, 201, 0.1);
+        padding: 12px 32px;
+        border-radius: 40px;
+        border: 1px solid rgba(0, 161, 201, 0.2);
+      }
+
+      .exam-code {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 120px;
+        font-weight: 700;
+        color: var(--on-primary);
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+      }
+
+      .question-num {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 54px;
+        font-weight: 700;
+        color: var(--accent-orange);
+      }
+
+      .decorative-line {
+        width: 200px;
+        height: 5px;
+        background: linear-gradient(90deg, var(--accent-blue), var(--accent-orange));
+        border-radius: 2px;
+        margin-top: 10px;
+      }
+
+      /* --- Persistent Question Context Card --- */
+      #global-question-card {
+        position: absolute;
+        top: 180px;
+        left: 80px;
+        width: 920px;
+        height: 540px;
+        border-left: 6px solid var(--accent-orange);
+        opacity: 0;
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        pointer-events: none;
+      }
+
+      .question-text {
+        font-size: 34px;
+        line-height: 1.65;
+        font-weight: 500;
+        color: var(--on-primary);
+        font-family: 'Space Mono', monospace;
+      }
+
+      .status-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 20px;
+        font-family: 'Space Mono', monospace;
+        font-size: 20px;
+        color: var(--muted);
+      }
+
+      .status-dot {
+        width: 12px;
+        height: 12px;
+        background: var(--accent-orange);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--accent-orange);
+      }
+
+      /* --- Scene 2: Scaling Diagram --- */
+      #scene2 .question-visual {
+        position: absolute;
+        top: 760px; /* Offset into workspace */
+        left: 80px;
+        width: 920px;
+        height: 600px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .scaling-diagram-container {
+        display: flex;
+        gap: 30px;
+        width: 920px;
+        height: 580px;
+      }
+
+      .scaling-column {
+        flex: 1;
+        background: #111827;
+        border: 2px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+      }
+
+      .column-header {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 15px;
+        align-items: center;
+        text-align: center;
+      }
+
+      .column-badge {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 12px;
+        letter-spacing: 0.05em;
+      }
+
+      .badge-red {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--accent-red);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
+
+      .badge-green {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--accent-green);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+      }
+
+      .column-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--on-primary);
+      }
+
+      .diagram-canvas {
+        flex-grow: 1;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+        border: 1px dashed rgba(255, 255, 255, 0.05);
+        padding: 15px;
+      }
+
+      /* Server node design */
+      .server-node {
+        background: var(--surface);
+        border: 2px solid var(--surface-border);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+      }
+
+      .server-icon {
+        font-size: 36px;
+        margin-bottom: 4px;
+      }
+
+      .server-label {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--on-primary);
+      }
+
+      .server-specs {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      /* Vertical Scaling Elements */
+      .server-box-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .small-node {
+        width: 160px;
+        height: 110px;
+      }
+
+      .scale-arrow {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--accent-red);
+        background: rgba(239, 68, 68, 0.1);
+        padding: 4px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
+
+      .large-node {
+        width: 250px;
+        height: 150px;
+        border-color: var(--accent-red);
+        box-shadow: 0 0 25px rgba(239, 68, 68, 0.15);
+      }
+
+      /* Horizontal Scaling Elements */
+      .elb-node {
+        background: var(--surface);
+        border: 2px solid var(--accent-blue);
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 15px rgba(0, 161, 201, 0.2);
+        margin-bottom: 50px;
+        z-index: 2;
+        position: absolute;
+        top: 20px;
+        left: calc(50% - 40px);
+      }
+
+      .elb-icon {
+        font-size: 26px;
+      }
+
+      .elb-label {
+        font-size: 11px;
+        color: var(--accent-blue);
+        font-weight: 700;
+        margin-top: 2px;
+      }
+
+      .horizontal-servers {
+        position: relative;
+        width: 100%;
+        height: 160px;
+        margin-top: 130px;
+        z-index: 2;
+      }
+
+      .horiz-node {
+        width: 110px;
+        height: 90px;
+      }
+
+      .horiz-node.active-scaling {
+        border-color: var(--accent-green) !important;
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.2) !important;
+      }
+
+      /* Connectors SVG */
+      .connector-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .connector-line {
+        stroke: rgba(0, 161, 201, 0.2);
+        stroke-width: 3;
+        fill: none;
+        stroke-dasharray: 6 6;
+      }
+
+      .connector-line.active-flow {
+        stroke: var(--accent-green) !important;
+        animation: flow-dash 1s infinite linear;
+      }
+
+      @keyframes flow-dash {
+        to {
+          stroke-dashoffset: -12;
+        }
+      }
+
+      /* --- Scene 3: Options Presentation (Workspace Center Focus) --- */
+      .options-presentation-layout {
+        position: absolute;
+        top: 740px; /* Workspace bottom alignment */
+        left: 80px;
+        width: 920px;
+        height: 700px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .option-card-vertical {
+        position: absolute;
+        width: 100%;
+        max-width: 920px;
+        padding: 50px 48px;
+        border-radius: 24px;
+        background: var(--surface);
+        border: 3px solid var(--surface-border);
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+        text-align: center;
+        opacity: 0;
+        transform: scale(0.9);
+        transition: border-color 0.3s, box-shadow 0.3s;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+      }
+
+      .option-card-vertical.active-focus {
+        opacity: 1;
+        transform: scale(1.1);
+        border-color: var(--accent-blue);
+        box-shadow: 0 25px 60px rgba(0, 161, 201, 0.25);
+      }
+
+      .option-card-vertical .option-badge {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(0, 161, 201, 0.1);
+        border: 3px solid var(--accent-blue);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--accent-blue);
+      }
+
+      .option-card-vertical .option-text {
+        font-size: 34px;
+        line-height: 1.55;
+        font-weight: 500;
+        color: var(--on-primary);
+      }
+
+      /* --- Scene 4: Reveal & Deep Dive (Workspace Center Focus) --- */
+      .deep-dive-layout {
+        position: absolute;
+        top: 740px; /* Workspace bottom alignment */
+        left: 80px;
+        width: 920px;
+        height: 750px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .dive-card-vertical {
+        position: absolute;
+        width: 100%;
+        max-width: 920px;
+        padding: 40px 48px;
+        border-radius: 24px;
+        background: var(--surface);
+        border: 3px solid var(--surface-border);
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        opacity: 0;
+        transform: scale(0.9);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+      }
+
+      .dive-card-vertical.active-focus {
+        opacity: 1;
+        transform: scale(1.05);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      .dive-card-vertical.correct-card {
+        border-color: var(--accent-green) !important;
+        box-shadow: 0 25px 60px rgba(16, 185, 129, 0.2) !important;
+      }
+
+      .dive-card-vertical.incorrect-card {
+        border-color: var(--accent-red) !important;
+        box-shadow: 0 25px 60px rgba(239, 68, 68, 0.2) !important;
+      }
+
+      .dive-card-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        border-bottom: 2px solid var(--surface-border);
+        padding-bottom: 20px;
+      }
+
+      .dive-card-badge {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .correct-card .dive-card-badge {
+        background: rgba(16, 185, 129, 0.1);
+        border: 3px solid var(--accent-green);
+        color: var(--accent-green);
+      }
+
+      .incorrect-card .dive-card-badge {
+        background: rgba(239, 68, 68, 0.1);
+        border: 3px solid var(--accent-red);
+        color: var(--accent-red);
+      }
+
+      .dive-card-status {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+      }
+
+      .correct-card .dive-card-status { color: var(--accent-green); }
+      .incorrect-card .dive-card-status { color: var(--accent-red); }
+
+      .dive-card-option-text {
+        font-size: 24px;
+        line-height: 1.5;
+        color: var(--muted);
+        font-style: italic;
+        padding-left: 15px;
+        border-left: 3px solid var(--surface-border);
+      }
+
+      .dive-card-explanation {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .explanation-point-vertical {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        font-size: 30px;
+        line-height: 1.5;
+        color: var(--on-primary);
+        opacity: 0;
+      }
+
+      .point-dot-vertical {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-top: 10px;
+        flex-shrink: 0;
+      }
+
+      .correct-card .point-dot-vertical {
+        background: var(--accent-green);
+        box-shadow: 0 0 10px var(--accent-green);
+      }
+
+      .incorrect-card .point-dot-vertical {
+        background: var(--accent-red);
+        box-shadow: 0 0 10px var(--accent-red);
+      }
+
+      /* --- Scene 5: Memory Hook & Outro --- */
+      #scene5 .hook-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 1400px;
+        gap: 60px;
+        padding-top: 150px;
+      }
+
+      #scene5 .hook-card {
+        background: linear-gradient(135deg, rgba(255, 153, 0, 0.08), rgba(0, 161, 201, 0.08));
+        border: 2px solid var(--accent-orange);
+        border-radius: 24px;
+        padding: 60px 48px;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(255, 153, 0, 0.15);
+        width: 100%;
+        max-width: 920px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        opacity: 0;
+        transform: scale(0.85);
+      }
+
+      #scene5 .brain-icon {
+        font-size: 100px;
+        line-height: 1;
+      }
+
+      #scene5 .hook-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 42px;
+        font-weight: 700;
+        color: var(--accent-orange);
+        letter-spacing: 0.05em;
+      }
+
+      #scene5 .hook-formula {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 34px;
+        font-weight: 700;
+        line-height: 1.65;
+        color: var(--on-primary);
+      }
+
+      #scene5 .hook-formula span {
+        background: rgba(255, 153, 0, 0.15);
+        color: var(--accent-orange);
+        padding: 4px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 153, 0, 0.3);
+        display: inline-block;
+        margin-top: 10px;
+      }
+
+      #scene5 .hook-outro {
+        font-size: 26px;
+        color: var(--muted);
+        font-weight: 500;
+        text-align: center;
+        line-height: 1.5;
+        padding: 0 20px;
+        opacity: 0;
+      }
+
+      /* --- Captions System --- */
+      #caption-wrapper {
+        position: absolute;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 920px;
+        height: 100px;
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 0 40px;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      #caption-box {
+        font-family: 'Space Mono', monospace;
+        color: var(--on-primary);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+        white-space: nowrap;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translate3d(460px, -50%, 0);
+        transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+        will-change: transform;
+      }
+
+      .caption-word {
+        font-size: 38px;
+        font-weight: 500;
+        opacity: 0.3;
+        transition: opacity 0.2s, color 0.2s, transform 0.2s;
+        flex-shrink: 0;
+        display: inline-block;
+      }
+
+      .caption-word.active {
+        opacity: 1;
+        color: var(--accent-orange);
+        font-weight: 700;
+        transform: scale(1.15);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="79.1"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- Background elements (Shared globally under scenes) -->
+      <div class="bg-grid"></div>
+      <div class="bg-glow bg-glow-1"></div>
+      <div class="bg-glow bg-glow-2"></div>
+
+      <!-- Narration Audio Clip -->
+      <audio id="narration" src="narration.wav" data-start="0" data-track-index="0"></audio>
+
+      <!-- Persistent stationary question card at top half of canvas -->
+      <div class="card" id="global-question-card">
+        <p class="question-text">
+          Which of the following is an example of horizontal scaling in the AWS Cloud?
+        </p>
+        <div class="status-bar">
+          <span class="status-dot"></span>
+          <span class="status-lbl">ANALYZING REQUIREMENTS...</span>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 1: TITLE CARD ================= -->
+      <div id="scene1" class="scene clip" data-start="0" data-duration="3.5" data-track-index="1" data-layout-allow-overflow>
+        <div class="title-card-layout">
+          <div class="exam-badge" id="s1-exam-badge">AWS CERTIFIED CLOUD PRACTITIONER</div>
+          <div class="exam-code" id="s1-exam-code">CLF-C02</div>
+          <div class="question-num" id="s1-question-num">Question #2</div>
+          <div class="decorative-line" id="s1-line"></div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 2: QUESTION CONTEXT ================= -->
+      <div id="scene2" class="scene clip" data-start="3.5" data-duration="4.3" data-track-index="2" data-layout-allow-overflow>
+        <div class="scene-header" id="s2-header">
+          <span class="header-badge">AWS CLF-C02</span>
+          <span class="header-info">Topic 1 · Question #2</span>
+        </div>
+        <div class="scene-title" id="s2-title">Question Context</div>
+        
+        <div class="question-visual" id="s2-visual">
+          <div class="scaling-diagram-container">
+            <!-- Left Column: Vertical Scaling -->
+            <div class="scaling-column" id="s2-col-vertical">
+              <div class="column-header">
+                <div class="column-badge badge-red">VERTICAL SCALING</div>
+                <div class="column-title">Scale Up (Single Node)</div>
+              </div>
+              <div class="diagram-canvas">
+                <div class="server-box-wrapper">
+                  <!-- Small Server -->
+                  <div class="server-node small-node" id="s2-vert-small">
+                    <div class="server-icon">🖥️</div>
+                    <div class="server-label">t3.micro</div>
+                    <div class="server-specs">1 vCPU | 1 GB RAM</div>
+                  </div>
+                  <!-- Upward Scaling Arrow -->
+                  <div class="scale-arrow" id="s2-vert-arrow">⬆️ Scale Up</div>
+                  <!-- Large Server -->
+                  <div class="server-node large-node" id="s2-vert-large">
+                    <div class="server-icon">🖥️</div>
+                    <div class="server-label">c6g.8xlarge</div>
+                    <div class="server-specs">32 vCPU | 64 GB RAM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Horizontal Scaling -->
+            <div class="scaling-column" id="s2-col-horizontal">
+              <div class="column-header">
+                <div class="column-badge badge-green">HORIZONTAL SCALING</div>
+                <div class="column-title">Scale Out (Add Nodes)</div>
+              </div>
+              <div class="diagram-canvas">
+                <div class="elb-node" id="s2-horiz-elb">
+                  <div class="elb-icon">🔄</div>
+                  <div class="elb-label">Load Balancer</div>
+                </div>
+                <div class="horizontal-servers">
+                  <div class="server-node horiz-node" id="s2-horiz-s1" style="position: absolute; left: 152.5px; top: 0;">
+                    <div class="server-icon">🖥️</div>
+                    <div class="server-label">t3.micro</div>
+                  </div>
+                  <div class="server-node horiz-node" id="s2-horiz-s2" style="position: absolute; left: 152.5px; top: 0; opacity: 0;">
+                    <div class="server-icon">🖥️</div>
+                    <div class="server-label">t3.micro</div>
+                  </div>
+                  <div class="server-node horiz-node" id="s2-horiz-s3" style="position: absolute; left: 152.5px; top: 0; opacity: 0;">
+                    <div class="server-icon">🖥️</div>
+                    <div class="server-label">t3.micro</div>
+                  </div>
+                </div>
+                <!-- Connectors -->
+                <svg class="connector-svg" id="s2-horiz-connectors" viewBox="0 0 415 300">
+                  <path d="M 207.5 90 L 82.5 150" class="connector-line" id="line-s1" />
+                  <path d="M 207.5 90 L 207.5 150" class="connector-line" id="line-s2" />
+                  <path d="M 207.5 90 L 332.5 150" class="connector-line" id="line-s3" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 3: OPTIONS PRESENTATION ================= -->
+      <div id="scene3" class="scene clip" data-start="7.8" data-duration="23.0" data-track-index="1" data-layout-allow-overflow>
+        <div class="scene-header" id="s3-header">
+          <span class="header-badge">PROPOSED OPTIONS</span>
+          <span class="header-info">Evaluating options</span>
+        </div>
+        <div class="scene-title" id="s3-title">Proposed Options</div>
+
+        <div class="options-presentation-layout">
+          <div class="card option-card-vertical" id="s3-optA">
+            <div class="option-badge">A</div>
+            <div class="option-text">Replacing an existing EC2 instance with a larger, more powerful one.</div>
+          </div>
+          <div class="card option-card-vertical" id="s3-optB">
+            <div class="option-badge">B</div>
+            <div class="option-text">Increasing the compute capacity of a single EC2 instance to address the growing demands of an application.</div>
+          </div>
+          <div class="card option-card-vertical" id="s3-optC">
+            <div class="option-badge">C</div>
+            <div class="option-text">Adding more RAM capacity to an EC2 instance.</div>
+          </div>
+          <div class="card option-card-vertical" id="s3-optD">
+            <div class="option-badge">D</div>
+            <div class="option-text">Adding more EC2 instances of the same size to handle an increase in traffic.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 4: REVEAL & DEEP DIVE ================= -->
+      <div id="scene4" class="scene clip" data-start="30.8" data-duration="39.6" data-track-index="2" data-layout-allow-overflow>
+        <div class="scene-header" id="s4-header">
+          <span class="header-badge">ANSWER DEEP DIVE</span>
+          <span class="header-info">Detailed justifications</span>
+        </div>
+        <div class="scene-title" id="s4-title">Technical Deep Dive</div>
+
+        <div class="deep-dive-layout">
+          <!-- Card D (Correct - Add more instances) -->
+          <div class="dive-card-vertical correct-card" id="s4-expD">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">D</div>
+              <div class="dive-card-status">CORRECT ANSWER</div>
+            </div>
+            <p class="dive-card-option-text">Adding more EC2 instances of the same size to handle traffic</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical" id="s4-expD-p1">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Scale Out:</strong> Adds identical instances to distribute traffic load.</div>
+              </div>
+              <div class="explanation-point-vertical" id="s4-expD-p2">
+                <div class="point-dot-vertical"></div>
+                <div><strong>High Availability:</strong> Integrates with Auto Scaling and Elastic Load Balancer.</div>
+              </div>
+              <div class="explanation-point-vertical" id="s4-expD-p3">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Cloud Best Practice:</strong> Easily scales out and in to optimize resource costs.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card A (Incorrect - Larger instance) -->
+          <div class="dive-card-vertical incorrect-card" id="s4-expA">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">A</div>
+              <div class="dive-card-status">INCORRECT</div>
+            </div>
+            <p class="dive-card-option-text">Replacing an existing instance with a larger one</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical" id="s4-expA-p1">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Vertical Scaling:</strong> Upgrades a single node's configuration (Scale Up).</div>
+              </div>
+              <div class="explanation-point-vertical" id="s4-expA-p2">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Not Horizontal:</strong> Replaces the resource rather than adding new ones.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card B (Incorrect - Compute capacity) -->
+          <div class="dive-card-vertical incorrect-card" id="s4-expB">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">B</div>
+              <div class="dive-card-status">INCORRECT</div>
+            </div>
+            <p class="dive-card-option-text">Increasing compute capacity of a single instance</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical" id="s4-expB-p1">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Single Instance Limit:</strong> Modifies CPU/RAM properties of a single server.</div>
+              </div>
+              <div class="explanation-point-vertical" id="s4-expB-p2">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Scale Up:</strong> Limited by physical hardware constraints of a single host.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card C (Incorrect - Add RAM) -->
+          <div class="dive-card-vertical incorrect-card" id="s4-expC">
+            <div class="dive-card-header">
+              <div class="dive-card-badge">C</div>
+              <div class="dive-card-status">INCORRECT</div>
+            </div>
+            <p class="dive-card-option-text">Adding more RAM capacity to an EC2 instance</p>
+            <div class="dive-card-explanation">
+              <div class="explanation-point-vertical" id="s4-expC-p1">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Hardware Upgrade:</strong> Enhances memory of a single instance.</div>
+              </div>
+              <div class="explanation-point-vertical" id="s4-expC-p2">
+                <div class="point-dot-vertical"></div>
+                <div><strong>Vertical Scaling:</strong> Upgrades existing resources (no new nodes).</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 5: MEMORY HOOK & OUTRO ================= -->
+      <div id="scene5" class="scene clip" data-start="70.4" data-duration="8.7" data-track-index="1" data-layout-allow-overflow>
+        <div id="s5-content-wrap" style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: flex-start;">
+          <div class="scene-header" id="s5-header">
+            <span class="header-badge">MEMORY HOOK</span>
+            <span class="header-info">Exam Strategy</span>
+          </div>
+          <div class="scene-title" id="s5-title">Key Takeaways</div>
+
+          <div class="hook-container">
+            <div class="hook-card" id="s5-hook-card">
+              <div class="brain-icon" id="s5-brain">🧠</div>
+              <div class="hook-title">AWS Scaling Memory Guide:</div>
+              <div class="hook-formula" id="s5-summary-text">
+                Horizontal = <span>More Instances</span><br/>
+                Vertical = Larger Instance<br/>
+                Scaling Out = Scale Horizontally
+              </div>
+            </div>
+            <div class="hook-outro" id="s5-outro">
+              More instances, choose horizontal scaling!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Synced Captions Box -->
+      <div id="caption-wrapper" data-layout-allow-overflow>
+        <div id="caption-box">Loading captions...</div>
+      </div>
+    </div>
+
+    <!-- GSAP Choreography Script -->
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = tl;
+
+      // Ensure elements start in clean state for "gsap.from" layouts
+      gsap.set("#scene2", { x: "100%" });
+      gsap.set("#scene3", { x: "100%" });
+      gsap.set("#scene4", { x: "100%" });
+      gsap.set("#scene5", { x: "100%" });
+
+      // Ambient background animations
+      tl.to(".bg-glow-1", { x: 100, y: 50, duration: 20, repeat: 3, yoyo: true, ease: "sine.inOut" }, 0);
+      tl.to(".bg-glow-2", { x: -100, y: -50, duration: 25, repeat: 2, yoyo: true, ease: "sine.inOut" }, 0);
+
+      // ================= SCENE 1 ANIMATIONS (0.0s - 3.5s) =================
+      tl.from("#s1-exam-badge", { y: -50, opacity: 0, duration: 0.8, ease: "power3.out" }, 0.2);
+      tl.from("#s1-exam-code", { scale: 0.9, opacity: 0, duration: 1.0, ease: "back.out(1.5)" }, 0.5);
+      tl.from("#s1-question-num", { y: 50, opacity: 0, duration: 0.8, ease: "power3.out" }, 0.8);
+      tl.from("#s1-line", { width: 0, opacity: 0, duration: 0.8, ease: "power2.out" }, 1.2);
+
+      // TRANSITION: Scene 1 -> Scene 2 (at 3.5s)
+      tl.to("#scene1", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 3.5);
+      tl.to("#scene2", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 3.5);
+
+      // ================= STATIONARY QUESTION CARD ANIMATION =================
+      // Fade in at 3.8s (when S2 starts reading question)
+      tl.to("#global-question-card", { opacity: 1, duration: 0.8, ease: "power2.out" }, 3.8);
+      // Fade out at 70.4s (when S5 Hook starts)
+      tl.to("#global-question-card", { opacity: 0, duration: 0.8, ease: "power2.in" }, 70.4);
+
+      // ================= SCENE 2 ANIMATIONS (3.5s - 7.8s) =================
+      tl.from("#s2-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 3.8);
+      tl.from("#s2-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 4.1);
+      tl.from("#s2-visual", { scale: 0.9, opacity: 0, duration: 0.8, ease: "back.out(1.2)" }, 4.3);
+
+      // Scene 2 Diagram Initial States
+      gsap.set("#s2-vert-large", { opacity: 0, scale: 0.5, display: "none" });
+      gsap.set("#s2-vert-arrow", { opacity: 0, y: -20 });
+      gsap.set("#s2-horiz-elb", { opacity: 0, y: -30 });
+      gsap.set("#s2-horiz-s2", { opacity: 0 });
+      gsap.set("#s2-horiz-s3", { opacity: 0 });
+      gsap.set("#s2-horiz-connectors", { opacity: 0 });
+
+      // Vertical Scaling (Left Column) Animation at 4.6s
+      tl.to("#s2-vert-arrow", { opacity: 1, y: 0, duration: 0.4 }, 4.6);
+      tl.to("#s2-vert-small", { opacity: 0, scale: 0.8, duration: 0.4 }, 5.0);
+      tl.set("#s2-vert-small", { display: "none" }, 5.4);
+      tl.set("#s2-vert-large", { display: "flex" }, 5.4);
+      tl.to("#s2-vert-large", { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.2)" }, 5.4);
+
+      // Horizontal Scaling (Right Column / Spawning) Animation at 5.8s
+      tl.to("#s2-horiz-elb", { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 5.8);
+      tl.to("#s2-horiz-s1", { left: 27.5, duration: 0.6, ease: "power2.out" }, 5.8);
+      tl.to("#s2-horiz-s3", { left: 277.5, opacity: 1, duration: 0.6, ease: "power2.out" }, 5.8);
+      tl.to("#s2-horiz-s2", { opacity: 1, duration: 0.6 }, 5.8);
+      tl.to("#s2-horiz-connectors", { opacity: 1, duration: 0.4 }, 6.2);
+      
+      // Apply active states
+      tl.set("#s2-horiz-s1", { className: "server-node horiz-node active-scaling" }, 6.5);
+      tl.set("#s2-horiz-s2", { className: "server-node horiz-node active-scaling" }, 6.5);
+      tl.set("#s2-horiz-s3", { className: "server-node horiz-node active-scaling" }, 6.5);
+      tl.set("#line-s1", { attr: { class: "connector-line active-flow" } }, 6.5);
+      tl.set("#line-s2", { attr: { class: "connector-line active-flow" } }, 6.5);
+      tl.set("#line-s3", { attr: { class: "connector-line active-flow" } }, 6.5);
+
+      // TRANSITION: Scene 2 -> Scene 3 (at 7.8s)
+      tl.to("#scene2", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 7.8);
+      tl.to("#scene3", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 7.8);
+
+      // ================= SCENE 3 ANIMATIONS (7.8s - 30.8s) =================
+      tl.from("#s3-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 8.1);
+      tl.from("#s3-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 8.4);
+
+      // Option A Centered Focus (Option A: 9.27s - 14.07s)
+      tl.to("#s3-optA", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 9.27);
+      tl.set("#s3-optA", { className: "option-card-vertical active-focus" }, 9.27);
+
+      // Option B Centered Focus (Option B: 14.07s - 20.81s)
+      tl.to("#s3-optA", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 14.07);
+      tl.set("#s3-optA", { className: "option-card-vertical" }, 14.07);
+      tl.to("#s3-optB", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 14.07);
+      tl.set("#s3-optB", { className: "option-card-vertical active-focus" }, 14.07);
+
+      // Option C Centered Focus (Option C: 20.81s - 25.25s)
+      tl.to("#s3-optB", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 20.81);
+      tl.set("#s3-optB", { className: "option-card-vertical" }, 20.81);
+      tl.to("#s3-optC", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 20.81);
+      tl.set("#s3-optC", { className: "option-card-vertical active-focus" }, 20.81);
+
+      // Option D Centered Focus (Option D: 25.25s - 30.8s)
+      tl.to("#s3-optC", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 25.25);
+      tl.set("#s3-optC", { className: "option-card-vertical" }, 25.25);
+      tl.to("#s3-optD", { scale: 1.1, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 25.25);
+      tl.set("#s3-optD", { className: "option-card-vertical active-focus" }, 25.25);
+
+      // TRANSITION: Scene 3 -> Scene 4 (at 30.8s)
+      tl.to("#scene3", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 30.8);
+      tl.to("#scene4", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 30.8);
+
+      // ================= SCENE 4 ANIMATIONS (30.8s - 70.4s) =================
+      tl.from("#s4-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 31.1);
+      tl.from("#s4-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 31.4);
+
+      // Option D correct reveal & deep dive (30.8s - 51.15s)
+      tl.to("#s4-expD", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 31.0);
+      tl.set("#s4-expD", { className: "dive-card-vertical correct-card active-focus" }, 31.0);
+      // Option D bullet points timing
+      tl.to("#s4-expD-p1", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 33.5);
+      tl.to("#s4-expD-p2", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 43.5);
+
+      // Option A incorrect deep dive (51.15s - 57.87s)
+      tl.to("#s4-expD", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 51.15);
+      tl.set("#s4-expD", { className: "dive-card-vertical correct-card" }, 51.15);
+      tl.to("#s4-expA", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 51.15);
+      tl.set("#s4-expA", { className: "dive-card-vertical incorrect-card active-focus" }, 51.15);
+      // Option A bullet points timing
+      tl.to("#s4-expA-p1", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 52.7);
+      tl.to("#s4-expA-p2", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 55.0);
+
+      // Option B incorrect deep dive (57.87s - 63.19s)
+      tl.to("#s4-expA", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 57.87);
+      tl.set("#s4-expA", { className: "dive-card-vertical incorrect-card" }, 57.87);
+      tl.to("#s4-expB", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 57.87);
+      tl.set("#s4-expB", { className: "dive-card-vertical incorrect-card active-focus" }, 57.87);
+      // Option B bullet points timing
+      tl.to("#s4-expB-p1", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 59.4);
+      tl.to("#s4-expB-p2", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 61.5);
+
+      // Option C incorrect deep dive (63.19s - 70.4s)
+      tl.to("#s4-expB", { scale: 0.9, opacity: 0, duration: 0.4, ease: "power2.in" }, 63.19);
+      tl.set("#s4-expB", { className: "dive-card-vertical incorrect-card" }, 63.19);
+      tl.to("#s4-expC", { scale: 1.05, opacity: 1, duration: 0.5, ease: "back.out(1.2)" }, 63.19);
+      tl.set("#s4-expC", { className: "dive-card-vertical incorrect-card active-focus" }, 63.19);
+      // Option C bullet points timing
+      tl.to("#s4-expC-p1", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 65.0);
+      tl.to("#s4-expC-p2", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 67.5);
+
+      // TRANSITION: Scene 4 -> Scene 5 (at 70.4s)
+      tl.to("#scene4", { x: "-100%", duration: 0.8, ease: "power2.inOut" }, 70.4);
+      tl.to("#scene5", { x: "0%", duration: 0.8, ease: "power2.inOut" }, 70.4);
+
+      // ================= SCENE 5 ANIMATIONS (70.4s - 79.1s) =================
+      tl.from("#s5-header", { y: -30, opacity: 0, duration: 0.6, ease: "power2.out" }, 70.7);
+      tl.from("#s5-title", { y: 30, opacity: 0, duration: 0.7, ease: "power3.out" }, 71.0);
+      
+      tl.to("#s5-hook-card", { scale: 1, opacity: 1, duration: 0.8, ease: "elastic.out(1.1, 0.75)" }, 71.2);
+      tl.from("#s5-brain", { scale: 0, rotation: -45, duration: 0.6, ease: "back.out(2.5)" }, 71.9);
+      tl.from("#s5-summary-text", { y: 25, opacity: 0, duration: 0.6, ease: "power2.out" }, 72.5);
+      tl.to("#s5-outro", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 76.47);
+
+      // Outro Fade Out to Black
+      tl.to("#s5-content-wrap", { opacity: 0, duration: 1.0, ease: "power2.in" }, 77.8);
+      tl.to("#caption-wrapper", { opacity: 0, duration: 0.8 }, 77.9);
+      tl.set("#s5-content-wrap", { visibility: "hidden" }, 78.9);
+      tl.set("#caption-wrapper", { visibility: "hidden" }, 78.9);
+
+      // ================= CAPTIONS SYNCHRONIZATION SYSTEM =================
+      var TRANSCRIPT = [{"text": "AWS", "start": 0.03, "end": 0.24}, {"text": "Certified", "start": 0.24, "end": 0.94}, {"text": "Cloud", "start": 0.95, "end": 1.23}, {"text": "Practitioner,", "start": 1.36, "end": 2.45}, {"text": "question", "start": 2.45, "end": 3}, {"text": "two.", "start": 3, "end": 3.44}, {"text": "Which", "start": 3.47, "end": 3.67}, {"text": "of", "start": 3.67, "end": 3.76}, {"text": "the", "start": 3.76, "end": 3.89}, {"text": "following", "start": 3.89, "end": 4.32}, {"text": "is", "start": 4.32, "end": 4.39}, {"text": "an", "start": 4.49, "end": 4.56}, {"text": "example", "start": 4.56, "end": 5.01}, {"text": "of", "start": 5.01, "end": 5.02}, {"text": "horizontal", "start": 5.12, "end": 5.7}, {"text": "scaling", "start": 5.79, "end": 6.2}, {"text": "in", "start": 6.27, "end": 6.44}, {"text": "the", "start": 6.44, "end": 6.74}, {"text": "AWS", "start": 6.74, "end": 6.95}, {"text": "cloud?", "start": 7.03, "end": 7.81}, {"text": "Let's", "start": 7.87, "end": 8.11}, {"text": "review", "start": 8.15, "end": 8.47}, {"text": "the", "start": 8.47, "end": 8.55}, {"text": "options.", "start": 8.63, "end": 9.24}, {"text": "Option", "start": 9.27, "end": 9.78}, {"text": "A,", "start": 9.78, "end": 10.06}, {"text": "replacing", "start": 10.06, "end": 10.47}, {"text": "an", "start": 10.6, "end": 10.72}, {"text": "existing", "start": 10.72, "end": 11.2}, {"text": "EC2", "start": 11.2, "end": 11.49}, {"text": "instance", "start": 11.59, "end": 12}, {"text": "with", "start": 12.03, "end": 12.26}, {"text": "a", "start": 12.26, "end": 12.32}, {"text": "larger,", "start": 12.32, "end": 12.84}, {"text": "more", "start": 12.84, "end": 13.1}, {"text": "powerful", "start": 13.1, "end": 13.57}, {"text": "one.", "start": 13.68, "end": 14.04}, {"text": "Option", "start": 14.07, "end": 14.44}, {"text": "B,", "start": 14.44, "end": 14.63}, {"text": "increasing", "start": 14.63, "end": 15.27}, {"text": "the", "start": 15.36, "end": 15.51}, {"text": "compute", "start": 15.51, "end": 15.98}, {"text": "capacity", "start": 15.98, "end": 16.56}, {"text": "of", "start": 16.59, "end": 16.68}, {"text": "a", "start": 16.68, "end": 16.75}, {"text": "single", "start": 16.75, "end": 17.16}, {"text": "EC2", "start": 17.16, "end": 17.49}, {"text": "instance", "start": 17.49, "end": 18.08}, {"text": "to", "start": 18.08, "end": 18.13}, {"text": "address", "start": 18.24, "end": 18.54}, {"text": "the", "start": 18.54, "end": 18.68}, {"text": "growing", "start": 18.68, "end": 19.02}, {"text": "demands", "start": 19.02, "end": 19.44}, {"text": "of", "start": 19.47, "end": 19.56}, {"text": "an", "start": 19.61, "end": 19.71}, {"text": "application.", "start": 19.72, "end": 20.76}, {"text": "Option", "start": 20.81, "end": 21.49}, {"text": "C,", "start": 21.52, "end": 21.92}, {"text": "adding", "start": 21.92, "end": 22.35}, {"text": "more", "start": 22.46, "end": 22.8}, {"text": "RAM", "start": 22.8, "end": 23.03}, {"text": "capacity", "start": 23.13, "end": 23.8}, {"text": "to", "start": 23.8, "end": 23.83}, {"text": "an", "start": 23.83, "end": 24.22}, {"text": "EC2", "start": 24.22, "end": 24.43}, {"text": "instance.", "start": 24.43, "end": 25.22}, {"text": "Option", "start": 25.25, "end": 25.7}, {"text": "D,", "start": 25.71, "end": 25.93}, {"text": "adding", "start": 25.95, "end": 26.43}, {"text": "more", "start": 26.44, "end": 26.76}, {"text": "EC2", "start": 26.76, "end": 27.16}, {"text": "instances", "start": 27.16, "end": 27.92}, {"text": "of", "start": 27.92, "end": 28.04}, {"text": "the", "start": 28.04, "end": 28.22}, {"text": "same", "start": 28.22, "end": 28.27}, {"text": "size", "start": 28.7, "end": 28.76}, {"text": "to", "start": 28.79, "end": 28.88}, {"text": "handle", "start": 28.88, "end": 29.24}, {"text": "an", "start": 29.25, "end": 29.37}, {"text": "increase", "start": 29.37, "end": 29.87}, {"text": "in", "start": 29.87, "end": 29.98}, {"text": "traffic.", "start": 29.99, "end": 30.53}, {"text": "The", "start": 30.67, "end": 30.86}, {"text": "correct", "start": 30.86, "end": 31.35}, {"text": "answer", "start": 31.38, "end": 31.83}, {"text": "is", "start": 31.83, "end": 31.87}, {"text": "option", "start": 32, "end": 32.41}, {"text": "D.", "start": 32.5, "end": 32.76}, {"text": "Option", "start": 32.76, "end": 33.18}, {"text": "Dis", "start": 33.25, "end": 33.4}, {"text": "correct", "start": 33.4, "end": 33.69}, {"text": "because", "start": 33.87, "end": 34.2}, {"text": "horizontal", "start": 34.2, "end": 34.72}, {"text": "scaling,", "start": 34.72, "end": 35.2}, {"text": "also", "start": 35.2, "end": 35.41}, {"text": "known", "start": 35.52, "end": 35.8}, {"text": "as", "start": 35.8, "end": 35.95}, {"text": "scaling", "start": 35.95, "end": 36.48}, {"text": "out,", "start": 36.48, "end": 36.72}, {"text": "means", "start": 36.75, "end": 37.04}, {"text": "adding", "start": 37.04, "end": 37.38}, {"text": "more", "start": 37.42, "end": 37.67}, {"text": "resources", "start": 37.77, "end": 38.27}, {"text": "of", "start": 38.27, "end": 38.41}, {"text": "the", "start": 38.41, "end": 38.49}, {"text": "same", "start": 38.6, "end": 38.86}, {"text": "size,", "start": 38.86, "end": 39.16}, {"text": "such", "start": 39.19, "end": 39.48}, {"text": "as", "start": 39.48, "end": 39.64}, {"text": "EC2", "start": 39.64, "end": 40.04}, {"text": "instances,", "start": 40.04, "end": 40.93}, {"text": "to", "start": 41.04, "end": 41.09}, {"text": "distribute", "start": 41.09, "end": 41.78}, {"text": "the", "start": 41.78, "end": 41.98}, {"text": "workload.", "start": 41.98, "end": 42.76}, {"text": "This", "start": 42.79, "end": 43.02}, {"text": "is", "start": 43.02, "end": 43.15}, {"text": "a", "start": 43.15, "end": 43.21}, {"text": "cloud", "start": 43.21, "end": 43.47}, {"text": "best", "start": 43.53, "end": 43.71}, {"text": "practice", "start": 43.81, "end": 44.31}, {"text": "because", "start": 44.35, "end": 44.71}, {"text": "it", "start": 44.71, "end": 44.82}, {"text": "enables", "start": 44.82, "end": 45.21}, {"text": "high", "start": 45.21, "end": 45.43}, {"text": "availability,", "start": 45.43, "end": 46.24}, {"text": "fault", "start": 46.24, "end": 46.57}, {"text": "tolerance,", "start": 46.67, "end": 47.36}, {"text": "and", "start": 47.39, "end": 47.54}, {"text": "easily", "start": 47.54, "end": 47.91}, {"text": "integrates", "start": 47.91, "end": 48.56}, {"text": "with", "start": 48.56, "end": 48.83}, {"text": "auto", "start": 48.83, "end": 49.1}, {"text": "scaling", "start": 49.1, "end": 49.6}, {"text": "and", "start": 49.63, "end": 49.73}, {"text": "elastic", "start": 49.77, "end": 50.17}, {"text": "load", "start": 50.17, "end": 50.31}, {"text": "balancing.", "start": 50.39, "end": 51.12}, {"text": "Option", "start": 51.15, "end": 51.56}, {"text": "A", "start": 51.56, "end": 51.63}, {"text": "is", "start": 51.63, "end": 51.76}, {"text": "incorrect.", "start": 51.77, "end": 52.67}, {"text": "Replacing", "start": 52.71, "end": 53.16}, {"text": "a", "start": 53.16, "end": 53.21}, {"text": "smaller", "start": 53.21, "end": 53.58}, {"text": "instance", "start": 53.58, "end": 53.91}, {"text": "with", "start": 54.04, "end": 54.25}, {"text": "a", "start": 54.25, "end": 54.36}, {"text": "larger", "start": 54.36, "end": 54.61}, {"text": "one", "start": 54.61, "end": 54.78}, {"text": "is", "start": 54.81, "end": 54.9}, {"text": "vertical", "start": 54.9, "end": 55.43}, {"text": "scaling", "start": 55.44, "end": 55.9}, {"text": "or", "start": 55.9, "end": 56.01}, {"text": "scaling", "start": 56.1, "end": 56.49}, {"text": "up,", "start": 56.49, "end": 56.75}, {"text": "not", "start": 56.75, "end": 56.94}, {"text": "horizontal.", "start": 56.94, "end": 57.83}, {"text": "Option", "start": 57.87, "end": 58.28}, {"text": "Bis", "start": 58.28, "end": 58.48}, {"text": "incorrect.", "start": 58.49, "end": 59.39}, {"text": "Increasing", "start": 59.43, "end": 59.94}, {"text": "the", "start": 59.94, "end": 60.06}, {"text": "compute", "start": 60.1, "end": 60.48}, {"text": "capacity", "start": 60.48, "end": 60.92}, {"text": "of", "start": 60.95, "end": 61.04}, {"text": "a", "start": 61.04, "end": 61.1}, {"text": "single", "start": 61.1, "end": 61.46}, {"text": "instance", "start": 61.46, "end": 61.87}, {"text": "is", "start": 61.97, "end": 62.06}, {"text": "vertical", "start": 62.06, "end": 62.49}, {"text": "scaling.", "start": 62.6, "end": 63.16}, {"text": "Option", "start": 63.19, "end": 63.67}, {"text": "Cis", "start": 63.67, "end": 63.87}, {"text": "incorrect.", "start": 63.91, "end": 64.93}, {"text": "Adding", "start": 64.99, "end": 65.38}, {"text": "more", "start": 65.38, "end": 65.62}, {"text": "RAM", "start": 65.66, "end": 65.87}, {"text": "to", "start": 65.87, "end": 65.91}, {"text": "an", "start": 66.01, "end": 66.15}, {"text": "instance", "start": 66.15, "end": 66.73}, {"text": "increases", "start": 66.77, "end": 67.33}, {"text": "its", "start": 67.33, "end": 67.45}, {"text": "individual", "start": 67.51, "end": 68.17}, {"text": "capacity,", "start": 68.17, "end": 68.72}, {"text": "representing", "start": 68.75, "end": 69.38}, {"text": "vertical", "start": 69.42, "end": 69.83}, {"text": "scaling.", "start": 69.83, "end": 70.29}, {"text": "Here", "start": 70.43, "end": 70.65}, {"text": "is", "start": 70.65, "end": 70.77}, {"text": "your", "start": 70.77, "end": 71.02}, {"text": "memory", "start": 71.02, "end": 71.35}, {"text": "hook.", "start": 71.45, "end": 71.88}, {"text": "Horizontal", "start": 71.91, "end": 72.53}, {"text": "equals", "start": 72.54, "end": 72.94}, {"text": "more", "start": 72.94, "end": 73.11}, {"text": "instances.", "start": 73.2, "end": 74.02}, {"text": "Vertical", "start": 74.05, "end": 74.52}, {"text": "equals", "start": 74.52, "end": 74.9}, {"text": "a", "start": 74.9, "end": 74.96}, {"text": "larger", "start": 74.96, "end": 75.25}, {"text": "single", "start": 75.34, "end": 75.72}, {"text": "instance.", "start": 75.72, "end": 76.44}, {"text": "More", "start": 76.47, "end": 76.69}, {"text": "instances,", "start": 76.69, "end": 77.38}, {"text": "choose", "start": 77.39, "end": 77.67}, {"text": "horizontal", "start": 77.8, "end": 78.41}, {"text": "scaling.", "start": 78.41, "end": 79.1}];
+
+      function initCaptionsDOM() {
+        const box = document.getElementById("caption-box");
+        box.innerHTML = ''; // Clear loading text
+        
+        TRANSCRIPT.forEach((wordObj, idx) => {
+          const span = document.createElement("span");
+          span.className = "caption-word";
+          span.id = `w-${idx}`;
+          span.textContent = wordObj.text;
+          box.appendChild(span);
+        });
+      }
+
+      // Automatically run caption initialization
+      if (typeof TRANSCRIPT !== 'undefined') {
+        initCaptionsDOM();
+      }
+
+      // Hook dynamic caption updating directly to the timeline update callback
+      tl.eventCallback("onUpdate", () => {
+        const t = tl.time();
+        if (typeof TRANSCRIPT === 'undefined' || TRANSCRIPT.length === 0) return;
+
+        let activeIdx = -1;
+
+        // Find current words falling within active timing
+        TRANSCRIPT.forEach((wordObj, idx) => {
+          const span = document.getElementById(`w-${idx}`);
+          if (!span) return;
+
+          if (t >= wordObj.start && t <= wordObj.end) {
+            span.className = "caption-word active";
+            activeIdx = idx;
+          } else {
+            span.className = "caption-word";
+          }
+        });
+
+        // Slide the caption track so the active word is centered horizontally
+        if (activeIdx !== -1) {
+          const activeSpan = document.getElementById(`w-${activeIdx}`);
+          const box = document.getElementById("caption-box");
+          const wrapper = document.getElementById("caption-wrapper");
+          if (activeSpan && box && wrapper) {
+            const wrapperCenter = (wrapper.offsetWidth || 920) / 2;
+            const activeCenter = activeSpan.offsetLeft + activeSpan.offsetWidth / 2;
+            const shift = wrapperCenter - activeCenter;
+            box.style.transform = `translate3d(${shift}px, -50%, 0)`;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
