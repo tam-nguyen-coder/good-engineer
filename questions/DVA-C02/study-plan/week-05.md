@@ -223,6 +223,7 @@
 - **⭐ CHECKPOINT Domain 1:** đã đạt **≥70%** ở MINI-MOCK Domain 1 (~25 câu) chưa? Nếu chưa → **KHÔNG** sang Tuần 6, ôn lại câu sai trước.
 
 ## 📎 Tài nguyên tuần này
+> 📂 **Đã crawl sẵn tài liệu AWS vào** [`resources/week-05/`](resources/week-05/INDEX.md) — đọc offline được.
 - AWS Docs: `Amazon SQS` Developer Guide — Standard vs FIFO, visibility timeout, DLQ, long polling.
 - AWS Docs: `Amazon SNS` Developer Guide — fan-out, message filtering, FIFO topics.
 - AWS Docs: `Amazon Kinesis Data Streams` Developer Guide — shard, ordering, enhanced fan-out; `Kinesis Data Firehose` Developer Guide.

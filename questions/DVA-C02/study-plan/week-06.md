@@ -220,6 +220,7 @@
   **Đáp án gọn:** 3 JWT — ID / Access / Refresh token; **ID/Access token mặc định hết hạn 1 giờ**, refresh token cấu hình được.
 
 ## 📎 Tài nguyên tuần này
+> 📂 **Đã crawl sẵn tài liệu AWS vào** [`resources/week-06/`](resources/week-06/INDEX.md) — đọc offline được.
 - AWS Docs: `AWS IAM` User Guide — Policy evaluation logic, JSON policy elements (`Effect`/`Action`/`Resource`/`Condition`/`Principal`).
 - AWS Docs: `AWS IAM` User Guide — Identity-based vs resource-based policies; roles cho `Lambda`, EC2 instance profile, ECS task/execution roles.
 - AWS Docs: `AWS STS` API Reference — `AssumeRole`, `AssumeRoleWithWebIdentity`, `AssumeRoleWithSAML`, `GetSessionToken`; cross-account access.

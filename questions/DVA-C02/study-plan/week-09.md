@@ -203,6 +203,7 @@
 - **⭐ FULL MOCK #1:** đã làm **65 câu / 130 phút** canh giờ, ghi điểm và **review 100% câu sai** chưa? Nếu chưa → chưa được coi là xong Domain 4.
 
 ## 📎 Tài nguyên tuần này
+> 📂 **Đã crawl sẵn tài liệu AWS vào** [`resources/week-09/`](resources/week-09/INDEX.md) — đọc offline được.
 - AWS Docs: `Amazon CloudWatch` User Guide — metrics (namespace/dimension/resolution), custom metrics (`PutMetricData`), EMF.
 - AWS Docs: `Amazon CloudWatch Logs` — log group/stream, retention, metric filter, subscription filter, Logs Insights.
 - AWS Docs: `Amazon CloudWatch` Alarms — states, actions, composite alarms; `AWS Lambda` metrics reference.

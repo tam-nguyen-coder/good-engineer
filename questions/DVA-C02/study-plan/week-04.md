@@ -187,6 +187,7 @@ aws s3 cp big-file.bin s3://my-bucket/big-file.bin
    **Đáp án gọn:** Khi cần **audit** (log qua `CloudTrail`), **rotation** và kiểm soát quyền dùng khoá; `SSE-S3` chỉ là AES-256 do AWS quản lý, không audit theo khoá.
 
 ## 📎 Tài nguyên tuần này
+> 📂 **Đã crawl sẵn tài liệu AWS vào** [`resources/week-04/`](resources/week-04/INDEX.md) — đọc offline được.
 - AWS Docs: `API Gateway` Developer Guide — REST vs HTTP API, Stages & stage variables, Integration types, Mapping templates (`VTL`), Authorizers, Usage plans & API keys, Caching, CORS.
 - AWS Docs: `Amazon S3` User Guide — Presigned URLs, Multipart upload, Byte-range fetch, Server-side encryption (`SSE-S3`/`SSE-KMS`/`SSE-C`), Versioning, Event notifications.
 - AWS FAQ: `Amazon API Gateway` FAQs; `Amazon S3` FAQs (mục consistency, encryption).

@@ -249,6 +249,7 @@ cache:
 - **⭐ CHECKPOINT Domain 3:** đã đạt **≥70%** ở MINI-MOCK Domain 3 (~25 câu) chưa? Chưa → **KHÔNG** sang Tuần 9, ôn lại câu sai trước.
 
 ## 📎 Tài nguyên tuần này
+> 📂 **Đã crawl sẵn tài liệu AWS vào** [`resources/week-08/`](resources/week-08/INDEX.md) — đọc offline được.
 - AWS Docs: `AWS CodeBuild` User Guide — build spec reference (`buildspec.yml`), phases, env/artifacts/cache.
 - AWS Docs: `AWS CodeDeploy` User Guide — AppSpec file reference, lifecycle event hooks (EC2/Lambda/ECS), deployment configurations.
 - AWS Docs: `AWS CodePipeline` User Guide — stages, artifacts, source integrations (CodeConnections).

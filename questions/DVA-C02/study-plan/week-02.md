@@ -111,7 +111,7 @@ aws lambda create-event-source-mapping --function-name myFn \
 
 **1. Invocation model — nắm chắc 3 kiểu:**
 - **Sync (`RequestResponse`)**: gọi và chờ kết quả (vd `API Gateway`, CLI mặc định). Payload tối đa **6 MB**. Lỗi → trả về ngay cho caller, caller tự retry.
-- **Async (`Event`)**: `Lambda` xếp vào internal queue rồi trả `202` ngay. Payload tối đa **256 KB**. Lỗi → **`Lambda` tự retry**.
+- **Async (`Event`)**: `Lambda` xếp vào internal queue rồi trả `202` ngay. Payload tối đa **1 MB** (*AWS đã nâng từ 256 KB — đề/khoá cũ có thể vẫn ghi 256 KB*). Lỗi → **`Lambda` tự retry**.
 - **Event source mapping (poll)**: `Lambda` chủ động **poll** từ `SQS` / `Kinesis` / `DynamoDB Streams` rồi gọi function theo batch.
 
 **2. Xử lý lỗi async (RẤT hay hỏi):**
@@ -149,7 +149,7 @@ aws lambda create-event-source-mapping --function-name myFn \
 | Reserved concurrency | Đặt **trần** + đảm bảo phần riêng; giới hạn ảnh hưởng function khác |
 | Provisioned concurrency | Giữ sẵn môi trường ấm → **loại bỏ cold start** (có phí) |
 | Payload sync | **6 MB** (`RequestResponse`) |
-| Payload async | **256 KB** (`Event`) |
+| Payload async | **1 MB** (`Event`) — *AWS đã nâng từ 256 KB* |
 | Async retry | Retry **2 lần** (tổng **3 lần thử**) → DLQ hoặc destinations `OnFailure` |
 | DLQ đích | `SQS` / `SNS` (chỉ onFailure) |
 | Destinations đích | `SQS` / `SNS` / `Lambda` / `EventBridge` (cả onSuccess + onFailure) |
@@ -164,7 +164,7 @@ aws lambda create-event-source-mapping --function-name myFn \
 - Thấy "cần lưu file tạm lớn giữa các bước xử lý trong 1 invoke" → `/tmp` OK; nhưng "giữ state **bền** giữa các invoke" → phải `S3`/`DynamoDB`/`EFS`.
 - Thấy "async invoke thất bại đi đâu" → sau **3 lần thử** vào **DLQ hoặc destinations**, KHÔNG mất im lặng ngay lần đầu.
 - Thấy "`Lambda` trong VPC gọi API internet lỗi timeout" → thiếu **`NAT Gateway`** (private subnet không tự ra internet).
-- Thấy "payload 5 MB gọi trực tiếp OK, 5 MB async lỗi" → async giới hạn **256 KB**, sync mới tới **6 MB**.
+- Thấy "payload 5 MB gọi trực tiếp OK, 5 MB async lỗi" → async giới hạn **1 MB**, sync mới tới **6 MB**.
 
 ## 🔁 Phản xạ nhanh (keyword → đáp án)
 
@@ -215,9 +215,10 @@ aws lambda create-event-source-mapping --function-name myFn \
    **Đáp án gọn:** `/tmp` (512 MB, tới 10 GB) chỉ tồn tại trong vòng đời execution environment, **không bền** giữa các invoke → dữ liệu bền phải dùng `S3`/`DynamoDB`/`EFS`.
 
 6. **Giới hạn payload sync và async là bao nhiêu?**
-   **Đáp án gọn:** Sync (`RequestResponse`) **6 MB**; async (`Event`) **256 KB**.
+   **Đáp án gọn:** Sync (`RequestResponse`) **6 MB**; async (`Event`) **1 MB** (AWS đã nâng từ 256 KB).
 
 ## 📎 Tài nguyên tuần này
+> 📂 **Đã crawl sẵn tài liệu AWS vào** [`resources/week-02/`](resources/week-02/INDEX.md) — đọc offline được.
 - AWS Docs: `Lambda` Developer Guide — mục *Lambda function versions*, *Lambda function aliases*, *Configuring reserved/provisioned concurrency*, *Asynchronous invocation*, *Lambda event source mappings*.
 - AWS Docs: `Lambda` Developer Guide — *Using layers*, *Configuring ephemeral storage (/tmp)*, *Configuring VPC access*.
 - AWS FAQ: `AWS Lambda` FAQs (mục limits & pricing).

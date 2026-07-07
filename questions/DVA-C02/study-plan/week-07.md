@@ -198,6 +198,7 @@ aws kms get-key-rotation-status --key-id <key-id>
 - **⭐ CHECKPOINT Domain 2:** đã đạt **≥72%** ở MINI-MOCK Domain 1+2 (~30 câu) chưa? Nếu chưa → **KHÔNG** sang Tuần 8, ôn lại câu sai trước.
 
 ## 📎 Tài nguyên tuần này
+> 📂 **Đã crawl sẵn tài liệu AWS vào** [`resources/week-07/`](resources/week-07/INDEX.md) — đọc offline được.
 - AWS Docs: `AWS KMS` Developer Guide — symmetric vs asymmetric, envelope encryption, key policy vs grant, rotation, multi-region key, `ViaService`.
 - AWS Docs: `AWS Secrets Manager` User Guide — automatic rotation, RDS integration, staging labels.
 - AWS Docs: `AWS Systems Manager Parameter Store` — String/StringList/SecureString, hierarchies, standard vs advanced tier.

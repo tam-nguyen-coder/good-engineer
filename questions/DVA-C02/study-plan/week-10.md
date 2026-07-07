@@ -146,6 +146,8 @@ Bốn "buổi" tuần này quy đổi thành **lịch mock dồn**. Nguyên tắ
 
 ## 📎 Tài nguyên tuần này
 
+> 📂 **Đã crawl sẵn tài liệu AWS vào** [`resources/week-10/`](resources/week-10/INDEX.md) — đọc offline được.
+
 - **AWS Certification:** trang chi tiết kỳ thi **AWS Certified Developer – Associate (DVA-C02)** — exam guide, số câu, thời gian, điểm đậu.
 - **Đăng ký & lịch thi:** AWS Certification account → Pearson VUE / PSI (chọn **online proctored** hoặc **test center**); đọc kỹ **hướng dẫn thiết bị/phòng** nếu thi online.
 - **Bộ đề mock:** các nhà cung cấp practice exam uy tín (vd Tutorials Dojo / Stephane Maarek practice tests) — chọn **≥ 3 bộ KHÁC NHAU**, luôn **canh giờ 130'**.

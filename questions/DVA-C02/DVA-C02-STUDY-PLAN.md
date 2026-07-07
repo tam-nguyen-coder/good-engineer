@@ -229,7 +229,7 @@
 - **Layers**: tối đa **5 layers**, tổng unzip ≤ 250 MB; tách dependencies/dùng chung.
 - **Environment variables**: ≤ **4 KB**, mã hoá bằng KMS.
 - **Concurrency**: reserved (giới hạn + đảm bảo) vs provisioned (giữ ấm, chống cold start). Vượt hạn → **`TooManyRequestsException` (429)**.
-- **Invocation**: sync (6 MB payload) vs async (256 KB, retry **2 lần**, DLQ/destinations) vs event source mapping (poll SQS/Kinesis/DynamoDB Streams).
+- **Invocation**: sync (6 MB payload) vs async (1 MB, retry **2 lần**, DLQ/destinations) vs event source mapping (poll SQS/Kinesis/DynamoDB Streams).
 - **`/tmp`**: 512 MB → tối đa 10 GB.
 - **Bẫy:** async retry 2 lần; cần persistent state → KHÔNG dùng `/tmp` (không bền) → dùng S3/DynamoDB/EFS. VPC-attached Lambda cần NAT để ra internet.
 
@@ -341,7 +341,7 @@
 - Env vars: tổng **4 KB**.
 - Layers: tối đa **5**.
 - Concurrency mặc định/region: **1,000** (soft limit).
-- Payload: **6 MB** (sync), **256 KB** (async).
+- Payload: **6 MB** (sync), **1 MB** (async) — *AWS đã nâng từ 256 KB; một số đề/khoá cũ vẫn ghi 256 KB*.
 - Async: retry **2 lần**.
 
 ### DynamoDB

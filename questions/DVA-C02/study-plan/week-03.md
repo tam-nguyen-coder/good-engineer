@@ -220,6 +220,8 @@ aws dynamodb transact-write-items --transact-items '[
 
 ## 📎 Tài nguyên tuần này
 
+> 📂 **Đã crawl sẵn tài liệu AWS vào** [`resources/week-03/`](resources/week-03/INDEX.md) — đọc offline được.
+
 - AWS Docs: **Amazon DynamoDB Developer Guide** — mục *Read/Write Capacity Mode*, *Working with Queries & Scans*, *Secondary Indexes (GSI/LSI)*.
 - AWS Docs: **DynamoDB Developer Guide** — *Change Data Capture with Streams*, *DAX*, *Time to Live (TTL)*, *Working with Transactions*, *PartiQL for DynamoDB*.
 - AWS FAQ: **Amazon DynamoDB FAQs** (capacity, consistency, throttling, best practices key design).

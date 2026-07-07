@@ -271,6 +271,7 @@ console.log(new TextDecoder().decode(res.Payload));
   **Đáp án gọn:** timeout tối đa 15 phút (900s); memory 128 MB–10240 MB, CPU tỉ lệ theo memory.
 
 ## 📎 Tài nguyên tuần này
+> 📂 **Đã crawl sẵn tài liệu AWS vào** [`resources/week-01/`](resources/week-01/INDEX.md) — đọc offline được.
 - AWS Docs: *AWS CLI User Guide* – Configuration and credential file settings; Named profiles.
 - AWS Docs: *AWS SDKs and Tools Reference Guide* – Credential provider chain; Retries; (SDK) Paginators & Waiters.
 - AWS Docs: *Lambda Developer Guide* – Lambda programming model (handler/event/context); Execution role; Resource-based policies.
