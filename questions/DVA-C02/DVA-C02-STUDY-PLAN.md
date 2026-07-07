@@ -65,12 +65,13 @@
 - **`Lambda` chuyên sâu**: versions, aliases, layers, environment variables, concurrency (reserved/provisioned), cold start, `/tmp`, DLQ, destinations, event source mapping.
 - **`DynamoDB` chuyên sâu**: WCU/RCU tính toán, GSI/LSI, DynamoDB Streams, DAX, conditional writes, optimistic locking, TransactWriteItems, PartiQL.
 - **`API Gateway` chuyên sâu**: REST vs HTTP vs WebSocket, stages, stage variables, authorizers, usage plans, mapping templates, caching, CORS.
-- **CI/CD**: `CodeCommit`, `CodeBuild` (**buildspec.yml**), `CodeDeploy` (**appspec.yml**, hooks), `CodePipeline`, `CodeArtifact`.
+- **CI/CD**: `CodeCommit` *(AWS từng ngừng nhận khách mới 2024, mở lại GA 11/2025; đề vẫn có thể hỏi)*, `CodeBuild` (**buildspec.yml**), `CodeDeploy` (**appspec.yml**, hooks), `CodePipeline`, `CodeArtifact`.
 - **IaC dev**: `CloudFormation` (intrinsic functions, change sets) + **`SAM`** (`sam build/deploy/local`).
 - **`Cognito`** (User Pools vs Identity Pools), **`STS`** (AssumeRole...), **`Secrets Manager` vs `Parameter Store`**.
 - **Observability**: `X-Ray` (segments/subsegments/annotations), `CloudWatch Logs/Metrics/Alarms`, `EventBridge`.
 - **Containers cho dev**: `ECS`/`Fargate`, `ECR`.
 - **`Elastic Beanstalk`** (deployment policies), **`Step Functions`**, **`ElastiCache`** (caching strategies), **`Kinesis`**.
+- **Khác (in-scope)**: `CloudFront` (signed URL/cookies, OAC), `AppSync` (GraphQL), `AppConfig` (feature flags), `WAF`.
 
 > 🧠 **Câu thần chú chuyển tư duy:** SAA hỏi *"nên dùng gì?"* — DVA hỏi *"dùng như thế nào, đặt config ở đâu, gọi API nào, sửa lỗi ra sao."*
 
@@ -93,22 +94,22 @@
 
 ---
 
-### 🗓️ Chi tiết 10 tuần — mỗi tuần 1 file riêng
+### 🗓️ Chi tiết 10 tuần — mỗi tuần 1 thư mục riêng
 
-> 👉 Mỗi tuần có **file chi tiết riêng** trong thư mục [`study-plan/`](study-plan/): mục tiêu, nội dung học từng buổi, lab từng bước, điểm phải nhớ, bẫy đề, cổng tự kiểm tra, tài nguyên và checklist hoàn thành. Bấm vào tên tuần để mở.
+> 👉 Mỗi tuần là **1 thư mục** trong [`study-plan/`](study-plan/) gồm: `README.md` (plan chi tiết: mục tiêu, nội dung từng buổi, lab từng bước, điểm phải nhớ, bẫy đề, cổng tự kiểm tra, checklist) và thư mục **`resources/`** (tài liệu AWS đã crawl sẵn để đọc offline). Bấm vào tên tuần để mở.
 
 | Tuần | Trọng tâm | Domain | Mốc quan trọng | File |
 |---|---|---|---|---|
-| **1** | Developer mindset + AWS SDK/CLI + `Lambda` (cơ bản) | D1 | — | [week-01.md](study-plan/week-01.md) |
-| **2** | `Lambda` nâng cao (versions/aliases/layers/concurrency) | D1 | — | [week-02.md](study-plan/week-02.md) |
-| **3** | `DynamoDB` toàn tập | D1 | — | [week-03.md](study-plan/week-03.md) |
-| **4** | `API Gateway` + `S3` (góc dev) | D1 | — | [week-04.md](study-plan/week-04.md) |
-| **5** | Messaging + `Step Functions` + `ElastiCache` + `RDS Proxy` | D1 ✅ | 🎯 mini-mock D1 ≥70% | [week-05.md](study-plan/week-05.md) |
-| **6** | Security I: `IAM` + `STS` + `Cognito` | D2 | — | [week-06.md](study-plan/week-06.md) |
-| **7** | Security II: `KMS` + `Secrets`/`Parameter Store` + Encryption | D2 ✅ | 🎯 mini-mock D1+2 ≥72% | [week-07.md](study-plan/week-07.md) |
-| **8** | Deployment: CI/CD + `CloudFormation`/`SAM` + `Beanstalk` + `ECS`/`ECR` | D3 ✅ | 🎯 mini-mock D3 ≥70% | [week-08.md](study-plan/week-08.md) |
-| **9** | Troubleshooting & Optimization (`CloudWatch`/`X-Ray`) | D4 ✅ | 🎯 **FULL MOCK #1** | [week-09.md](study-plan/week-09.md) |
-| **10** | Tuần chốt: Mock dồn + Review + Cram + Thi | Tất cả | 🏁 **Full mock #2–4 → Thi** | [week-10.md](study-plan/week-10.md) |
+| **1** | Developer mindset + AWS SDK/CLI + `Lambda` (cơ bản) | D1 | — | [week-01/](study-plan/week-01/README.md) |
+| **2** | `Lambda` nâng cao (versions/aliases/layers/concurrency) | D1 | — | [week-02/](study-plan/week-02/README.md) |
+| **3** | `DynamoDB` toàn tập | D1 | — | [week-03/](study-plan/week-03/README.md) |
+| **4** | `API Gateway` + `S3` (góc dev) | D1 | — | [week-04/](study-plan/week-04/README.md) |
+| **5** | Messaging + `Step Functions` + `ElastiCache` + `RDS Proxy` | D1 ✅ | 🎯 mini-mock D1 ≥70% | [week-05/](study-plan/week-05/README.md) |
+| **6** | Security I: `IAM` + `STS` + `Cognito` | D2 | — | [week-06/](study-plan/week-06/README.md) |
+| **7** | Security II: `KMS` + `Secrets`/`Parameter Store` + Encryption | D2 ✅ | 🎯 mini-mock D1+2 ≥72% | [week-07/](study-plan/week-07/README.md) |
+| **8** | Deployment: CI/CD + `CloudFormation`/`SAM` + `Beanstalk` + `ECS`/`ECR` | D3 ✅ | 🎯 mini-mock D3 ≥70% | [week-08/](study-plan/week-08/README.md) |
+| **9** | Troubleshooting & Optimization (`CloudWatch`/`X-Ray`) | D4 ✅ | 🎯 **FULL MOCK #1** | [week-09/](study-plan/week-09/README.md) |
+| **10** | Tuần chốt: Mock dồn + Review + Cram + Thi | Tất cả | 🏁 **Full mock #2–4 → Thi** | [week-10/](study-plan/week-10/README.md) |
 
 > 📈 Tiến trình phủ Domain: **D1** (Tuần 1–5, 32%) → **D2** (Tuần 6–7, 26%) → **D3** (Tuần 8, 24%) → **D4** (Tuần 9, 18%) → **chốt** (Tuần 10).
 
@@ -162,7 +163,7 @@
 
 **Task 2.1 — Implement authentication and/or authorization**
 - `IAM`: identity-based vs resource-based policy, cấu trúc policy (Effect/Action/Resource/Condition/Principal), **explicit deny > allow**.
-- `STS`: `AssumeRole`, `AssumeRoleWithWebIdentity`, `GetSessionToken`; cross-account access; instance profile.
+- `STS`: `AssumeRole`, `AssumeRoleWithWebIdentity`, `AssumeRoleWithSAML`, `GetSessionToken`; cross-account access; instance profile.
 - `Cognito`: **User Pools** (authentication, JWT: ID/Access/Refresh token) vs **Identity Pools** (authorization → temporary AWS credentials).
 - Federation: SAML, OIDC, social login; Hosted UI; MFA.
 - API Gateway authorizers (IAM / Cognito / Lambda authorizer).
@@ -229,6 +230,7 @@
 - **Layers**: tối đa **5 layers**, tổng unzip ≤ 250 MB; tách dependencies/dùng chung.
 - **Environment variables**: ≤ **4 KB**, mã hoá bằng KMS.
 - **Concurrency**: reserved (giới hạn + đảm bảo) vs provisioned (giữ ấm, chống cold start). Vượt hạn → **`TooManyRequestsException` (429)**.
+- **SnapStart**: giảm cold start (best-effort) cho `Java 11+`, `Python 3.12+`, `.NET 8+`; chỉ trên **published version/alias** (không `$LATEST`); **không dùng chung provisioned concurrency**; không hỗ trợ `/tmp` > 512 MB.
 - **Invocation**: sync (6 MB payload) vs async (1 MB, retry **2 lần**, DLQ/destinations) vs event source mapping (poll SQS/Kinesis/DynamoDB Streams).
 - **`/tmp`**: 512 MB → tối đa 10 GB.
 - **Bẫy:** async retry 2 lần; cần persistent state → KHÔNG dùng `/tmp` (không bền) → dùng S3/DynamoDB/EFS. VPC-attached Lambda cần NAT để ra internet.
@@ -251,7 +253,7 @@
 - **Integration**: Lambda proxy (`AWS_PROXY`) vs Lambda vs HTTP vs AWS service vs Mock.
 - **Authorizers**: IAM, Cognito User Pool, **Lambda authorizer** (token/request).
 - **Usage plans + API keys**, throttling, **caching** (TTL mặc định 300s), CORS, mapping templates (VTL), gateway responses.
-- **Timeout integration tối đa 29 giây**.
+- **Integration timeout**: mặc định **29s**; có thể **tăng tới 300s** qua `Service Quotas` cho **Regional/private REST API** (KHÔNG áp dụng edge-optimized REST & HTTP API; có thể phải giảm throttle quota). Tác vụ dài → vẫn nên async.
 - **Bẫy:** CORS lỗi → cấu hình cả OPTIONS + header ở method response; canary release qua stage; proxy integration truyền nguyên request.
 
 ### `Amazon S3` (góc nhìn developer)
@@ -262,27 +264,32 @@
 - **Strong read-after-write consistency** (mặc định hiện nay).
 - **Bẫy:** presigned URL kế thừa quyền của identity tạo ra nó; byte-range fetch để tải song song.
 
+### `CloudFront` (góc nhìn developer)
+- **Signed URL** (1 file) vs **Signed cookies** (nhiều file, giữ nguyên URL) — dùng trusted key group; so với **`S3` presigned URL** (truy cập S3 trực tiếp, kế thừa quyền IAM người tạo).
+- **OAC** (thay OAI) khoá S3 chỉ cho CloudFront đọc.
+- **Cache invalidation** (`CreateInvalidation`) hoặc versioned object để cập nhật nội dung.
+
 ### `SQS` / `SNS` / `Kinesis` (messaging — hay bị so sánh)
 - **`SQS`**: Standard (at-least-once, thứ tự best-effort) vs **FIFO** (exactly-once, có thứ tự, `MessageGroupId`/`MessageDeduplicationId`). Message ≤ **256 KB** (lớn hơn → SQS Extended Client + S3). Visibility timeout mặc định **30s** (max 12h). Retention **4 ngày** (1 phút–14 ngày). **Long polling** (`WaitTimeSeconds` ≤ 20s). DLQ + `maxReceiveCount`.
 - **`SNS`**: pub/sub, **fan-out** ra SQS/Lambda/HTTP/email/SMS; FIFO topics; message filtering.
-- **`Kinesis Data Streams`**: shards (1 MB/s hoặc 1000 rec/s in, 2 MB/s out mỗi shard), retention 24h→365 ngày, ordered theo partition key, cho phép **nhiều consumer + replay**. `Firehose` = near-real-time load vào S3/Redshift/OpenSearch (không replay).
+- **`Kinesis Data Streams`**: shards (1 MB/s hoặc 1000 rec/s in, 2 MB/s out mỗi shard), retention 24h→365 ngày, ordered theo partition key, cho phép **nhiều consumer + replay**. **Capacity mode**: `on-demand` (AWS tự quản shard, không cần capacity planning) vs `provisioned` (tự đặt số shard). `Firehose` = near-real-time load vào S3/Redshift/OpenSearch (không replay).
 - **Bẫy khi chọn:** cần thứ tự + nhiều consumer + replay → Kinesis; decouple đơn giản 1 consumer group → SQS; fan-out 1→N → SNS (hoặc SNS+SQS).
 
 ### `Cognito` (security)
-- **User Pools** = *authentication* ("bạn là ai?") → trả **JWT** (ID/Access/Refresh). Sign-up/sign-in, MFA, social/SAML/OIDC, Hosted UI.
+- **User Pools** = *authentication* ("bạn là ai?") → trả **JWT** (ID/Access/Refresh). Sign-up/sign-in, MFA, social/SAML/OIDC, Hosted UI. *Hosted UI = classic; **Managed Login** (2024) = thế hệ mới (branding editor, passkey), cần feature plan **Essentials/Plus**.*
 - **Identity Pools (Federated Identities)** = *authorization* ("bạn được làm gì?") → đổi token lấy **temporary AWS credentials** qua STS, map vào IAM role.
 - **Bẫy:** cần gọi trực tiếp AWS service từ client (mobile) → Identity Pool. Chỉ cần đăng nhập app → User Pool.
 
 ### `KMS` (encryption)
 - **Envelope encryption**: `GenerateDataKey` → mã hoá data local bằng data key, lưu data key đã mã hoá.
 - Encrypt trực tiếp qua API ≤ **4 KB**.
-- Symmetric (mặc định) vs asymmetric; key policy + grants; **automatic rotation** (mỗi năm với CMK).
+- Symmetric (mặc định) vs asymmetric; key policy + grants; **automatic rotation** (mỗi năm với CMK); hỗ trợ **custom rotation period** và **on-demand rotation** (rotate ngay).
 - Loại key: **AWS owned / AWS managed / customer managed (CMK)**.
 
 ### `IAM` + `STS`
 - Cấu trúc policy JSON; **evaluation: explicit Deny > Allow > default Deny**.
 - Roles cho service (Lambda execution role, EC2 instance profile, ECS task role vs execution role).
-- STS APIs: `AssumeRole` (cross-account), `AssumeRoleWithWebIdentity` (federation web), `GetSessionToken` (MFA).
+- STS APIs: `AssumeRole` (cross-account), `AssumeRoleWithWebIdentity` (federation web/OIDC), `AssumeRoleWithSAML` (federation SAML), `GetSessionToken` (MFA).
 
 ### CI/CD: `CodeCommit` / `CodeBuild` / `CodeDeploy` / `CodePipeline`
 - **`buildspec.yml`** (CodeBuild): phases `install → pre_build → build → post_build`; sections `env`, `artifacts`, `cache`, `reports`. Đặt ở **root** của repo.
@@ -301,7 +308,7 @@
 
 ### `Elastic Beanstalk`
 - Platform + environment (web tier vs **worker tier** — worker đọc từ SQS).
-- **Deployment policies**: All at once (downtime), **Rolling**, **Rolling with additional batch**, **Immutable** (an toàn nhất, tạo instance mới hoàn toàn), Blue/Green (swap CNAME URL).
+- **Deployment policies (5)**: All at once (downtime) / **Rolling** / **Rolling with additional batch** / **Immutable** (an toàn nhất, tạo instance mới hoàn toàn) / **Traffic splitting** (canary %, cần ALB). **Blue/Green KHÔNG phải policy** — là kỹ thuật **swap CNAME/URL** giữa 2 environment.
 - `.ebextensions/*.config` để tuỳ biến; `Dockerrun.aws.json`.
 
 ### `ECS` / `Fargate` / `ECR`
@@ -343,6 +350,8 @@
 - Concurrency mặc định/region: **1,000** (soft limit).
 - Payload: **6 MB** (sync), **1 MB** (async) — *AWS đã nâng từ 256 KB; một số đề/khoá cũ vẫn ghi 256 KB*.
 - Async: retry **2 lần**.
+- Concurrency scaling: **1,000 execution environments / 10 giây / function**.
+- Response streaming: tới **200 MB** (cách vượt cap 6 MB sync).
 
 ### DynamoDB
 - Item tối đa: **400 KB**.
@@ -352,7 +361,7 @@
 - Query kết quả tối đa **1 MB**/lần (rồi paginate).
 
 ### API Gateway
-- Integration timeout tối đa: **29 giây**.
+- Integration timeout: mặc định **29s**; tăng tới **300s** qua `Service Quotas` cho **Regional/private REST API** (KHÔNG áp dụng edge-optimized REST & HTTP API).
 - Throttling mặc định account: **10,000 req/s** (burst **5,000**).
 - Cache TTL mặc định: **300s** (0–3600s).
 - Payload tối đa: **10 MB**.
@@ -363,12 +372,13 @@
 - Retention: mặc định **4 ngày**, khoảng **60s–14 ngày**.
 - Long polling `WaitTimeSeconds`: tối đa **20s**.
 - Delay queue: tối đa **15 phút**.
-- FIFO throughput: **300 msg/s** (3,000 với batching).
+- FIFO throughput: **300 msg/s** (3,000 với batching); bật **high throughput mode** → tới **~30,000 msg/s** (theo region).
 
 ### Kinesis Data Streams
 - Shard: **1 MB/s** hoặc **1,000 records/s** in; **2 MB/s** out.
 - Record tối đa: **1 MB**.
 - Retention: **24h** mặc định → **365 ngày**.
+- **Capacity mode**: `on-demand` (AWS tự quản shard) vs `provisioned` (tự đặt số shard).
 
 ### KMS / S3 / khác
 - KMS encrypt trực tiếp: tối đa **4 KB** (lớn hơn → envelope encryption).
@@ -389,8 +399,9 @@
 | "mobile app cần gọi trực tiếp AWS service", đổi token lấy AWS creds | **Cognito Identity Pool** |
 | "decouple", "buffer", "at-least-once", 1 consumer | **SQS** |
 | "ordered", "replay", "multiple consumers", real-time streaming | **Kinesis Data Streams** |
+| "no shard/capacity management" (Kinesis) | **Kinesis on-demand mode** |
 | "fan-out", "1 message → nhiều nơi", push notification | **SNS** (hoặc SNS + SQS) |
-| "reduce Lambda cold start", giữ ấm | **Provisioned Concurrency** |
+| "reduce Lambda cold start", giữ ấm | **Provisioned Concurrency** (đảm bảo) hoặc **SnapStart** (Java/Python/.NET, best-effort, chỉ version+alias) |
 | "limit blast radius"/giới hạn concurrency 1 function | **Reserved Concurrency** |
 | "microsecond latency" cho DynamoDB | **DAX** |
 | "sub-millisecond cache", session store | **ElastiCache** |
@@ -408,6 +419,8 @@
 | "audit ai gọi API nào" | **CloudTrail** |
 | "schedule/cron trigger" | **EventBridge (CloudWatch Events)** |
 | "presigned URL" upload/download tạm | **S3 presigned URL** |
+| "phân phối file private qua CDN / nhiều file" | **CloudFront signed cookies** |
+| "chặn S3 chỉ cho CloudFront" | **OAC** |
 | "throttling / ProvisionedThroughputExceeded" | **Exponential backoff + jitter** |
 | "hot partition" | **Thiết kế partition key phân tán đều** |
 | "connection pool cho Lambda → RDS" | **RDS Proxy** |
