@@ -165,6 +165,7 @@ cache:
 4. `docker build` → **push image lên `ECR`** theo lệnh trên; bật scan + lifecycle policy.
 
 ### 🅳 Buổi D — Practice + Review (~2h)
+> 📝 **Bộ câu hỏi luyện tập của tuần:** [questions.md](questions.md) — đáp án & giải thích: [answers.md](answers.md). *(bằng tiếng Anh — văn phong đề thật để làm quen đề.)*
 - Làm bộ câu hỏi CI/CD + `CloudFormation`/`SAM` + `Beanstalk` + `ECS`/`ECR`.
 - **⭐ MINI-MOCK Domain 3 (~25 câu)** — trộn toàn bộ chủ đề tuần. **Ghi sổ câu sai**, phân loại theo dịch vụ.
 - **Spaced repetition:** ôn flashcard theo mốc **1 / 3 / 7 ngày** (thứ tự hooks appspec + tên deployment config rất dễ quên).

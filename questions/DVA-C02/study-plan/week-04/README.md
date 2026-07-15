@@ -129,6 +129,7 @@ aws s3 cp big-file.bin s3://my-bucket/big-file.bin
    - **Đối chiếu:** cần REST truyền thống → `API Gateway` (REST/HTTP API); client cần **query linh hoạt / real-time** → `AppSync` (GraphQL).
 
 ### 🅳 Buổi D — Practice + Review (~2h)
+> 📝 **Bộ câu hỏi luyện tập của tuần:** [questions.md](questions.md) — đáp án & giải thích: [answers.md](answers.md). *(bằng tiếng Anh — văn phong đề thật để làm quen đề.)*
 - Làm 30–40 câu practice tập trung `API Gateway` + `S3`.
 - Ghi mọi câu sai vào sổ lỗi: ghi rõ **keyword đề** → **đáp án đúng** → **lý do**.
 - Ôn spaced repetition: xem lại flashcard tuần này ở mốc **1 / 3 / 7 ngày**; đảo lại số liệu ở mục "PHẢI NHỚ".

@@ -132,6 +132,7 @@ aws lambda create-event-source-mapping --function-name myFn \
 Đọc thêm: `Lambda` Developer Guide — mục *Versions*, *Aliases*, *Concurrency*, *Async invocation*, *Event source mappings*.
 
 ### 🅳 Buổi D — Practice + Review (~2h)
+> 📝 **Bộ câu hỏi luyện tập của tuần:** [questions.md](questions.md) — đáp án & giải thích: [answers.md](answers.md). *(bằng tiếng Anh — văn phong đề thật để làm quen đề.)*
 - Làm 20–30 câu practice chủ đề `Lambda` (versions/aliases/concurrency/invocation/event source).
 - Ghi **sổ câu sai**: mỗi câu sai ghi lại keyword + lý do chọn nhầm.
 - Ôn **spaced repetition**: xem lại flashcard số liệu ở mốc **1 / 3 / 7 ngày**.

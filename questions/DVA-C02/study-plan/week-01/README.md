@@ -202,6 +202,7 @@ console.log(new TextDecoder().decode(res.Payload));
 - `Lambda` Developer Guide — *Lambda programming model*, *Execution role*.
 
 ### 🅳 Buổi D — Practice + Review (~2h)
+> 📝 **Bộ câu hỏi luyện tập của tuần:** [questions.md](questions.md) — đáp án & giải thích: [answers.md](answers.md). *(bằng tiếng Anh — văn phong đề thật để làm quen đề.)*
 - Làm **15–20 câu practice** về: CLI/profile, credential chain, SDK retry/pagination, `Lambda` cơ bản & execution role.
 - **Ghi sổ câu sai:** mỗi câu sai ghi lại *keyword bẫy* + *lý do đúng*.
 - **Spaced repetition:** đặt lịch ôn lại các fact tuần này ở mốc **1 / 3 / 7 ngày**.

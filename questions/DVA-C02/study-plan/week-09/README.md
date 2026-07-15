@@ -127,6 +127,7 @@
 **Đọc thêm:** `X-Ray` concepts (segment/subsegment, sampling), `CloudWatch` Logs Insights query syntax, `EventBridge` schedule expression.
 
 ### 🅳 Buổi D — Practice + Review (~2h)
+> 📝 **Bộ câu hỏi luyện tập của tuần:** [questions.md](questions.md) — đáp án & giải thích: [answers.md](answers.md). *(bằng tiếng Anh — văn phong đề thật để làm quen đề.)*
 - **⭐⭐ FULL MOCK #1 — 65 câu, canh giờ CHÍNH XÁC 130 phút.** Làm như thi thật: không tra cứu, không dừng giữa chừng.
 - **Ghi điểm** ngay, tính % theo từng Domain.
 - **Review 100% câu sai NGAY trong tuần** (không để dồn): với mỗi câu ghi lý do sai (không biết / đọc nhầm / bẫy) vào **sổ câu sai**.

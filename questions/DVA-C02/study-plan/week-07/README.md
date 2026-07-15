@@ -125,6 +125,7 @@ aws kms get-key-rotation-status --key-id <key-id>
 **Đọc thêm:** `KMS` FAQ (envelope encryption, key policy vs grant, rotation), `Secrets Manager` User Guide (rotation, staging labels), `Parameter Store` (SecureString, tier).
 
 ### 🅳 Buổi D — Practice + Review (~2h)
+> 📝 **Bộ câu hỏi luyện tập của tuần:** [questions.md](questions.md) — đáp án & giải thích: [answers.md](answers.md). *(bằng tiếng Anh — văn phong đề thật để làm quen đề.)*
 - Làm bộ câu hỏi chủ đề `KMS` + encryption + `Secrets Manager`/`Parameter Store`.
 - **⭐ MINI-MOCK Domain 1+2 (~30 câu)** trộn toàn bộ Tuần 1→7. **Ghi sổ câu sai**, phân loại theo dịch vụ.
 - **Spaced repetition:** ôn flashcard số liệu theo mốc **1 / 3 / 7 ngày** (4 KB, 365 ngày, các loại key rất dễ lẫn).

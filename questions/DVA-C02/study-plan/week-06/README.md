@@ -145,6 +145,7 @@
 **Đọc thêm:** `IAM` policy evaluation logic, `IAM` JSON policy reference, `STS` API reference, `Cognito` Developer Guide (User Pool vs Identity Pool).
 
 ### 🅳 Buổi D — Practice + Review (~2h)
+> 📝 **Bộ câu hỏi luyện tập của tuần:** [questions.md](questions.md) — đáp án & giải thích: [answers.md](answers.md). *(bằng tiếng Anh — văn phong đề thật để làm quen đề.)*
 - Làm bộ câu hỏi chủ đề `IAM` policy evaluation, roles (Lambda/ECS), `STS`, `Cognito`.
 - **Ghi sổ câu sai**, phân loại theo: đọc policy / chọn role / chọn STS API / User Pool vs Identity Pool.
 - **Spaced repetition:** ôn flashcard theo mốc **1 / 3 / 7 ngày** — nhất là bảng STS API và cặp task role vs execution role (rất dễ quên).

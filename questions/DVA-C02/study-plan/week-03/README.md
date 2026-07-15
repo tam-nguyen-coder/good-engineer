@@ -142,6 +142,8 @@ aws dynamodb transact-write-items --transact-items '[
 
 ### 🅳 Buổi D — Practice + Review (~2h)
 
+> 📝 **Bộ câu hỏi luyện tập của tuần:** [questions.md](questions.md) — đáp án & giải thích: [answers.md](answers.md). *(bằng tiếng Anh — văn phong đề thật để làm quen đề.)*
+
 - Làm **20–30 câu practice** chủ đề `DynamoDB` (tính capacity, GSI/LSI, Streams, conditional write). Bấm tay lại các bài tính WCU/RCU cho tới khi phản xạ.
 - **Ghi sổ câu sai:** đề + đáp án đúng + **lý do mình sai**. Đặc biệt các câu bẫy về consistency và index.
 - **Spaced repetition:** ôn lại theo mốc **1 ngày → 3 ngày → 7 ngày** (đặc biệt bảng công thức RCU/WCU và bảng GSI vs LSI).

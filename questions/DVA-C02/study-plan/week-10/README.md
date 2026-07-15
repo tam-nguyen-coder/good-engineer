@@ -33,6 +33,8 @@ Bốn "buổi" tuần này quy đổi thành **lịch mock dồn**. Nguyên tắ
 
 ### 🅰️ Buổi A — FULL MOCK #2 + chiến lược làm bài (~2.5h)
 
+> 📝 **Mock mini cross-domain của repo (25 câu, phủ cả 4 domain theo tỉ trọng đề):** [questions.md](questions.md) — canh giờ **~50 phút** (~2 phút/câu), tự chấm + **phân tích điểm theo domain** ở [answers.md](answers.md). *(Câu hỏi & giải thích bằng tiếng Anh — văn phong đề thật.)* Dùng làm bài "khởi động" phản xạ 4 domain trước khi vào full mock 65 câu/130'.
+
 **Quy trình chạy mock (giống thi thật):**
 1. Chọn một bộ full-length **65 câu**, đặt đồng hồ **130 phút**, không dừng giữa chừng, không tra tài liệu.
 2. Áp dụng **chiến lược làm bài** dưới đây trong suốt bài.

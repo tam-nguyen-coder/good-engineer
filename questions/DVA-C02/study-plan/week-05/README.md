@@ -149,6 +149,7 @@
 **Đọc thêm:** `SQS` FAQ (visibility timeout, FIFO), `SNS` message filtering, `Kinesis` Developer Guide (shard, enhanced fan-out).
 
 ### 🅳 Buổi D — Practice + Review (~2h)
+> 📝 **Bộ câu hỏi luyện tập của tuần:** [questions.md](questions.md) — đáp án & giải thích: [answers.md](answers.md). *(bằng tiếng Anh — văn phong đề thật để làm quen đề.)*
 - Làm bộ câu hỏi chủ đề messaging + orchestration + caching.
 - **⭐ MINI-MOCK Domain 1 (~25 câu)** trộn toàn bộ Tuần 1→5. **Ghi sổ câu sai**, phân loại theo dịch vụ.
 - **Spaced repetition:** ôn lại flashcard số liệu theo mốc **1 / 3 / 7 ngày** (số liệu `SQS`, `Kinesis` rất dễ quên).
