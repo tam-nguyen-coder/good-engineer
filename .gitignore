@@ -16,3 +16,4 @@ Thumbs.db
 
 # Dependency directories
 node_modules/
+*.zip

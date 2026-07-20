@@ -1,0 +1,13 @@
+{
+  "name": "sdk-invoke",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-lambda": "^3.0.0"
+  }
+}
