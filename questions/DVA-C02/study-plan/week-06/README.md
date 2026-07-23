@@ -56,6 +56,7 @@
 | **Task execution role** | **ECS agent** (hạ tầng) | **kéo image từ `ECR`** + **ghi log lên `CloudWatch Logs`**, đọc secret khi khởi động task |
 
 ### 🅱️ Buổi B — Hands-on (~3.5h)
+> 🧪 **Lab cầm tay chỉ việc (từng bước + lệnh + code):** [labs.md](labs.md).
 
 **Lab 1 — Viết IAM policy least-privilege cho `Lambda` + test explicit `Deny`**
 1. Tạo policy identity-based chỉ cho phép ghi vào MỘT bảng `DynamoDB` cụ thể:

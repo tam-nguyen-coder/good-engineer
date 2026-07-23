@@ -84,6 +84,8 @@ SDK/CLI tìm credentials theo **thứ tự ưu tiên giảm dần**:
 
 ### 🅱️ Buổi B — Hands-on (~3.5h)
 
+> 🧪 **Lab cầm tay chỉ việc (từng bước + lệnh + code):** [labs.md](labs.md).
+
 **Bước 1 — Cấu hình CLI + profile**
 ```bash
 # Tạo profile mặc định

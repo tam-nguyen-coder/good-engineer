@@ -71,6 +71,8 @@ Bốn "buổi" tuần này quy đổi thành **lịch mock dồn**. Nguyên tắ
 
 ### 🅳 Buổi D — Cram cuối + tổng duyệt (~2h)
 
+> 🏗️ **Capstone project (hands-on ghép mọi thứ, 7 Part end-to-end):** [labs.md](labs.md) — tự tay build "Serverless Notes/Media App" (`API Gateway`→`Lambda`→`DynamoDB`, `S3` presigned + event, `SNS`/`SQS` fan-out, `Cognito`/`KMS`/`Secrets`, `X-Ray`/`CloudWatch`, đóng gói `SAM` + canary). Hoàn thành = tick xong tiêu chí #4 "toàn bộ hands-on Serverless & CI/CD".
+
 - **Đọc lướt cheat sheet + bảng số §6 + bảng phản xạ §7 + danh sách bẫy** — chỉ ôn lại, không nhồi cái mới.
 - **Rà hands-on còn thiếu:** đảm bảo đã hoàn tất **toàn bộ hands-on nhóm Serverless & CI/CD** (điều kiện đăng ký thi).
 - **Spaced repetition** lần cuối cho các nhóm hay quên (STS API, `SQS` FIFO vs Standard, cache invalidation…).

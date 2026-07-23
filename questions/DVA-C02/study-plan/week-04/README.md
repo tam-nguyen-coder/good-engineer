@@ -59,6 +59,8 @@
 
 ### 🅱️ Buổi B — Hands-on (~3.5h): `REST API` → `Lambda` → `DynamoDB` (CRUD)
 
+> 🧪 **Lab cầm tay chỉ việc (từng bước + lệnh + code):** [labs.md](labs.md).
+
 1. Tạo bảng `DynamoDB` tên `Items` (partition key `id` kiểu String).
 2. Viết 1 hàm `Lambda` xử lý CRUD, đọc `event.httpMethod` (proxy) để phân nhánh POST/GET/PUT/DELETE ghi/đọc `DynamoDB`. Trả về đúng `{ statusCode, headers, body }`.
 3. Tạo `REST API`, resource `/items` và `/items/{id}`.

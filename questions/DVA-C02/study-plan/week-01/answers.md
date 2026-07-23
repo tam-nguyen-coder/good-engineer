@@ -3,7 +3,9 @@
 > Open only after you have attempted every question in [questions.md](questions.md).
 > Back to [week plan](README.md) · [master plan](../../DVA-C02-STUDY-PLAN.md)
 
-**Answer key:** 1-B · 2-C · 3-AC · 4-C · 5-AC · 6-C · 7-B · 8-C · 9-B · 10-B · 11-AD · 12-C · 13-B · 14-B · 15-B · 16-B · 17-B · 18-AB · 19-AB · 20-AB · 21-B · 22-B
+**Answer key — Part 1 (Q1–Q22):** 1-B · 2-C · 3-AC · 4-C · 5-AC · 6-C · 7-B · 8-C · 9-B · 10-B · 11-AD · 12-C · 13-B · 14-B · 15-B · 16-B · 17-B · 18-AB · 19-AB · 20-AB · 21-B · 22-B
+
+**Answer key — Part 2 (Q23–Q36):** 23-B · 24-A · 25-C · 26-AC · 27-BC · 28-A · 29-B · 30-AB · 31-B · 32-B · 33-B · 34-A · 35-A · 36-AB
 
 ---
 
@@ -140,3 +142,93 @@
 - **Why the others are wrong:** A — `AWSLambdaBasicExecutionRole` is a **permissions policy** (what the function may do), not a trust policy (who may assume it). C — a resource-based policy with `lambda:InvokeFunction` governs "who can invoke the function", which is different from assuming a role. D — you do not set an IAM user as the principal for a service execution role.
 - 🧠 **Key point / trap:** Trust policy = **who can assume the role** (here `lambda.amazonaws.com`); permissions policy = **what the role can do**.
 - 📎 Source: `resources/lambda-execution-role.md` ("trust policy must specify the Lambda service principal").
+
+---
+
+## Part 2 — Lambda integration & invocation models
+
+> The whole part hinges on one matrix. **Synchronous (RequestResponse):** caller waits for the result and **owns the retry** — `API Gateway`, ALB, `Cognito`, `Step Functions`, Lex/Alexa, `Lambda@Edge`, `S3 Batch Operations`, and direct SDK/CLI invokes; payload up to **6 MB**. **Asynchronous (Event):** the service hands the event to Lambda's internal queue and gets a `202` back; **Lambda retries up to 2 more times** then sends to a DLQ / on-failure destination — `S3` notifications, `SNS`, `EventBridge`, SES, CloudFormation, IoT, CloudWatch Logs, Config; payload up to **1 MB**. **Event source mapping (poll-based):** **Lambda polls the source** and invokes in batches — `SQS` (standard & FIFO), `Kinesis Data Streams`, `DynamoDB Streams`, Amazon MQ, MSK/self-managed Kafka, DocumentDB.
+
+### Question 23 — Answer: **B**
+- **Why correct:** `S3` event notifications invoke Lambda **asynchronously (Event mode)**. S3 places the event in Lambda's internal queue, receives an immediate acknowledgement, and **Lambda** (not S3) handles retries — up to 2 automatic retries, then a DLQ / on-failure destination if configured. There is no polling and no event source mapping involved.
+- **Why the others are wrong:** A — this is the classic trap; `S3` → Lambda is **push/async**, not poll-based (only `SQS`/`Kinesis`/`DynamoDB Streams`/MQ/Kafka are polled). C — S3 does not invoke synchronously or wait on the function. D — there is no persistent WebSocket; S3 fires a discrete async event.
+- 🧠 **Key point / trap:** `S3` → Lambda = **ASYNC push**. Do not confuse it with `SQS` → Lambda (poll). Async payload limit = **1 MB**.
+- 📎 Source: `resources/lambda-faqs.md` ("What is an event source?" — *"Some services publish events by invoking the function directly, e.g. Amazon S3"*); AWS Lambda Developer Guide — invocation modes.
+
+### Question 24 — Answer: **A**
+- **Why correct:** `SQS` → Lambda is an **event source mapping**: a Lambda-managed poller **pulls** messages from the queue in batches and invokes the function (internally synchronous). SQS itself never pushes to Lambda.
+- **Why the others are wrong:** B — SQS does not invoke Lambda asynchronously; the "retry twice" behavior belongs to the async model (`S3`/`SNS`). C — there is no streamed/open connection; Lambda polls on an interval. D — you do **not** call `ReceiveMessage` in the handler; the event source mapping delivers messages in the `event` payload for you.
+- 🧠 **Key point / trap:** `SQS` → Lambda = **poll / event source mapping** (Lambda pulls). `SNS` → Lambda = **push / async**. Same-looking messaging services, opposite models.
+- 📎 Source: `resources/lambda-faqs.md` ("What is an event source?" — *"Lambda can also poll resources... pull records from an Amazon Kinesis stream or an Amazon SQS queue"*).
+
+### Question 25 — Answer: **C**
+- **Why correct:** `SNS` → Lambda is **asynchronous**. On failure Lambda **retries the event up to two more times** (with delays). Because no on-failure destination or DLQ is configured, the event is **discarded** once the retries are exhausted.
+- **Why the others are wrong:** A — async does retry (it is not fire-and-forget from Lambda's side). B — Lambda does not hand the exception back to SNS synchronously; SNS already got its `202` when it delivered the event. D — Lambda does not re-publish failed events back onto the SNS topic.
+- 🧠 **Key point / trap:** Async failure path = **2 retries → DLQ / on-failure destination → otherwise dropped**. Configure a destination/DLQ if you cannot afford to lose events.
+- 📎 Source: `resources/lambda-faqs.md` ("What happens if my function fails while processing an event?"; "What happens if my function invocations exhaust the available policy?" — DLQ).
+
+### Question 26 — Answer: **A, C**
+- **Why correct:** A `S3` event notifications and C `SNS` both **push** events and invoke Lambda **asynchronously** (Event mode).
+- **Why the others are wrong:** B `API Gateway` invokes **synchronously** (RequestResponse). D `SQS` and E `Kinesis Data Streams` are **poll-based event source mappings**, not async push.
+- 🧠 **Key point / trap:** Async push senders to remember: **`S3`, `SNS`, `EventBridge`**, SES, CloudFormation, IoT, CloudWatch Logs, Config.
+- 📎 Source: `resources/lambda-faqs.md` ("What is an event source?"); AWS Lambda Developer Guide — asynchronous invocation.
+
+### Question 27 — Answer: **B, C**
+- **Why correct:** B `DynamoDB Streams` and C `SQS FIFO queue` are consumed through **event source mappings** — Lambda **polls** the source and invokes the function in batches. (Both standard and FIFO SQS are poll-based.)
+- **Why the others are wrong:** A `EventBridge` (scheduled rule) invokes Lambda **asynchronously**. D `SNS` is **async push**. E `ALB` invokes **synchronously**.
+- 🧠 **Key point / trap:** Poll-based sources to remember: **`SQS` (standard + FIFO), `Kinesis Data Streams`, `DynamoDB Streams`**, Amazon MQ, MSK/Kafka, DocumentDB.
+- 📎 Source: `resources/lambda-faqs.md` ("What is an event source?"); AWS Lambda Developer Guide — event source mappings.
+
+### Question 28 — Answer: **A**
+- **Why correct:** `API Gateway` (like ALB, `Cognito`, `Step Functions`, `Lambda@Edge`) invokes Lambda **synchronously**. Lambda does **not** retry synchronous invocations — it returns the result or the error to the caller — so the **caller/client** must implement retry with backoff (or handle the error).
+- **Why the others are wrong:** B — API Gateway is synchronous, not asynchronous; on-failure destinations apply to async invocations only. C — the "2 retries" behavior is async-only; there is no automatic retry for synchronous calls. D — you cannot attach an event source mapping to API Gateway; that concept applies to poll-based sources.
+- 🧠 **Key point / trap:** **Sync = caller owns the retry.** No automatic Lambda retry for `API Gateway`/ALB/SDK invokes. Sync payload limit = **6 MB**.
+- 📎 Source: `resources/lambda-faqs.md` ("How do I invoke an AWS Lambda function over HTTPS?" — API Gateway); AWS Lambda Developer Guide — synchronous invocation.
+
+### Question 29 — Answer: **B**
+- **Why correct:** `IteratorAge` measures the age of the last record processed from a shard. A **high and rising** value means the consumer is **falling behind** — records are being read slower than they arrive, so the "oldest unprocessed record" keeps aging. Remedies: raise the **parallelization factor** (up to 10 for Kinesis), add shards, increase batch size/memory, or speed up the function.
+- **Why the others are wrong:** A — a permission failure surfaces as read/`AccessDenied` errors, not a steadily climbing `IteratorAge`. C — too few records would keep `IteratorAge` **low**, not rising. D — Lambda refreshes execution-role credentials automatically; it does not drive `IteratorAge`.
+- 🧠 **Key point / trap:** **`IteratorAge` climbing = processing lag / consumer behind** on a stream. It is *the* metric to watch for `Kinesis`/`DynamoDB Streams`.
+- 📎 Source: AWS Lambda Developer Guide — monitoring Kinesis/DynamoDB stream event sources (`IteratorAge`); `resources/lambda-faqs.md` (stream retry until success or expiry).
+
+### Question 30 — Answer: **A, B**
+- **Why correct:** In stream sources, records are processed **in order per shard**, so one failing record **blocks the whole shard** until it succeeds or the data expires. To let the shard progress: A **bisect batch on function error** splits the batch to isolate the poison record; B a **maximum retry attempts** / **maximum record age** limit plus an **on-failure destination** lets Lambda give up on the bad record (sending its metadata aside) and move on.
+- **Why the others are wrong:** C — more memory speeds a slow function but does not stop a *deterministic* failure from re-blocking the shard. D — you cannot make a stream event source "asynchronous"; the poison-record blocking is inherent to ordered stream processing. E — Provisioned Concurrency addresses cold starts, not a poison record.
+- 🧠 **Key point / trap:** Stream poison-record toolkit: **bisect on error + max retry attempts / max record age + on-failure destination**. Error in 1 record blocks the shard by default.
+- 📎 Source: AWS Lambda Developer Guide — error handling for Kinesis/DynamoDB stream event source mappings; `resources/lambda-faqs.md` (streams retried until success or expiry).
+
+### Question 31 — Answer: **B**
+- **Why correct:** When an `SQS` message is delivered to Lambda it becomes invisible for the **visibility timeout**. If the function has not finished (and deleted the message) before that window elapses, the message becomes visible again and is processed a second time. AWS recommends a **visibility timeout ≥ 6× the function timeout** (here 6 × 60 s = 360 s) to give processing plenty of headroom.
+- **Why the others are wrong:** A — a batch size of 1 reduces batching but does not fix a visibility window that is too short. C — long polling only reduces empty `ReceiveMessage` calls; it has nothing to do with reprocessing. D — more concurrency does not stop a message from reappearing mid-processing.
+- 🧠 **Key point / trap:** `SQS` + Lambda reprocessing → **visibility timeout ≥ 6× function timeout**. On failure, the message returns to the queue after the visibility timeout.
+- 📎 Source: AWS Lambda Developer Guide — using Lambda with Amazon SQS (visibility timeout recommendation).
+
+### Question 32 — Answer: **B**
+- **Why correct:** **Partial batch response** (`ReportBatchItemFailures`) lets the function return the IDs of only the messages that failed. Lambda then makes **only those** messages visible again for retry and treats the rest as successfully processed — so the 9 good messages are not reprocessed.
+- **Why the others are wrong:** A — batch size 1 avoids the problem but throws away batching efficiency and increases invocation count/cost. C — deleting successful messages yourself is fragile and not the managed pattern; if the batch still reports failure the deletes race the redelivery. D — moving to async with a DLQ changes the whole model and does not apply to an SQS event source.
+- 🧠 **Key point / trap:** "Only retry the failed items in a batch" → **`ReportBatchItemFailures` (partial batch response)**. Works for SQS, Kinesis, and DynamoDB Streams.
+- 📎 Source: AWS Lambda Developer Guide — batch item failures / partial batch response.
+
+### Question 33 — Answer: **B**
+- **Why correct:** For an `SQS` event source, the **dead-letter queue lives on the SQS source queue** — you set a **redrive policy** with `maxReceiveCount` that points to a separate DLQ. After a message is received that many times without being deleted, SQS moves it to the DLQ.
+- **Why the others are wrong:** A — the function's **on-failure destination / async DLQ** applies to the **asynchronous** invocation model (`S3`/`SNS`/`EventBridge`), not to a polled SQS source. C — the execution role governs permissions, not failed-message routing. D — `ReportBatchItemFailures` controls which items are retried, not where exhausted messages land.
+- 🧠 **Key point / trap:** `SQS` DLQ = **on the queue** (redrive policy). Async DLQ / on-failure destination = **on the Lambda function**. Do not mix them up.
+- 📎 Source: AWS Lambda Developer Guide — Amazon SQS dead-letter queues; `resources/lambda-faqs.md` ("What resources can I configure as a dead letter queue?" — SQS queue or SNS topic).
+
+### Question 34 — Answer: **A**
+- **Why correct:** Event source mappings for `SQS`, `Kinesis`, and `DynamoDB Streams` support **filter criteria (event filtering)**. Lambda evaluates each record against the filter and **only invokes** the function for matching records — cutting invocations and cost, with no wasted "invoke-then-return-early" runs.
+- **Why the others are wrong:** B — the early-return `if` still **invokes** the function (you pay for every invocation), which is exactly the waste to eliminate. C — the batch window batches records over time; it does not drop non-matching records. D — a separate stream per event type is heavy, and DynamoDB Streams cannot be split by event type anyway.
+- 🧠 **Key point / trap:** "Invoke only for matching records / cut wasted invocations" → **event filtering (filter criteria)** on the event source mapping.
+- 📎 Source: AWS Lambda Developer Guide — event filtering for event source mappings.
+
+### Question 35 — Answer: **A**
+- **Why correct:** For an `SQS FIFO` source, Lambda guarantees ordering **within each message group ID**: it processes one batch per group at a time and, on failure, stops that group to preserve order. Throughput scales **horizontally with the number of active message groups** — many customers (group IDs) run in parallel while each customer's messages stay ordered.
+- **Why the others are wrong:** B — it is not a single global loop; different message groups are processed concurrently. C — FIFO explicitly honors the message group ID; it does not process a group fully out of order. D — ordering is inherent to FIFO handling and does not require Provisioned Concurrency.
+- 🧠 **Key point / trap:** `SQS FIFO` + Lambda = **order preserved per message group**, concurrency scales with the count of active groups.
+- 📎 Source: AWS Lambda Developer Guide — using Lambda with SQS FIFO queues (message group ordering & scaling).
+
+### Question 36 — Answer: **A, B**
+- **Why correct:** A — `SNS` → Lambda is **async push**; once the 2 async retries are exhausted with no on-failure destination/DLQ, the event is **lost**. B — `SQS` → Lambda is **poll-based**: messages stay **buffered in the queue** up to the retention period and are retried after the visibility timeout, so a Lambda outage does not lose events — the durability advantage the scenario needs.
+- **Why the others are wrong:** C — SNS does **not** guarantee exactly-once, in-order delivery to Lambda; a queue is exactly what adds the buffering/durability here. D — Lambda never "pushes back" to the producer; SQS simply retains messages. E — SNS → Lambda does **not** auto-retain undelivered events for 14 days; you must configure a DLQ/on-failure destination.
+- 🧠 **Key point / trap:** Need a **buffer / no-loss during outages** → prefer **`SQS` (poll, retained + visibility-timeout retry)** over **`SNS` (async push, lost after retries)**. Fan-out pattern `SNS → SQS → Lambda` combines both.
+- 📎 Source: `resources/lambda-faqs.md` ("What is an event source?"; async failure/DLQ behavior); AWS Lambda Developer Guide — comparing SNS vs SQS event sources.

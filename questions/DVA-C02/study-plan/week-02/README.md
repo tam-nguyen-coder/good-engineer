@@ -46,6 +46,8 @@
 
 ### 🅱️ Buổi B — Hands-on (~3.5h)
 
+> 🧪 **Lab cầm tay chỉ việc (từng bước + lệnh + code):** [labs.md](labs.md).
+
 > Thay `myFn` bằng tên function của bạn.
 
 **Bước 1 — Publish version từ `$LATEST`:**

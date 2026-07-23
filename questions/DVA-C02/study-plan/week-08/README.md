@@ -76,6 +76,7 @@ cache:
 - **Canary** = shift 1 cục nhỏ rồi phần còn lại; **Linear** = shift đều theo bước; `AllAtOnce` = chuyển hết ngay.
 
 ### 🅱️ Buổi B — Hands-on (~3.5h): buildspec → appspec → pipeline
+> 🧪 **Lab cầm tay chỉ việc (từng bước + lệnh + code):** [labs.md](labs.md).
 
 **Lab 1 — Viết `buildspec.yml` + chạy CodeBuild**
 1. Đặt file `buildspec.yml` (mẫu ở Buổi A) tại **ROOT** repo.

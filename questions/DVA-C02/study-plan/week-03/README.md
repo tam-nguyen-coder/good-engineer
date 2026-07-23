@@ -64,6 +64,8 @@
 
 ### 🅱️ Buổi B — Hands-on (~3.5h)
 
+> 🧪 **Lab cầm tay chỉ việc (từng bước + lệnh + code):** [labs.md](labs.md).
+
 **Bước 1 — Tạo bảng có composite key + LSI (LSI phải khai lúc tạo):**
 ```bash
 aws dynamodb create-table \

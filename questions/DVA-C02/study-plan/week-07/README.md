@@ -56,6 +56,7 @@
 - **In transit:** dùng **TLS**. `ACM` (AWS Certificate Manager) **cấp & tự gia hạn** chứng chỉ TLS cho các dịch vụ tích hợp (`ALB`/`CloudFront`/`API Gateway`) → khỏi lo cert hết hạn.
 
 ### 🅱️ Buổi B — Hands-on (~3.5h)
+> 🧪 **Lab cầm tay chỉ việc (từng bước + lệnh + code):** [labs.md](labs.md).
 
 **Lab 1 — Envelope encryption thủ công với `GenerateDataKey`**
 1. Tạo CMK (customer managed):

@@ -51,6 +51,7 @@
 | Hợp cho | workflow dài, kiểm toán, bước con người | **high-volume**, event ngắn, IoT/streaming |
 
 ### 🅱️ Buổi B — Hands-on (~3.5h)
+> 🧪 **Lab cầm tay chỉ việc (từng bước + lệnh + code):** [labs.md](labs.md).
 
 **Lab 1 — Fan-out `SNS` → 2 `SQS`**
 1. Tạo 2 queue: `orders-analytics` và `orders-billing`.

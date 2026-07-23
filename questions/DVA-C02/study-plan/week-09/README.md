@@ -53,6 +53,7 @@
 - 🧠 Phản xạ: **"lịch chạy có timezone / one-time schedule quy mô lớn"** → **`EventBridge` Scheduler**.
 
 ### 🅱️ Buổi B — Hands-on (~3.5h)
+> 🧪 **Lab cầm tay chỉ việc (từng bước + lệnh + code):** [labs.md](labs.md).
 
 **Lab 1 — Bật `X-Ray` active tracing cho `Lambda` + `API Gateway`, filter theo annotation**
 1. Trên function `Lambda`: **Configuration → Monitoring → Active tracing = ON** (bật **active tracing**). Cấp role quyền ghi `X-Ray` (`AWSXRayDaemonWriteAccess`).
