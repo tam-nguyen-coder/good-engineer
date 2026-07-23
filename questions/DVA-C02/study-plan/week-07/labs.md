@@ -9,8 +9,8 @@
 ## 🔧 Chuẩn bị chung (làm 1 lần, dùng cho mọi lab)
 
 ```bash
-# 1) Đặt region (đổi theo bạn — ví dụ ap-southeast-1 hoặc us-east-1)
-export AWS_REGION=ap-southeast-1
+# 1) Đặt region — mặc định us-east-1 (đổi nếu bạn dùng region khác)
+export AWS_REGION=us-east-1
 export AWS_DEFAULT_REGION=$AWS_REGION
 
 # 2) Lấy Account ID để dựng ARN
@@ -442,10 +442,8 @@ rm -f param_handler.py param_fn.zip trust-lambda.json ssm-read-policy.json out.j
 1. Tạo bucket (tên phải toàn cầu duy nhất).
    ```bash
    BUCKET="dva-week7-ssekms-${ACCOUNT_ID}"
-   aws s3api create-bucket --bucket "$BUCKET" \
-     --region "$AWS_REGION" \
-     --create-bucket-configuration LocationConstraint="$AWS_REGION"
-   # LƯU Ý: nếu region là us-east-1 thì BỎ hẳn cờ --create-bucket-configuration.
+   aws s3api create-bucket --bucket "$BUCKET" --region "$AWS_REGION"
+   # us-east-1 là default → KHÔNG cần LocationConstraint. (Region khác: thêm --create-bucket-configuration LocationConstraint=<region>)
    ```
 
 2. Lấy ARN CMK rồi put object với **SSE-KMS**.

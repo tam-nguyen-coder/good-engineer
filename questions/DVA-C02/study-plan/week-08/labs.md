@@ -9,8 +9,8 @@
 ## 🔧 Chuẩn bị chung (làm 1 lần, dùng cho mọi lab)
 
 ```bash
-# 1) Đặt region (đổi theo bạn — ví dụ ap-southeast-1 hoặc us-east-1)
-export AWS_REGION=ap-southeast-1
+# 1) Đặt region (đổi theo bạn — ví dụ us-east-1 hoặc us-east-1)
+export AWS_REGION=us-east-1
 export AWS_DEFAULT_REGION=$AWS_REGION
 
 # 2) Lấy Account ID để dựng ARN / tên bucket toàn cục

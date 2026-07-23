@@ -21,7 +21,7 @@
 
 ```bash
 # Đặt region của bạn (VD Singapore). CloudFront là global nên không cần region.
-export AWS_REGION=ap-southeast-1
+export AWS_REGION=us-east-1
 export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 echo "Account=$ACCOUNT_ID Region=$AWS_REGION"
 
@@ -54,8 +54,8 @@ EOF
 1. Tạo bucket + role cho Lambda (basic execution + quyền ghi metadata trở lại bucket).
    ```bash
    export B41=week4-s3lambda-$RANDOM-$ACCOUNT_ID
-   aws s3api create-bucket --bucket $B41 --region $AWS_REGION \
-     --create-bucket-configuration LocationConstraint=$AWS_REGION
+   aws s3api create-bucket --bucket $B41 --region $AWS_REGION
+   # us-east-1 là default → KHÔNG cần LocationConstraint. (Region khác: thêm --create-bucket-configuration LocationConstraint=<region>)
 
    aws iam create-role --role-name week4-s3lambda-role \
      --assume-role-policy-document file://trust-lambda.json
@@ -421,8 +421,8 @@ aws lambda delete-function --function-name week4-square --region $AWS_REGION
 1. Tạo bucket private (mặc định đã chặn public).
    ```bash
    export B44=week4-presign-$RANDOM-$ACCOUNT_ID
-   aws s3api create-bucket --bucket $B44 --region $AWS_REGION \
-     --create-bucket-configuration LocationConstraint=$AWS_REGION
+   aws s3api create-bucket --bucket $B44 --region $AWS_REGION
+   # us-east-1 là default → KHÔNG cần LocationConstraint. (Region khác: thêm --create-bucket-configuration LocationConstraint=<region>)
    ```
 2. Sinh presigned URL bằng `boto3` (PUT để upload, GET để download).
    ```python
@@ -488,8 +488,8 @@ aws s3api delete-bucket --bucket $B44 --region $AWS_REGION
 1. Tạo bucket private + upload 1 trang.
    ```bash
    export B45=week4-cf-oac-$RANDOM-$ACCOUNT_ID
-   aws s3api create-bucket --bucket $B45 --region $AWS_REGION \
-     --create-bucket-configuration LocationConstraint=$AWS_REGION
+   aws s3api create-bucket --bucket $B45 --region $AWS_REGION
+   # us-east-1 là default → KHÔNG cần LocationConstraint. (Region khác: thêm --create-bucket-configuration LocationConstraint=<region>)
    echo '<h1>Private via CloudFront OAC</h1>' > index.html
    aws s3 cp index.html s3://$B45/index.html
    ```

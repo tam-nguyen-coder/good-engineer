@@ -4,9 +4,9 @@
 > ⚙️ Yêu cầu chung: đã cấu hình `AWS CLI v2` (xem Lab 1.1) + IAM đủ quyền cho dịch vụ trong lab.
 > Về [plan tuần](README.md) · [Câu hỏi luyện tập](questions.md) · [Kế hoạch tổng](../../DVA-C02-STUDY-PLAN.md)
 
-> 🧰 **Biến shell dùng chung** (đặt 1 lần cho cả buổi — nhớ đổi region cho phù hợp, mặc định `ap-southeast-1`):
+> 🧰 **Biến shell dùng chung** (đặt 1 lần cho cả buổi — nhớ đổi region cho phù hợp, mặc định `us-east-1`):
 > ```bash
-> export REGION=ap-southeast-1
+> export REGION=us-east-1
 > export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 > export ROLE_NAME=dva-lab-lambda-role
 > export ROLE_ARN=arn:aws:iam::$ACCOUNT_ID:role/$ROLE_NAME
@@ -43,8 +43,8 @@
 4. **Thực nghiệm chọn region** (không đổi credentials): cờ dòng lệnh thắng biến môi trường thắng profile.
    ```bash
    aws configure get region                                  # region trong profile
-   AWS_REGION=us-east-1 aws configure list | grep region     # env override profile
-   aws configure list --region eu-west-1 | grep region       # cờ --region thắng tất cả
+   AWS_REGION=eu-west-1 aws configure list | grep region     # env var override profile
+   aws configure list --region ap-northeast-1 | grep region   # cờ --region thắng tất cả
    ```
 5. **Thực nghiệm credential chain — env var thắng file.** Cố tình đặt env var credentials SAI rồi gọi lại: nếu lệnh báo lỗi token không hợp lệ (thay vì fallback về profile hợp lệ) nghĩa là SDK/CLI đã **dừng ở env var** — env đứng trước file.
    ```bash
@@ -149,7 +149,7 @@ unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_REGION
    ```python
    # invoke_sdk.py
    import boto3, json, os
-   lam = boto3.client("lambda", region_name=os.environ.get("REGION", "ap-southeast-1"))
+   lam = boto3.client("lambda", region_name=os.environ.get("REGION", "us-east-1"))
    resp = lam.invoke(
        FunctionName="dva-lab-fn",
        InvocationType="RequestResponse",           # synchronous
@@ -210,9 +210,9 @@ aws logs delete-log-group --log-group-name /aws/lambda/dva-lab-fn --region "$REG
      --region "$REGION"
    aws dynamodb wait table-exists --table-name "$TABLE" --region "$REGION"   # waiter
 
-   # S3 bucket (us-east-1: BỎ cờ --create-bucket-configuration)
-   aws s3api create-bucket --bucket "$BUCKET" --region "$REGION" \
-     --create-bucket-configuration LocationConstraint="$REGION"
+   # S3 bucket
+   aws s3api create-bucket --bucket "$BUCKET" --region "$REGION"
+   # us-east-1 là default → KHÔNG cần LocationConstraint. (Region khác: thêm --create-bucket-configuration LocationConstraint=<region>)
    ```
 2. Viết handler tích hợp và đóng gói lại.
    ```python
@@ -337,8 +337,8 @@ aws s3api delete-bucket --bucket "$BUCKET" --region "$REGION"
 1. (Tuỳ chọn) Tạo dữ liệu để phân trang: 1 bucket + vài chục object nhỏ.
    ```bash
    export BUCKET=dva-lab-paginate-$ACCOUNT_ID
-   aws s3api create-bucket --bucket "$BUCKET" --region "$REGION" \
-     --create-bucket-configuration LocationConstraint="$REGION"
+   aws s3api create-bucket --bucket "$BUCKET" --region "$REGION"
+   # us-east-1 là default → KHÔNG cần LocationConstraint. (Region khác: thêm --create-bucket-configuration LocationConstraint=<region>)
    for i in $(seq 1 30); do echo "obj $i" | aws s3 cp - "s3://$BUCKET/k/$i.txt"; done
    ```
 2. Viết script có **retry config** + **paginator**.
@@ -348,7 +348,7 @@ aws s3api delete-bucket --bucket "$BUCKET" --region "$REGION"
    import boto3
    from botocore.config import Config
 
-   REGION = os.environ.get("REGION", "ap-southeast-1")
+   REGION = os.environ.get("REGION", "us-east-1")
    BUCKET = os.environ["BUCKET"]
 
    # retries.mode: standard (mặc định) | adaptive (single-resource, throttle nhiều) | legacy
