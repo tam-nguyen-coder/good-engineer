@@ -22,7 +22,7 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
 > - `KMS` `Encrypt`/`Decrypt` trực tiếp: tối đa **4 KB**. Lớn hơn → **envelope encryption** (`GenerateDataKey`).
 > - Customer managed CMK tồn tại trong account là **có phí ~$1/tháng** (prorate theo giờ). Vì vậy các lab dưới đây **tái dùng CHUNG 1 CMK** `alias/dva-week7` (tạo ở Lab 7.1), và chỉ **huỷ key ở Lab 7.5** (lab cuối dùng key).
 >
-> 🧠 **Đọc secret từ `Lambda` (Lab 7.3 & 7.4):** `Lambda` KHÔNG hard-code credential — nó lấy quyền qua **execution role (IAM)** rồi gọi SDK (`boto3`) lúc **runtime**. Env var chỉ chứa **TÊN** secret/param, không chứa giá trị.
+> 🧠 **Đọc secret từ `Lambda` (Lab 7.3 & 7.4):** `Lambda` KHÔNG hard-code credential — nó lấy quyền qua **execution role (IAM)** rồi gọi AWS SDK v3 lúc **runtime**. Env var chỉ chứa **TÊN** secret/param, không chứa giá trị.
 
 ---
 
@@ -95,76 +95,82 @@ rm -f plain.txt secret.enc big.bin
 
 ---
 
-## Lab 7.2 — Envelope encryption với `GenerateDataKey` (script `boto3` + `cryptography`)
+## Lab 7.2 — Envelope encryption với `GenerateDataKey` (script Node.js + module `crypto`)
 **🎯 Mục tiêu:** Mã hoá một file **1 MB** (vượt xa 4 KB) bằng đúng luồng envelope: xin data key, mã hoá payload **cục bộ**, lưu **kèm** data key đã mã hoá; rồi giải mã ngược. Hiểu vì sao > 4 KB **bắt buộc** dùng envelope.
 **🧩 Luyện kỹ năng (liên quan đề):**
 - Task 2.2: mô tả & thực hiện đúng 5 bước envelope encryption.
 - Chỉ gọi `KMS` **1 lần** cho data key (32 bytes), payload mã hoá offline → không đụng giới hạn 4 KB, không phụ thuộc kích thước file.
 - `GenerateDataKey` trả về **cả** plaintext key **và** encrypted key.
 
-**⏱️ ~25 phút** · **Yêu cầu trước:** đã tạo CMK `alias/dva-week7` (Lab 7.1); có `python3` + `pip`.
+**⏱️ ~25 phút** · **Yêu cầu trước:** đã tạo CMK `alias/dva-week7` (Lab 7.1); có `Node.js 24` + `npm`.
 
 ### Các bước
-1. Cài thư viện mã hoá cục bộ.
+1. Khởi tạo project Node cục bộ + cài SDK `KMS` (module `crypto` đã có sẵn trong Node, không cần cài).
    ```bash
-   pip install boto3 cryptography
+   npm init -y && npm install @aws-sdk/client-kms
    ```
 
-2. Viết script envelope (mã hoá + giải mã). Lưu là `envelope.py`.
-   ```python
-   # envelope.py — envelope encryption thủ công với AWS KMS
-   import boto3, os, sys
-   from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+2. Viết script envelope (mã hoá + giải mã). Lưu là `envelope.mjs`.
+   ```javascript
+   // envelope.mjs — envelope encryption thủ công với AWS KMS
+   import { KMSClient, GenerateDataKeyCommand, DecryptCommand } from "@aws-sdk/client-kms";
+   import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
+   import { readFileSync, writeFileSync } from "fs";
 
-   KEY_ALIAS = "alias/dva-week7"
-   kms = boto3.client("kms")
+   const KEY_ALIAS = "alias/dva-week7";
+   const kms = new KMSClient({ region: "us-east-1" });
 
-   def encrypt(infile, outfile):
-       # (1) Xin data key: nhận plaintext key + encrypted key (bọc bởi CMK)
-       resp = kms.generate_data_key(KeyId=KEY_ALIAS, KeySpec="AES_256")
-       plaintext_key = resp["Plaintext"]        # 32 bytes -> CHỈ dùng trong RAM
-       encrypted_key = resp["CiphertextBlob"]   # lưu KÈM dữ liệu, an toàn để ghi ra đĩa
+   async function encrypt(infile, outfile) {
+     // (1) Xin data key: nhận plaintext key + encrypted key (bọc bởi CMK)
+     const resp = await kms.send(new GenerateDataKeyCommand({ KeyId: KEY_ALIAS, KeySpec: "AES_256" }));
+     const plaintextKey = Buffer.from(resp.Plaintext);       // 32 bytes (Uint8Array) -> CHỈ dùng trong RAM
+     const encryptedKey = Buffer.from(resp.CiphertextBlob);  // lưu KÈM dữ liệu, an toàn để ghi ra đĩa
 
-       # (2) Mã hoá file CỤC BỘ bằng plaintext key — KHÔNG gọi KMS cho payload
-       data = open(infile, "rb").read()
-       nonce = os.urandom(12)
-       ciphertext = AESGCM(plaintext_key).encrypt(nonce, data, None)
+     // (2) Mã hoá file CỤC BỘ bằng plaintext key — KHÔNG gọi KMS cho payload
+     const data = readFileSync(infile);
+     const iv = randomBytes(12);
+     const cipher = createCipheriv("aes-256-gcm", plaintextKey, iv);
+     const ciphertext = Buffer.concat([cipher.update(data), cipher.final()]);
+     const tag = cipher.getAuthTag();                        // 16B auth tag của GCM (toàn vẹn)
 
-       # (3) Lưu định dạng: [4B len][encrypted_key][12B nonce][ciphertext]
-       with open(outfile, "wb") as f:
-           f.write(len(encrypted_key).to_bytes(4, "big"))
-           f.write(encrypted_key)
-           f.write(nonce)
-           f.write(ciphertext)
+     // (3) Lưu định dạng: [4B len][encrypted_key][12B iv][16B tag][ciphertext]
+     const header = Buffer.alloc(4);
+     header.writeUInt32BE(encryptedKey.length, 0);
+     writeFileSync(outfile, Buffer.concat([header, encryptedKey, iv, tag, ciphertext]));
 
-       # (4) Xoá plaintext key khỏi bộ nhớ ngay
-       del plaintext_key
-       print(f"Đã mã hoá {len(data)} bytes -> {outfile}")
+     // (4) Xoá plaintext key khỏi bộ nhớ ngay
+     plaintextKey.fill(0);
+     console.log(`Đã mã hoá ${data.length} bytes -> ${outfile}`);
+   }
 
-   def decrypt(infile, outfile):
-       blob = open(infile, "rb").read()
-       n = int.from_bytes(blob[:4], "big")
-       encrypted_key = blob[4:4 + n]
-       nonce = blob[4 + n:4 + n + 12]
-       ciphertext = blob[4 + n + 12:]
+   async function decrypt(infile, outfile) {
+     const blob = readFileSync(infile);
+     const n = blob.readUInt32BE(0);
+     const encryptedKey = blob.subarray(4, 4 + n);
+     const iv = blob.subarray(4 + n, 4 + n + 12);
+     const tag = blob.subarray(4 + n + 12, 4 + n + 28);
+     const ciphertext = blob.subarray(4 + n + 28);
 
-       # (5) Gọi KMS Decrypt để lấy lại plaintext key -> giải mã payload cục bộ
-       plaintext_key = kms.decrypt(CiphertextBlob=encrypted_key)["Plaintext"]
-       data = AESGCM(plaintext_key).decrypt(nonce, ciphertext, None)
-       open(outfile, "wb").write(data)
-       del plaintext_key
-       print(f"Đã giải mã -> {outfile} ({len(data)} bytes)")
+     // (5) Gọi KMS Decrypt để lấy lại plaintext key -> giải mã payload cục bộ
+     const resp = await kms.send(new DecryptCommand({ CiphertextBlob: encryptedKey }));
+     const plaintextKey = Buffer.from(resp.Plaintext);
+     const decipher = createDecipheriv("aes-256-gcm", plaintextKey, iv);
+     decipher.setAuthTag(tag);
+     const data = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
+     writeFileSync(outfile, data);
+     plaintextKey.fill(0);
+     console.log(`Đã giải mã -> ${outfile} (${data.length} bytes)`);
+   }
 
-   if __name__ == "__main__":
-       mode, src, dst = sys.argv[1], sys.argv[2], sys.argv[3]
-       (encrypt if mode == "encrypt" else decrypt)(src, dst)
+   const [mode, src, dst] = process.argv.slice(2);
+   await (mode === "encrypt" ? encrypt(src, dst) : decrypt(src, dst));
    ```
 
 3. Tạo file lớn 1 MB rồi chạy mã hoá + giải mã.
    ```bash
    head -c 1048576 /dev/urandom > bigfile.bin      # 1 MB, vượt xa 4 KB
-   python3 envelope.py encrypt bigfile.bin bigfile.enc
-   python3 envelope.py decrypt bigfile.enc bigfile.out
+   node envelope.mjs encrypt bigfile.bin bigfile.enc
+   node envelope.mjs decrypt bigfile.enc bigfile.out
    ```
 
 ### ✅ Kiểm chứng
@@ -176,7 +182,7 @@ rm -f plain.txt secret.enc big.bin
 
 ### 🧹 Dọn dẹp
 ```bash
-rm -f envelope.py bigfile.bin bigfile.enc bigfile.out
+rm -rf envelope.mjs bigfile.bin bigfile.enc bigfile.out node_modules package.json package-lock.json
 # CMK giữ lại cho Lab 7.4 & 7.5 — huỷ ở cuối Lab 7.5.
 ```
 
@@ -189,7 +195,7 @@ rm -f envelope.py bigfile.bin bigfile.enc bigfile.out
 ---
 
 ## Lab 7.3 — Đọc secret `Secrets Manager` từ `Lambda` (không hard-code) ⭐
-**🎯 Mục tiêu:** Lưu DB credentials vào `Secrets Manager`, rồi `Lambda` **lấy credential lúc runtime** qua `boto3` với quyền `secretsmanager:GetSecretValue` — source code KHÔNG chứa password.
+**🎯 Mục tiêu:** Lưu DB credentials vào `Secrets Manager`, rồi `Lambda` **lấy credential lúc runtime** qua AWS SDK v3 (`@aws-sdk/client-secrets-manager`) với quyền `secretsmanager:GetSecretValue` — source code KHÔNG chứa password.
 **🧩 Luyện kỹ năng (liên quan đề):**
 - Task 2.3 (quản lý dữ liệu nhạy cảm): thay hard-coded credential bằng runtime retrieval.
 - `Lambda` execution role gắn quyền cụ thể `secretsmanager:GetSecretValue` trên đúng secret ARN (least privilege).
@@ -244,28 +250,29 @@ rm -f envelope.py bigfile.bin bigfile.enc bigfile.out
    ```
    > Nếu secret được mã hoá bằng **customer managed key** (không phải `aws/secretsmanager`), phải thêm quyền `kms:Decrypt` trên key đó.
 
-4. Viết handler đọc secret lúc runtime — env var chỉ chứa **TÊN** secret, KHÔNG chứa password.
-   ```python
-   # secret_handler.py
-   import boto3, json, os
+4. Viết handler đọc secret lúc runtime — env var chỉ chứa **TÊN** secret, KHÔNG chứa password. Lưu là `index.mjs`.
+   ```javascript
+   // index.mjs
+   import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 
-   sm = boto3.client("secretsmanager")
-   SECRET_NAME = os.environ["SECRET_NAME"]   # chỉ là tên, không phải giá trị
+   const sm = new SecretsManagerClient({});
+   const SECRET_NAME = process.env.SECRET_NAME;   // chỉ là tên, không phải giá trị
 
-   def handler(event, context):
-       resp = sm.get_secret_value(SecretId=SECRET_NAME)
-       creds = json.loads(resp["SecretString"])
-       # ... dùng creds["username"] / creds["password"] để kết nối DB ...
-       # KHÔNG BAO GIỜ log password:
-       print(f"OK — lấy creds cho user={creds['username']} host={creds['host']}")
-       return {"user": creds["username"], "connected": True}
+   export const handler = async (event) => {
+     const resp = await sm.send(new GetSecretValueCommand({ SecretId: SECRET_NAME }));
+     const creds = JSON.parse(resp.SecretString);
+     // ... dùng creds.username / creds.password để kết nối DB ...
+     // KHÔNG BAO GIỜ log password:
+     console.log(`OK — lấy creds cho user=${creds.username} host=${creds.host}`);
+     return { user: creds.username, connected: true };
+   };
    ```
 
 5. Đóng gói + tạo function, truyền tên secret qua env var.
    ```bash
-   zip secret_fn.zip secret_handler.py
+   zip secret_fn.zip index.mjs
    aws lambda create-function --function-name lab7-read-secret \
-     --runtime python3.12 --handler secret_handler.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role "$ROLE_ARN" --zip-file fileb://secret_fn.zip --timeout 15 \
      --environment "Variables={SECRET_NAME=prod/dva-week7/db-creds}"
    aws lambda wait function-active-v2 --function-name lab7-read-secret
@@ -285,7 +292,7 @@ rm -f envelope.py bigfile.bin bigfile.enc bigfile.out
   ```bash
   aws logs tail /aws/lambda/lab7-read-secret --since 5m
   ```
-- Source code (`secret_handler.py`) hoàn toàn không chứa password → đạt mục tiêu "no hard-code".
+- Source code (`index.mjs`) hoàn toàn không chứa password → đạt mục tiêu "no hard-code".
 
 ### 🧹 Dọn dẹp
 ```bash
@@ -296,7 +303,7 @@ aws iam detach-role-policy --role-name lab7-secrets-role \
 aws iam delete-role --role-name lab7-secrets-role
 aws secretsmanager delete-secret --secret-id "$SECRET_ARN" \
   --force-delete-without-recovery
-rm -f secret_handler.py secret_fn.zip trust-lambda.json secrets-read-policy.json out.json
+rm -f index.mjs secret_fn.zip trust-lambda.json secrets-read-policy.json out.json
 ```
 
 ### 🧠 Ý nghĩa với đề thi
@@ -369,26 +376,27 @@ rm -f secret_handler.py secret_fn.zip trust-lambda.json secrets-read-policy.json
    ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/lab7-ssm-role"
    ```
 
-4. Handler đọc SecureString lúc runtime (`WithDecryption=True`), KHÔNG log giá trị.
-   ```python
-   # param_handler.py
-   import boto3, os
+4. Handler đọc SecureString lúc runtime (`WithDecryption: true`), KHÔNG log giá trị. Lưu là `index.mjs`.
+   ```javascript
+   // index.mjs
+   import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 
-   ssm = boto3.client("ssm")
-   PARAM_NAME = os.environ["PARAM_NAME"]   # chỉ là tên param
+   const ssm = new SSMClient({});
+   const PARAM_NAME = process.env.PARAM_NAME;   // chỉ là tên param
 
-   def handler(event, context):
-       resp = ssm.get_parameter(Name=PARAM_NAME, WithDecryption=True)
-       value = resp["Parameter"]["Value"]
-       print(f"OK — đọc SecureString, len(value)={len(value)} (KHÔNG log giá trị)")
-       return {"ok": True, "length": len(value)}
+   export const handler = async (event) => {
+     const resp = await ssm.send(new GetParameterCommand({ Name: PARAM_NAME, WithDecryption: true }));
+     const value = resp.Parameter.Value;
+     console.log(`OK — đọc SecureString, len(value)=${value.length} (KHÔNG log giá trị)`);
+     return { ok: true, length: value.length };
+   };
    ```
 
 5. Đóng gói + tạo function + invoke.
    ```bash
-   zip param_fn.zip param_handler.py
+   zip param_fn.zip index.mjs
    aws lambda create-function --function-name lab7-read-param \
-     --runtime python3.12 --handler param_handler.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role "$ROLE_ARN" --zip-file fileb://param_fn.zip --timeout 15 \
      --environment "Variables={PARAM_NAME=/dva-week7/app/db-password}"
    aws lambda wait function-active-v2 --function-name lab7-read-param
@@ -411,7 +419,7 @@ aws iam detach-role-policy --role-name lab7-ssm-role \
   --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 aws iam delete-role --role-name lab7-ssm-role
 aws ssm delete-parameter --name /dva-week7/app/db-password
-rm -f param_handler.py param_fn.zip trust-lambda.json ssm-read-policy.json out.json
+rm -f index.mjs param_fn.zip trust-lambda.json ssm-read-policy.json out.json
 # CMK giữ lại cho Lab 7.5.
 ```
 

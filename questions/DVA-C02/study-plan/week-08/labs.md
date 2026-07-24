@@ -57,7 +57,7 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
    phases:
      install:
        runtime-versions:
-         nodejs: 20                   # chỉ phase install mới có runtime-versions
+         nodejs: 22                   # chỉ phase install mới có runtime-versions
        commands:
          - echo "[install] chuẩn bị runtime & dependencies"
      pre_build:
@@ -176,10 +176,10 @@ rm -f buildspec.yml source.zip trust-cb.json cb-policy.json project.json
 ### Các bước
 1. Khởi tạo project rồi vào thư mục.
    ```bash
-   sam init --name lab8-sam --runtime python3.12 --dependency-manager pip \
+   sam init --name lab8-sam --runtime nodejs22.x --dependency-manager npm \
      --app-template hello-world --no-tracing --no-application-insights
    cd lab8-sam
-   rm -rf hello_world tests events && mkdir -p src events
+   rm -rf hello-world hello_world tests events && mkdir -p src events
    ```
 
 2. Thay `template.yaml` bằng template dưới (Function + Api + SimpleTable).
@@ -190,7 +190,7 @@ rm -f buildspec.yml source.zip trust-cb.json cb-policy.json project.json
 
    Globals:
      Function:
-       Runtime: python3.12
+       Runtime: nodejs24.x
        Timeout: 10
        MemorySize: 128
 
@@ -203,7 +203,7 @@ rm -f buildspec.yml source.zip trust-cb.json cb-policy.json project.json
      PutItemFunction:
        Type: AWS::Serverless::Function
        Properties:
-         Handler: app.put_item
+         Handler: index.putItem
          CodeUri: src/
          Environment:
            Variables:
@@ -218,7 +218,7 @@ rm -f buildspec.yml source.zip trust-cb.json cb-policy.json project.json
      GetItemFunction:
        Type: AWS::Serverless::Function
        Properties:
-         Handler: app.get_item
+         Handler: index.getItem
          CodeUri: src/
          Environment:
            Variables:
@@ -236,24 +236,29 @@ rm -f buildspec.yml source.zip trust-cb.json cb-policy.json project.json
        Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
    ```
 
-3. Viết handler + requirements rỗng (boto3 có sẵn trong runtime).
-   ```python
-   # src/app.py
-   import os, json, boto3
-   table = boto3.resource("dynamodb").Table(os.environ["TABLE_NAME"])
+3. Viết handler `index.mjs` + `package.json` (AWS SDK v3 có sẵn trong runtime `nodejs24.x` nên KHÔNG cần `npm install`).
+   ```javascript
+   // src/index.mjs — export 2 handler: putItem + getItem (ESM)
+   import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+   import { DynamoDBDocumentClient, PutCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
 
-   def put_item(event, context):
-       body = json.loads(event.get("body") or "{}")
-       table.put_item(Item={"id": body["id"], "name": body.get("name", "")})
-       return {"statusCode": 200, "body": json.dumps({"saved": body["id"]})}
+   const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+   const TABLE_NAME = process.env.TABLE_NAME;
 
-   def get_item(event, context):
-       item_id = event["pathParameters"]["id"]
-       resp = table.get_item(Key={"id": item_id})
-       return {"statusCode": 200, "body": json.dumps(resp.get("Item", {}))}
+   export const putItem = async (event) => {
+     const body = JSON.parse(event.body || "{}");
+     await ddb.send(new PutCommand({ TableName: TABLE_NAME, Item: { id: body.id, name: body.name ?? "" } }));
+     return { statusCode: 200, body: JSON.stringify({ saved: body.id }) };
+   };
+
+   export const getItem = async (event) => {
+     const itemId = event.pathParameters.id;
+     const resp = await ddb.send(new GetCommand({ TableName: TABLE_NAME, Key: { id: itemId } }));
+     return { statusCode: 200, body: JSON.stringify(resp.Item ?? {}) };
+   };
    ```
    ```bash
-   : > src/requirements.txt
+   echo '{ "type": "module" }' > src/package.json
    ```
 
 4. Build + deploy có hướng dẫn (guided). Trả lời prompt: Stack name `lab8-sam`, Region của bạn, cho phép tạo IAM role (`Y`), lưu `samconfig.toml` (`Y`); các API không auth → chọn `y` khi hỏi "…may not have authorization defined".
@@ -268,7 +273,7 @@ rm -f buildspec.yml source.zip trust-cb.json cb-policy.json project.json
   API=$(aws cloudformation describe-stacks --stack-name lab8-sam \
         --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" --output text)
   curl -s -XPOST "$API/items" -d '{"id":"1","name":"widget"}'; echo
-  curl -s "$API/items/1"; echo   # -> {"id": "1", "name": "widget"}
+  curl -s "$API/items/1"; echo   # -> {"id":"1","name":"widget"}
   ```
 - Test **local** (mechanics của `sam local`) — bảng đã tồn tại sau deploy nên chạy được với creds của bạn:
   ```bash
@@ -306,7 +311,7 @@ cd .. && rm -rf lab8-sam
 1. Tạo project SAM tối giản.
    ```bash
    mkdir -p lab8-canary/src && cd lab8-canary
-   : > src/requirements.txt
+   echo '{ "type": "module" }' > src/package.json
    ```
    ```yaml
    # template.yaml
@@ -318,8 +323,8 @@ cd .. && rm -rf lab8-sam
      CanaryFunction:
        Type: AWS::Serverless::Function
        Properties:
-         Handler: app.handler
-         Runtime: python3.12
+         Handler: index.handler
+         Runtime: nodejs24.x
          CodeUri: src/
          AutoPublishAlias: live               # tạo alias 'live' + publish version mỗi lần deploy
          DeploymentPreference:
@@ -328,10 +333,11 @@ cd .. && rm -rf lab8-sam
      FunctionName:
        Value: !Ref CanaryFunction
    ```
-   ```python
-   # src/app.py  (version 1)
-   def handler(event, context):
-       return {"version": "v1"}
+   ```javascript
+   // src/index.mjs  (version 1)
+   export const handler = async (event) => {
+     return { version: "v1" };
+   };
    ```
 
 2. Deploy lần đầu (function mới → chưa có shift).
@@ -347,9 +353,10 @@ cd .. && rm -rf lab8-sam
 
 3. Đổi code sang **v2** rồi deploy lại → `CodeDeploy` bắt đầu canary.
    ```bash
-   cat > src/app.py <<'EOF'
-   def handler(event, context):
-       return {"version": "v2"}
+   cat > src/index.mjs <<'EOF'
+   export const handler = async (event) => {
+     return { version: "v2" };
+   };
    EOF
    sam build && sam deploy      # dùng lại samconfig.toml; không cần --guided nữa
    ```

@@ -30,19 +30,18 @@ export ROLE_ARN=arn:aws:iam::${ACCOUNT_ID}:role/dva-lambda-role
 ```
 
 **3. Viết handler & tạo function `myFn`:**
-```python
-# handler.py — base function
-import json, os
-
-def handler(event, context):
-    print("Received event:", json.dumps(event))
-    version = os.environ.get("APP_VERSION", "v1")
-    return {"statusCode": 200, "version": version}
+```javascript
+// index.mjs — base function
+export const handler = async (event) => {
+  console.log("Received event:", JSON.stringify(event));
+  const version = process.env.APP_VERSION ?? "v1";
+  return { statusCode: 200, version };
+};
 ```
 ```bash
-zip function.zip handler.py
+zip function.zip index.mjs
 aws lambda create-function --function-name myFn \
-  --runtime python3.12 --handler handler.handler \
+  --runtime nodejs24.x --handler index.handler \
   --role ${ROLE_ARN} \
   --zip-file fileb://function.zip \
   --timeout 10 --environment 'Variables={APP_VERSION=v1}'
@@ -91,7 +90,7 @@ aws lambda create-function --function-name myFn \
    for i in $(seq 1 20); do
      aws lambda invoke --function-name myFn --qualifier prod \
        --cli-binary-format raw-in-base64-out --payload '{}' o.json >/dev/null
-     cat o.json | python3 -c 'import sys,json;print(json.load(sys.stdin)["version"])'
+     node -e 'console.log(require("./o.json").version)'
    done
    # ~18 dòng "v1", ~2 dòng "v2"
    ```
@@ -114,26 +113,26 @@ aws lambda update-alias --function-name myFn --name prod --function-version 1 --
 ---
 
 ## Lab 2.2 — Tạo & gắn Lambda layer (đóng gói dependency dùng chung)
-**🎯 Mục tiêu:** Đóng gói một dependency Python (`requests`) vào `layer`, publish layer version, gắn vào `myFn`, và dùng thư viện đó trong handler.
+**🎯 Mục tiêu:** Đóng gói một dependency Node.js (`lodash`) vào `layer`, publish layer version, gắn vào `myFn`, và dùng thư viện đó trong handler.
 **🧩 Luyện kỹ năng (liên quan đề):**
 - "chia sẻ dependency giữa nhiều function / giảm dung lượng package" → **Layer**.
-- Cấu trúc thư mục `python/` → Lambda giải nén vào `/opt`; runtime tự thấy trong `sys.path`.
+- Cấu trúc thư mục `nodejs/node_modules/` → Lambda giải nén vào `/opt`; runtime tự thấy trong `NODE_PATH` (`/opt/nodejs/node_modules`).
 - Giới hạn: **≤ 5 layer/function**; tổng giải nén (function + layers) **≤ 250 MB**; layer version **bất biến**.
-**⏱️ ~20 phút** · **Yêu cầu trước:** có `myFn`; máy có `pip`.
+**⏱️ ~20 phút** · **Yêu cầu trước:** có `myFn`; máy có `npm`.
 
 ### Các bước
-1. Đóng gói dependency đúng cấu trúc `python/` (Lambda mount vào `/opt/python`):
+1. Đóng gói dependency đúng cấu trúc `nodejs/node_modules/` (Lambda mount vào `/opt/nodejs/node_modules`):
    ```bash
-   rm -rf layer && mkdir -p layer/python
-   pip install requests -t layer/python
-   (cd layer && zip -r ../layer.zip python >/dev/null)
+   rm -rf layer && mkdir -p layer/nodejs
+   (cd layer/nodejs && npm init -y >/dev/null && npm install lodash >/dev/null)
+   (cd layer && zip -r ../layer.zip nodejs >/dev/null)
    ```
 2. Publish layer version (chỉ định runtime tương thích):
    ```bash
    LAYER_ARN=$(aws lambda publish-layer-version --layer-name my-deps \
-     --description "requests lib" \
+     --description "lodash lib" \
      --zip-file fileb://layer.zip \
-     --compatible-runtimes python3.12 \
+     --compatible-runtimes nodejs24.x \
      --query 'LayerVersionArn' --output text)
    echo "$LAYER_ARN"   # -> ...:layer:my-deps:1 (phải chỉ định CHÍNH XÁC version)
    ```
@@ -142,23 +141,28 @@ aws lambda update-alias --function-name myFn --name prod --function-version 1 --
    aws lambda update-function-configuration --function-name myFn --layers "$LAYER_ARN"
    aws lambda wait function-updated --function-name myFn
    ```
-4. Cập nhật handler để `import requests` (thư viện đến TỪ layer, không nằm trong package):
-   ```python
-   # handler.py — dùng dependency từ layer
-   import json, requests   # 'requests' được cấp bởi layer ở /opt/python
+4. Cập nhật handler để dùng `lodash` (thư viện đến TỪ layer, không nằm trong package):
+   ```javascript
+   // index.mjs — dùng dependency từ layer
+   // ⚠️ Handler ESM (.mjs) KHÔNG đọc NODE_PATH, nên `import _ from "lodash"` sẽ không
+   //    resolve được module từ layer. Dùng createRequire để nạp module trong /opt/nodejs/node_modules.
+   import { createRequire } from "module";
+   const require = createRequire(import.meta.url);
+   const _ = require("lodash");   // 'lodash' được cấp bởi layer ở /opt/nodejs/node_modules
 
-   def handler(event, context):
-       print("requests version:", requests.__version__)
-       return {"ok": True, "requests_version": requests.__version__}
+   export const handler = async (event) => {
+     console.log("lodash version:", _.VERSION);
+     return { ok: true, lodash_version: _.VERSION };
+   };
    ```
    ```bash
-   zip function.zip handler.py
+   zip function.zip index.mjs
    aws lambda update-function-code --function-name myFn --zip-file fileb://function.zip
    aws lambda wait function-updated --function-name myFn
    ```
 
 ### ✅ Kiểm chứng
-- `aws lambda invoke --function-name myFn --cli-binary-format raw-in-base64-out --payload '{}' out.json && cat out.json` → thấy `requests_version` (nếu quên gắn layer sẽ báo `No module named 'requests'`).
+- `aws lambda invoke --function-name myFn --cli-binary-format raw-in-base64-out --payload '{}' out.json && cat out.json` → thấy `lodash_version` (nếu quên gắn layer sẽ báo `Cannot find module 'lodash'`).
 - `aws lambda get-function-configuration --function-name myFn --query 'Layers'` → liệt kê layer ARN đã gắn.
 
 ### 🧹 Dọn dẹp
@@ -242,18 +246,20 @@ aws lambda delete-function-concurrency --function-name myFn   # trả concurrenc
 
 ### Các bước
 1. Tạo function `async-fn` cố ý raise lỗi khi `event.fail == true`:
-   ```python
-   # async_handler.py
-   def handler(event, context):
-       print("Processing:", event)
-       if event.get("fail"):
-           raise Exception("intentional failure for DLQ/destination demo")
-       return {"ok": True}
+   ```javascript
+   // index.mjs
+   export const handler = async (event) => {
+     console.log("Processing:", JSON.stringify(event));
+     if (event.fail) {
+       throw new Error("intentional failure for DLQ/destination demo");
+     }
+     return { ok: true };
+   };
    ```
    ```bash
-   zip async.zip async_handler.py
+   zip async.zip index.mjs
    aws lambda create-function --function-name async-fn \
-     --runtime python3.12 --handler async_handler.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role ${ROLE_ARN} --zip-file fileb://async.zip --timeout 10
    ```
 2. Tạo 3 queue: DLQ, ok, fail; cho phép Lambda gửi (role có `AWSLambdaBasicExecutionRole` chưa đủ `sqs:SendMessage` → thêm inline policy):
@@ -341,22 +347,25 @@ aws iam delete-role-policy --role-name dva-lambda-role --policy-name allow-sqs-s
      --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaSQSQueueExecutionRole
    ```
 2. Viết handler xử lý batch + partial batch response:
-   ```python
-   # sqs_handler.py
-   def handler(event, context):
-       failures = []
-       for r in event["Records"]:
-           body = r["body"]
-           print("SQS message:", r["messageId"], body)
-           if body == "POISON":          # cố ý cho 1 message lỗi
-               failures.append({"itemIdentifier": r["messageId"]})
-       # chỉ các message trong danh sách này quay lại queue để xử lý lại
-       return {"batchItemFailures": failures}
+   ```javascript
+   // index.mjs
+   export const handler = async (event) => {
+     const failures = [];
+     for (const r of event.Records) {
+       const body = r.body;
+       console.log("SQS message:", r.messageId, body);
+       if (body === "POISON") {          // cố ý cho 1 message lỗi
+         failures.push({ itemIdentifier: r.messageId });
+       }
+     }
+     // chỉ các message trong danh sách này quay lại queue để xử lý lại
+     return { batchItemFailures: failures };
+   };
    ```
    ```bash
-   zip sqs.zip sqs_handler.py
+   zip sqs.zip index.mjs
    aws lambda create-function --function-name sqs-consumer \
-     --runtime python3.12 --handler sqs_handler.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role ${ROLE_ARN} --zip-file fileb://sqs.zip --timeout 10
    ```
 3. Tạo queue với **VisibilityTimeout = 60** (= 6 × timeout 10s):
@@ -425,21 +434,22 @@ aws iam detach-role-policy --role-name dva-lambda-role \
      --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole
    ```
 2. Viết handler in `eventName` (INSERT/MODIFY/REMOVE) + NEW/OLD image:
-   ```python
-   # ddb_handler.py
-   import json
-   def handler(event, context):
-       for r in event["Records"]:
-           dyn = r["dynamodb"]
-           print("Event:", r["eventName"],
-                 "NEW:", json.dumps(dyn.get("NewImage")),
-                 "OLD:", json.dumps(dyn.get("OldImage")))
-       return {"processed": len(event["Records"])}
+   ```javascript
+   // index.mjs
+   export const handler = async (event) => {
+     for (const r of event.Records) {
+       const dyn = r.dynamodb;
+       console.log("Event:", r.eventName,
+         "NEW:", JSON.stringify(dyn.NewImage),
+         "OLD:", JSON.stringify(dyn.OldImage));
+     }
+     return { processed: event.Records.length };
+   };
    ```
    ```bash
-   zip ddb.zip ddb_handler.py
+   zip ddb.zip index.mjs
    aws lambda create-function --function-name ddb-consumer \
-     --runtime python3.12 --handler ddb_handler.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role ${ROLE_ARN} --zip-file fileb://ddb.zip --timeout 10
    ```
 3. Tạo bảng và **bật stream** với cả ảnh mới lẫn cũ:

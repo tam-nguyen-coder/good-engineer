@@ -14,14 +14,14 @@
 
 ## Lab 3.1 — Tạo bảng + CRUD, so sánh Query vs Scan
 
-**🎯 Mục tiêu:** Tạo bảng `Orders` (composite key), thao tác CRUD bằng cả CLI và `boto3`, rồi so sánh trực tiếp **Query** (đọc theo partition key) với **Scan** (đọc toàn bảng) qua `ConsumedCapacity`.
+**🎯 Mục tiêu:** Tạo bảng `Orders` (composite key), thao tác CRUD bằng cả CLI và `AWS SDK for JavaScript v3` (`@aws-sdk/lib-dynamodb`), rồi so sánh trực tiếp **Query** (đọc theo partition key) với **Scan** (đọc toàn bảng) qua `ConsumedCapacity`.
 
 **🧩 Luyện kỹ năng (liên quan đề):**
 - Tạo table với partition key + sort key, `billing-mode PAY_PER_REQUEST` (on-demand).
 - `PutItem` / `GetItem` / `Query` / `Scan` — cú pháp CLI + SDK.
 - Hiểu vì sao **Query nhanh & ít RCU**, **Scan chậm & tốn RCU**; filter expression chạy **sau khi đọc** nên không tiết kiệm capacity.
 
-**⏱️ ~35 phút** · **Yêu cầu trước:** đã cấu hình `AWS CLI v2` + `boto3` (`pip install boto3`).
+**⏱️ ~35 phút** · **Yêu cầu trước:** đã cấu hình `AWS CLI v2` + `Node.js 24` (`node --version`).
 
 ### Các bước
 
@@ -73,33 +73,55 @@
    ```
    > So sánh: Scan trả `ScannedCount` (số item đã quét) **lớn hơn** `Count` (số item khớp filter) → chứng minh filter **không** giảm RCU.
 
-4. **CRUD + Query/Scan bằng `boto3`** (lưu `lab31.py` rồi `python lab31.py`):
-   ```python
-   import boto3
-   from boto3.dynamodb.conditions import Key
+4. **CRUD + Query/Scan bằng `AWS SDK v3`** — script chạy LOCAL nên cần cài SDK trước:
+   ```bash
+   npm init -y
+   npm install @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb
+   ```
+   Lưu `lab31.mjs` rồi `node lab31.mjs`:
+   ```javascript
+   import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+   import {
+     DynamoDBDocumentClient,
+     PutCommand,
+     GetCommand,
+     QueryCommand,
+     ScanCommand,
+   } from "@aws-sdk/lib-dynamodb";
 
-   table = boto3.resource("dynamodb").Table("Orders")
+   const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({ region: "us-east-1" }));
+   const TableName = "Orders";
 
-   # PutItem
-   table.put_item(Item={"CustomerId": "C3", "OrderDate": "2026-01-03", "Amount": 200, "Status": "NEW"})
+   // PutItem
+   await ddb.send(new PutCommand({
+     TableName,
+     Item: { CustomerId: "C3", OrderDate: "2026-01-03", Amount: 200, Status: "NEW" },
+   }));
 
-   # GetItem
-   print("GET:", table.get_item(Key={"CustomerId": "C3", "OrderDate": "2026-01-03"})["Item"])
+   // GetItem
+   const got = await ddb.send(new GetCommand({
+     TableName,
+     Key: { CustomerId: "C3", OrderDate: "2026-01-03" },
+   }));
+   console.log("GET:", got.Item);
 
-   # Query (theo partition key) — nên ưu tiên
-   q = table.query(KeyConditionExpression=Key("CustomerId").eq("C1"))
-   print("QUERY count:", q["Count"], q["Items"])
+   // Query (theo partition key) — nên ưu tiên
+   const q = await ddb.send(new QueryCommand({
+     TableName,
+     KeyConditionExpression: "CustomerId = :c",
+     ExpressionAttributeValues: { ":c": "C1" },
+   }));
+   console.log("QUERY count:", q.Count, q.Items);
 
-   # Scan (toàn bảng) — kèm pagination bằng LastEvaluatedKey
-   items, start = [], None
-   while True:
-       kwargs = {"ExclusiveStartKey": start} if start else {}
-       resp = table.scan(**kwargs)
-       items += resp["Items"]
-       start = resp.get("LastEvaluatedKey")
-       if not start:
-           break
-   print("SCAN total:", len(items))
+   // Scan (toàn bảng) — kèm pagination bằng LastEvaluatedKey
+   const items = [];
+   let start;
+   do {
+     const resp = await ddb.send(new ScanCommand({ TableName, ExclusiveStartKey: start }));
+     items.push(...(resp.Items ?? []));
+     start = resp.LastEvaluatedKey;
+   } while (start);
+   console.log("SCAN total:", items.length);
    ```
 
 ### ✅ Kiểm chứng
@@ -205,41 +227,47 @@ aws dynamodb update-table --table-name Orders \
    # Lần 2 chạy LẠI lệnh trên → ConditionalCheckFailedException (đã tồn tại, không ghi đè)
    ```
 
-2. **Optimistic locking mô phỏng 2 tiến trình** (lưu `lab33.py` rồi `python lab33.py`):
-   ```python
-   import boto3
-   from botocore.exceptions import ClientError
+2. **Optimistic locking mô phỏng 2 tiến trình** — script chạy LOCAL (nếu chưa cài SDK ở Lab 3.1: `npm init -y && npm install @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb`). Lưu `lab33.mjs` rồi `node lab33.mjs`:
+   ```javascript
+   import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+   import { DynamoDBDocumentClient, GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
-   table = boto3.resource("dynamodb").Table("Orders")
-   key = {"CustomerId": "C1", "OrderDate": "2026-01-01"}
+   const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({ region: "us-east-1" }));
+   const TableName = "Orders";
+   const key = { CustomerId: "C1", OrderDate: "2026-01-01" };
 
-   # Cả 2 tiến trình đọc CÙNG version (giả lập đọc đồng thời)
-   current = table.get_item(Key=key)["Item"]["Version"]   # ví dụ = 1
-   print("Cả hai tiến trình đọc Version =", current)
+   // Cả 2 tiến trình đọc CÙNG version (giả lập đọc đồng thời)
+   const got = await ddb.send(new GetCommand({ TableName, Key: key }));
+   const current = got.Item.Version;   // ví dụ = 1
+   console.log("Cả hai tiến trình đọc Version =", current);
 
-   def update_with_lock(name, new_amount, expected_version):
-       try:
-           table.update_item(
-               Key=key,
-               UpdateExpression="SET Amount = :a, Version = :newv",
-               ConditionExpression="Version = :curv",
-               ExpressionAttributeValues={
-                   ":a": new_amount,
-                   ":newv": expected_version + 1,
-                   ":curv": expected_version,
-               },
-           )
-           print(f"[{name}] OK: Amount={new_amount}, Version {expected_version}->{expected_version+1}")
-       except ClientError as e:
-           if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
-               print(f"[{name}] THẤT BẠI: item đã bị tiến trình khác ghi trước → phải đọc lại & thử lại")
-           else:
-               raise
+   async function updateWithLock(name, newAmount, expectedVersion) {
+     try {
+       await ddb.send(new UpdateCommand({
+         TableName,
+         Key: key,
+         UpdateExpression: "SET Amount = :a, Version = :newv",
+         ConditionExpression: "Version = :curv",
+         ExpressionAttributeValues: {
+           ":a": newAmount,
+           ":newv": expectedVersion + 1,
+           ":curv": expectedVersion,
+         },
+       }));
+       console.log(`[${name}] OK: Amount=${newAmount}, Version ${expectedVersion}->${expectedVersion + 1}`);
+     } catch (e) {
+       if (e.name === "ConditionalCheckFailedException") {
+         console.log(`[${name}] THẤT BẠI: item đã bị tiến trình khác ghi trước → phải đọc lại & thử lại`);
+       } else {
+         throw e;
+       }
+     }
+   }
 
-   # Tiến trình A ghi trước với version cũ (1) → thành công, Version 1->2
-   update_with_lock("A", 500, current)
-   # Tiến trình B cũng dùng version cũ (1) → điều kiện Version=1 KHÔNG còn đúng → thất bại
-   update_with_lock("B", 999, current)
+   // Tiến trình A ghi trước với version cũ (1) → thành công, Version 1->2
+   await updateWithLock("A", 500, current);
+   // Tiến trình B cũng dùng version cũ (1) → điều kiện Version=1 KHÔNG còn đúng → thất bại
+   await updateWithLock("B", 999, current);
    ```
 
 ### ✅ Kiểm chứng
@@ -330,10 +358,10 @@ aws dynamodb delete-table --table-name Inventory
 
 ## Lab 3.5 — `Lambda` CRUD `DynamoDB` ⭐
 
-**🎯 Mục tiêu:** Viết 1 `Lambda` (`boto3`) đọc/ghi bảng `Orders` theo `action` trong event, deploy bằng zip và invoke trực tiếp. Đây là **nền cho API tuần 4** (`API Gateway` → `Lambda` → `DynamoDB`).
+**🎯 Mục tiêu:** Viết 1 `Lambda` (`Node.js` + `AWS SDK v3`) đọc/ghi bảng `Orders` theo `action` trong event, deploy bằng zip và invoke trực tiếp. Đây là **nền cho API tuần 4** (`API Gateway` → `Lambda` → `DynamoDB`).
 
 **🧩 Luyện kỹ năng (liên quan đề):**
-- `Lambda` gọi `DynamoDB` qua `boto3` — mô hình **synchronous invoke** (nền cho `API Gateway` proxy).
+- `Lambda` gọi `DynamoDB` qua `AWS SDK v3` (`@aws-sdk/lib-dynamodb`) — mô hình **synchronous invoke** (nền cho `API Gateway` proxy).
 - Execution role = `AWSLambdaBasicExecutionRole` (ghi CloudWatch Logs) + quyền `DynamoDB`.
 - Truyền cấu hình qua **environment variable** (`TABLE_NAME`).
 
@@ -367,46 +395,54 @@ aws dynamodb delete-table --table-name Inventory
    echo "$ROLE_ARN"
    ```
 
-2. Viết handler `lambda_function.py`:
-   ```python
-   import json, os, boto3
-   from decimal import Decimal
-   from boto3.dynamodb.conditions import Key
+2. Viết handler `index.mjs` (runtime `nodejs24.x` đã bundle sẵn AWS SDK v3 → không cần `npm install`; DocumentClient tự map số nên không cần xử lý kiểu `Decimal` như boto3):
+   ```javascript
+   import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+   import {
+     DynamoDBDocumentClient,
+     PutCommand,
+     GetCommand,
+     QueryCommand,
+     DeleteCommand,
+   } from "@aws-sdk/lib-dynamodb";
 
-   table = boto3.resource("dynamodb").Table(os.environ["TABLE_NAME"])
+   const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+   const TableName = process.env.TABLE_NAME;
 
-   def _default(o):
-       if isinstance(o, Decimal):
-           return int(o) if o % 1 == 0 else float(o)
-       raise TypeError
-
-   def handler(event, context):
-       action = event.get("action")
-       if action == "create":
-           table.put_item(Item=event["item"])
-           result = {"message": "created", "item": event["item"]}
-       elif action == "read":
-           result = table.get_item(Key=event["key"]).get("Item")
-       elif action == "query":
-           result = table.query(
-               KeyConditionExpression=Key("CustomerId").eq(event["customerId"])
-           )["Items"]
-       elif action == "delete":
-           table.delete_item(Key=event["key"])
-           result = {"message": "deleted"}
-       else:
-           return {"statusCode": 400, "body": "unknown action"}
-       return {"statusCode": 200, "body": json.dumps(result, default=_default)}
+   export const handler = async (event) => {
+     const action = event.action;
+     let result;
+     if (action === "create") {
+       await ddb.send(new PutCommand({ TableName, Item: event.item }));
+       result = { message: "created", item: event.item };
+     } else if (action === "read") {
+       const got = await ddb.send(new GetCommand({ TableName, Key: event.key }));
+       result = got.Item;
+     } else if (action === "query") {
+       const q = await ddb.send(new QueryCommand({
+         TableName,
+         KeyConditionExpression: "CustomerId = :c",
+         ExpressionAttributeValues: { ":c": event.customerId },
+       }));
+       result = q.Items;
+     } else if (action === "delete") {
+       await ddb.send(new DeleteCommand({ TableName, Key: event.key }));
+       result = { message: "deleted" };
+     } else {
+       return { statusCode: 400, body: "unknown action" };
+     }
+     return { statusCode: 200, body: JSON.stringify(result) };
+   };
    ```
 
 3. Đóng gói & tạo function (chờ role kịp propagate vài giây):
    ```bash
-   zip function.zip lambda_function.py
+   zip function.zip index.mjs
 
    aws lambda create-function \
      --function-name dva-week3-crud \
-     --runtime python3.12 \
-     --handler lambda_function.handler \
+     --runtime nodejs24.x \
+     --handler index.handler \
      --role "$ROLE_ARN" \
      --zip-file fileb://function.zip \
      --environment "Variables={TABLE_NAME=Orders}" \
@@ -450,7 +486,7 @@ aws iam delete-role --role-name dva-week3-crud-role
 ```
 
 ### 🧠 Ý nghĩa với đề thi
-- Đây là mô hình **backend serverless CRUD** chuẩn: `Lambda` + `boto3` + `DynamoDB` — tuần 4 chỉ cần thêm `API Gateway` (proxy `AWS_PROXY`, invoke **synchronous**) phía trước.
+- Đây là mô hình **backend serverless CRUD** chuẩn: `Lambda` + `AWS SDK v3` + `DynamoDB` — tuần 4 chỉ cần thêm `API Gateway` (proxy `AWS_PROXY`, invoke **synchronous**) phía trước.
 - Execution role phải có **BasicExecutionRole** (logs) + quyền dịch vụ cụ thể (least privilege trong production).
 - Env var để tách cấu hình khỏi code (12-factor).
 
@@ -502,42 +538,49 @@ aws iam delete-role --role-name dva-week3-crud-role
    STREAM_ROLE_ARN=$(aws iam get-role --role-name dva-week3-stream-role --query Role.Arn --output text)
    ```
 
-4. Viết handler `stream_audit.py` — audit + aggregate (đếm theo `eventName`):
-   ```python
-   import boto3, os, json
-   from datetime import datetime, timezone
+4. Viết handler `index.mjs` — audit + aggregate (đếm theo `eventName`). Đọc thay đổi từ `event.Records[].dynamodb`; `Count` là **từ khoá dành riêng** nên phải alias `#c`:
+   ```javascript
+   import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+   import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
-   audit = boto3.resource("dynamodb").Table(os.environ["AUDIT_TABLE"])
+   const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+   const AuditTable = process.env.AUDIT_TABLE;
 
-   def handler(event, context):
-       for record in event["Records"]:
-           name = record["eventName"]          # INSERT | MODIFY | REMOVE
-           keys = record["dynamodb"]["Keys"]
-           # 1) Audit log: 1 dòng cho mỗi thay đổi
-           audit.put_item(Item={
-               "PK": f"EVENT#{record['eventID']}",
-               "EventName": name,
-               "Keys": json.dumps(keys),
-               "At": datetime.now(timezone.utc).isoformat(),
-           })
-           # 2) Aggregate: đếm số thay đổi theo loại (atomic counter)
-           audit.update_item(
-               Key={"PK": f"COUNTER#{name}"},
-               UpdateExpression="SET #c = if_not_exists(#c, :zero) + :one",
-               ExpressionAttributeNames={"#c": "Count"},
-               ExpressionAttributeValues={":one": 1, ":zero": 0},
-           )
-       print(f"Đã xử lý {len(event['Records'])} record")
-       return {"processed": len(event["Records"])}
+   export const handler = async (event) => {
+     for (const record of event.Records) {
+       const name = record.eventName;            // INSERT | MODIFY | REMOVE
+       const keys = record.dynamodb.Keys;
+       // 1) Audit log: 1 dòng cho mỗi thay đổi
+       await ddb.send(new PutCommand({
+         TableName: AuditTable,
+         Item: {
+           PK: `EVENT#${record.eventID}`,
+           EventName: name,
+           Keys: JSON.stringify(keys),
+           At: new Date().toISOString(),
+         },
+       }));
+       // 2) Aggregate: đếm số thay đổi theo loại (atomic counter)
+       await ddb.send(new UpdateCommand({
+         TableName: AuditTable,
+         Key: { PK: `COUNTER#${name}` },
+         UpdateExpression: "SET #c = if_not_exists(#c, :zero) + :one",
+         ExpressionAttributeNames: { "#c": "Count" },
+         ExpressionAttributeValues: { ":one": 1, ":zero": 0 },
+       }));
+     }
+     console.log(`Đã xử lý ${event.Records.length} record`);
+     return { processed: event.Records.length };
+   };
    ```
 
 5. Deploy + gắn **event source mapping** vào stream:
    ```bash
-   zip stream.zip stream_audit.py
+   zip stream.zip index.mjs
    aws lambda create-function \
      --function-name dva-week3-stream-audit \
-     --runtime python3.12 \
-     --handler stream_audit.handler \
+     --runtime nodejs24.x \
+     --handler index.handler \
      --role "$STREAM_ROLE_ARN" \
      --zip-file fileb://stream.zip \
      --environment "Variables={AUDIT_TABLE=OrderAudit}" \
@@ -609,6 +652,7 @@ aws dynamodb delete-table --table-name Inventory 2>/dev/null || true
 aws dynamodb delete-table --table-name OrderAudit 2>/dev/null || true
 
 # Dọn file tạm
-rm -f trust-policy.json function.zip stream.zip lambda_function.py stream_audit.py out.json lab31.py lab33.py
+rm -f trust-policy.json function.zip stream.zip index.mjs out.json lab31.mjs lab33.mjs package.json package-lock.json
+rm -rf node_modules
 ```
 > Kiểm tra không còn tài nguyên tính phí: `aws dynamodb list-tables`, `aws lambda list-functions`, `aws iam list-roles | grep dva-week3`.

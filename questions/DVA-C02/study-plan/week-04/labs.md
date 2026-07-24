@@ -11,7 +11,7 @@
 | 4.1 | `S3` → `Lambda` (event notification, **ASYNC**) | ⭐ |
 | 4.2 | `REST API` → `Lambda` → `DynamoDB` (CRUD, proxy `AWS_PROXY`) | ⭐ |
 | 4.3 | Proxy vs non-proxy integration + mapping `VTL` + lỗi 502 | |
-| 4.4 | `S3` presigned URL (PUT/GET bằng `boto3`) | ⭐ |
+| 4.4 | `S3` presigned URL (PUT/GET bằng SDK v3) | ⭐ |
 | 4.5 | `CloudFront` + `S3` với `OAC` (bucket private) | ⭐ |
 | 4.6 | `Lambda authorizer` / `Cognito` + bật **CORS** cho API ở Lab 4.2 | |
 
@@ -65,33 +65,41 @@ EOF
      --policy-document "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:PutObject\"],\"Resource\":\"arn:aws:s3:::$B41/metadata/*\"}]}"
    ```
 2. Viết handler xử lý event (ghi log + tạo `metadata/<file>.json`). Chú ý: notification chỉ lắng nghe prefix `uploads/`, còn metadata ghi vào prefix `metadata/` → **tránh vòng lặp vô hạn**.
-   ```python
-   # s3_handler.py
-   import boto3, json, urllib.parse, datetime
-   s3 = boto3.client('s3')
+   ```javascript
+   // index.mjs — runtime nodejs24.x ĐÃ bundle sẵn AWS SDK v3 → chỉ cần zip index.mjs, KHÔNG npm install
+   import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+   const s3 = new S3Client({});
 
-   def handler(event, context):
-       for rec in event['Records']:
-           bucket = rec['s3']['bucket']['name']
-           key = urllib.parse.unquote_plus(rec['s3']['object']['key'])
-           size = rec['s3']['object'].get('size')
-           print(f"ASYNC event: new object s3://{bucket}/{key} size={size}")
-           meta = {"sourceKey": key, "size": size,
-                   "processedAt": datetime.datetime.utcnow().isoformat() + "Z"}
-           meta_key = "metadata/" + key.split('/', 1)[-1] + ".json"
-           s3.put_object(Bucket=bucket, Key=meta_key,
-                         Body=json.dumps(meta).encode('utf-8'))
-           print(f"Wrote metadata to s3://{bucket}/{meta_key}")
-       return {"processed": len(event['Records'])}
+   export const handler = async (event) => {
+     for (const rec of event.Records) {
+       const bucket = rec.s3.bucket.name;
+       const key = decodeURIComponent(rec.s3.object.key.replace(/\+/g, " "));
+       const size = rec.s3.object.size;
+       console.log(`ASYNC event: new object s3://${bucket}/${key} size=${size}`);
+       const meta = {
+         sourceKey: key,
+         size,
+         processedAt: new Date().toISOString(),
+       };
+       const metaKey = "metadata/" + key.split("/").slice(1).join("/") + ".json";
+       await s3.send(new PutObjectCommand({
+         Bucket: bucket,
+         Key: metaKey,
+         Body: JSON.stringify(meta),
+       }));
+       console.log(`Wrote metadata to s3://${bucket}/${metaKey}`);
+     }
+     return { processed: event.Records.length };
+   };
    ```
 3. Đóng gói + tạo function.
    ```bash
-   zip s3_handler.zip s3_handler.py
+   zip function.zip index.mjs
    sleep 10   # chờ role propagate
    aws lambda create-function --function-name week4-s3-processor \
-     --runtime python3.12 --handler s3_handler.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role arn:aws:iam::$ACCOUNT_ID:role/week4-s3lambda-role \
-     --zip-file fileb://s3_handler.zip --timeout 30 --region $AWS_REGION
+     --zip-file fileb://function.zip --timeout 30 --region $AWS_REGION
    ```
 4. **Cấp quyền cho S3 gọi Lambda** (principal `s3.amazonaws.com`) — phải làm TRƯỚC khi gắn notification, nếu không `put-bucket-notification` sẽ báo lỗi thiếu quyền.
    ```bash
@@ -180,50 +188,69 @@ aws iam delete-role --role-name week4-s3lambda-role
      --policy-document "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"dynamodb:PutItem\",\"dynamodb:GetItem\",\"dynamodb:DeleteItem\",\"dynamodb:Scan\"],\"Resource\":\"arn:aws:dynamodb:$AWS_REGION:$ACCOUNT_ID:table/Items\"}]}"
    ```
 3. Viết handler CRUD (đọc `event.httpMethod` để phân nhánh; trả đúng format proxy).
-   ```python
-   # crud.py
-   import json, os, boto3
-   table = boto3.resource('dynamodb').Table(os.environ.get('TABLE_NAME', 'Items'))
+   ```javascript
+   // index.mjs — nodejs24.x đã bundle @aws-sdk/lib-dynamodb → chỉ cần zip index.mjs
+   import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+   import {
+     DynamoDBDocumentClient,
+     PutCommand,
+     GetCommand,
+     DeleteCommand,
+     ScanCommand,
+   } from "@aws-sdk/lib-dynamodb";
 
-   def resp(code, body):
-       return {
-           "statusCode": code,
-           "headers": {"Content-Type": "application/json",
-                       "Access-Control-Allow-Origin": "*"},   # kèm sẵn cho Lab 4.6 (CORS)
-           "body": json.dumps(body, default=str)
+   const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+   const TABLE = process.env.TABLE_NAME || "Items";
+
+   const resp = (code, body) => ({
+     statusCode: code,
+     headers: {
+       "Content-Type": "application/json",
+       "Access-Control-Allow-Origin": "*",   // kèm sẵn cho Lab 4.6 (CORS)
+     },
+     body: JSON.stringify(body),              // body PHẢI là string
+   });
+
+   export const handler = async (event) => {
+     const method = event.httpMethod;
+     const itemId = (event.pathParameters || {}).id;
+     try {
+       if (method === "POST") {
+         const data = JSON.parse(event.body || "{}");
+         await ddb.send(new PutCommand({ TableName: TABLE, Item: data }));
+         return resp(201, { created: data });
        }
-
-   def handler(event, context):
-       method = event['httpMethod']
-       item_id = (event.get('pathParameters') or {}).get('id')
-       try:
-           if method == 'POST':
-               data = json.loads(event.get('body') or '{}')
-               table.put_item(Item=data)
-               return resp(201, {"created": data})
-           if method == 'GET' and item_id:
-               item = table.get_item(Key={'id': item_id}).get('Item')
-               return resp(200, item) if item else resp(404, {"error": "not found"})
-           if method == 'GET':
-               return resp(200, table.scan().get('Items', []))
-           if method == 'PUT' and item_id:
-               data = json.loads(event.get('body') or '{}'); data['id'] = item_id
-               table.put_item(Item=data)
-               return resp(200, {"updated": data})
-           if method == 'DELETE' and item_id:
-               table.delete_item(Key={'id': item_id})
-               return resp(200, {"deleted": item_id})
-           return resp(400, {"error": "unsupported method"})
-       except Exception as e:
-           return resp(500, {"error": str(e)})
+       if (method === "GET" && itemId) {
+         const { Item } = await ddb.send(new GetCommand({ TableName: TABLE, Key: { id: itemId } }));
+         return Item ? resp(200, Item) : resp(404, { error: "not found" });
+       }
+       if (method === "GET") {
+         const { Items } = await ddb.send(new ScanCommand({ TableName: TABLE }));
+         return resp(200, Items || []);
+       }
+       if (method === "PUT" && itemId) {
+         const data = JSON.parse(event.body || "{}");
+         data.id = itemId;
+         await ddb.send(new PutCommand({ TableName: TABLE, Item: data }));
+         return resp(200, { updated: data });
+       }
+       if (method === "DELETE" && itemId) {
+         await ddb.send(new DeleteCommand({ TableName: TABLE, Key: { id: itemId } }));
+         return resp(200, { deleted: itemId });
+       }
+       return resp(400, { error: "unsupported method" });
+     } catch (e) {
+       return resp(500, { error: String(e) });
+     }
+   };
    ```
    ```bash
-   zip crud.zip crud.py
+   zip function.zip index.mjs
    sleep 10
    aws lambda create-function --function-name week4-crud \
-     --runtime python3.12 --handler crud.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role arn:aws:iam::$ACCOUNT_ID:role/week4-crud-role \
-     --zip-file fileb://crud.zip --timeout 30 \
+     --zip-file fileb://function.zip --timeout 30 \
      --environment "Variables={TABLE_NAME=Items}" --region $AWS_REGION
    CRUD_ARN=$(aws lambda get-function --function-name week4-crud \
      --query 'Configuration.FunctionArn' --output text --region $AWS_REGION)
@@ -309,22 +336,24 @@ aws iam delete-role --role-name week4-crud-role
 
 ### Các bước
 1. Tạo 1 function trả `{"result": n*n}`. Cùng function này xử lý được cả 2 kiểu integration (đọc `number` khi non-proxy, đọc `body.n` khi proxy).
-   ```python
-   # square.py
-   import json
-   def handler(event, context):
-       if event.get('body'):                 # proxy: request nằm trong body (string)
-           n = json.loads(event['body']).get('n', 0)
-       else:                                  # non-proxy: đã được VTL map thành {"number": n}
-           n = event.get('number', 0)
-       return {"result": n * n}               # CHỦ Ý: chưa có statusCode/body
+   ```javascript
+   // index.mjs
+   export const handler = async (event) => {
+     let n;
+     if (event.body) {                        // proxy: request nằm trong body (string)
+       n = JSON.parse(event.body).n ?? 0;
+     } else {                                 // non-proxy: đã được VTL map thành {"number": n}
+       n = event.number ?? 0;
+     }
+     return { result: n * n };                // CHỦ Ý: chưa có statusCode/body
+   };
    ```
    ```bash
-   zip square.zip square.py
+   zip function.zip index.mjs
    aws lambda create-function --function-name week4-square \
-     --runtime python3.12 --handler square.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role arn:aws:iam::$ACCOUNT_ID:role/week4-crud-role \
-     --zip-file fileb://square.zip --timeout 15 --region $AWS_REGION
+     --zip-file fileb://function.zip --timeout 15 --region $AWS_REGION
    SQ_ARN=$(aws lambda get-function --function-name week4-square \
      --query 'Configuration.FunctionArn' --output text --region $AWS_REGION)
    SQ_URI=arn:aws:apigateway:$AWS_REGION:lambda:path/2015-03-31/functions/$SQ_ARN/invocations
@@ -373,19 +402,21 @@ aws iam delete-role --role-name week4-crud-role
    curl -s -X POST $BASE/square-proxy -d '{"n":5}'   # PROXY → 502 {"message":"Internal server error"}
    ```
 5. **SỬA lỗi 502** — Lambda proxy phải trả đúng format. Cập nhật handler rồi deploy code.
-   ```python
-   # square.py (bản proxy đúng)
-   import json
-   def handler(event, context):
-       n = json.loads(event.get('body') or '{}').get('n', 0)
-       return {"statusCode": 200,
-               "headers": {"Content-Type": "application/json"},
-               "body": json.dumps({"result": n * n})}
+   ```javascript
+   // index.mjs (bản proxy đúng)
+   export const handler = async (event) => {
+     const n = JSON.parse(event.body || "{}").n ?? 0;
+     return {
+       statusCode: 200,
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify({ result: n * n }),
+     };
+   };
    ```
    ```bash
-   zip square.zip square.py
+   zip function.zip index.mjs
    aws lambda update-function-code --function-name week4-square \
-     --zip-file fileb://square.zip --region $AWS_REGION
+     --zip-file fileb://function.zip --region $AWS_REGION
    curl -s -X POST $BASE/square-proxy -d '{"n":5}'   # bây giờ → 200 {"result":25}
    ```
 
@@ -409,10 +440,10 @@ aws lambda delete-function --function-name week4-square --region $AWS_REGION
 
 ---
 
-## Lab 4.4 — `S3` presigned URL (PUT/GET bằng `boto3`) ⭐
+## Lab 4.4 — `S3` presigned URL (PUT/GET bằng SDK v3) ⭐
 **🎯 Mục tiêu:** Sinh **presigned URL** để bên thứ ba upload (PUT) và download (GET) object **trực tiếp lên/từ `S3`** mà KHÔNG cần credential AWS và KHÔNG sửa bucket policy.
 **🧩 Luyện kỹ năng (liên quan đề):**
-- `generate_presigned_url('put_object'/'get_object', ...)` bằng `boto3`.
+- `getSignedUrl(s3, new PutObjectCommand/GetObjectCommand(...), { expiresIn })` bằng `@aws-sdk/s3-request-presigner`.
 - URL **kế thừa quyền của identity đã tạo** ra nó; là **bearer token** — ai cầm cũng dùng được trong hạn.
 - Số liệu hạn dùng: `SigV4` tối đa **7 ngày**; Console tối đa **12h**; temp credentials → hết hạn theo credential.
 **⏱️ ~25 phút** · **Yêu cầu trước:** đã chạy Chuẩn bị chung.
@@ -424,25 +455,29 @@ aws lambda delete-function --function-name week4-square --region $AWS_REGION
    aws s3api create-bucket --bucket $B44 --region $AWS_REGION
    # us-east-1 là default → KHÔNG cần LocationConstraint. (Region khác: thêm --create-bucket-configuration LocationConstraint=<region>)
    ```
-2. Sinh presigned URL bằng `boto3` (PUT để upload, GET để download).
-   ```python
-   # presign.py
-   import boto3, os
-   bucket = os.environ['B44']
-   key = 'shared/report.txt'
-   # QUAN TRỌNG: ép SigV4 để hạn tối đa 7 ngày
-   s3 = boto3.client('s3', config=boto3.session.Config(signature_version='s3v4'))
+2. Sinh presigned URL bằng SDK v3 (PUT để upload, GET để download).
+   ```javascript
+   // presign.mjs — chạy LOCAL (không phải Lambda) → cần npm install trước
+   import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+   import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-   put_url = s3.generate_presigned_url(
-       'put_object', Params={'Bucket': bucket, 'Key': key}, ExpiresIn=300)
-   get_url = s3.generate_presigned_url(
-       'get_object', Params={'Bucket': bucket, 'Key': key}, ExpiresIn=300)
-   print('PUT_URL=' + put_url)
-   print('GET_URL=' + get_url)
+   const bucket = process.env.B44;
+   const key = "shared/report.txt";
+   // SDK v3 mặc định ký SigV4 → không cần cấu hình thêm (hạn tối đa 7 ngày)
+   const s3 = new S3Client({ region: process.env.AWS_REGION || "us-east-1" });
+
+   const putUrl = await getSignedUrl(
+     s3, new PutObjectCommand({ Bucket: bucket, Key: key }), { expiresIn: 300 });
+   const getUrl = await getSignedUrl(
+     s3, new GetObjectCommand({ Bucket: bucket, Key: key }), { expiresIn: 300 });
+   console.log("PUT_URL=" + putUrl);
+   console.log("GET_URL=" + getUrl);
    ```
    ```bash
-   pip install boto3 -q 2>/dev/null
-   B44=$B44 python3 presign.py
+   # Script LOCAL: phải cài SDK v3 (khác Lambda nodejs24.x đã bundle sẵn)
+   npm init -y
+   npm install @aws-sdk/client-s3 @aws-sdk/s3-request-presigner
+   B44=$B44 AWS_REGION=$AWS_REGION node presign.mjs
    ```
 3. Dùng URL (bất kỳ máy nào có `curl`, không cần AWS credential).
    ```bash
@@ -562,14 +597,14 @@ curl -s https://$DIST_DOMAIN/index.html
 curl -s -o /dev/null -w "%{http_code}\n" https://$B45.s3.$AWS_REGION.amazonaws.com/index.html
 ```
 
-> 🔒 **(Tuỳ chọn) Signed URL / Signed cookies:** với nội dung private có phí, tạo **trusted key group** (upload public key), gắn vào cache behavior, rồi ký URL bằng private key (`CloudFrontSigner` trong `boto3`). `Signed URL` = 1 file; `Signed cookies` = nhiều file cùng lúc, giữ nguyên URL.
+> 🔒 **(Tuỳ chọn) Signed URL / Signed cookies:** với nội dung private có phí, tạo **trusted key group** (upload public key), gắn vào cache behavior, rồi ký URL bằng private key (`getSignedUrl` từ `@aws-sdk/cloudfront-signer`). `Signed URL` = 1 file; `Signed cookies` = nhiều file cùng lúc, giữ nguyên URL.
 
 ### 🧹 Dọn dẹp (CloudFront phải disable trước khi xoá)
 ```bash
 # 1) Lấy config hiện tại + ETag, tắt Enabled=false, update
 aws cloudfront get-distribution-config --id $DIST_ID > cur.json
-ETAG=$(python3 -c "import json;print(json.load(open('cur.json'))['ETag'])")
-python3 -c "import json;d=json.load(open('cur.json'))['DistributionConfig'];d['Enabled']=False;json.dump(d,open('disabled.json','w'))"
+ETAG=$(node -e "console.log(JSON.parse(require('fs').readFileSync('cur.json')).ETag)")
+node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('cur.json')).DistributionConfig;d.Enabled=false;fs.writeFileSync('disabled.json',JSON.stringify(d))"
 aws cloudfront update-distribution --id $DIST_ID \
   --distribution-config file://disabled.json --if-match $ETAG
 # 2) Chờ deploy xong rồi xoá (lấy ETag mới)
@@ -600,33 +635,39 @@ aws s3 rm s3://$B45 --recursive && aws s3api delete-bucket --bucket $B45 --regio
 
 ### Các bước
 1. Viết + tạo function authorizer (TOKEN). Token `allow`→Allow, `deny`→Deny(403), rỗng/`unauthorized`→401.
-   ```python
-   # authorizer.py
-   def handler(event, context):
-       token = event.get('authorizationToken', '')
-       arn = event['methodArn']
-       if token == 'allow':
-           effect = 'Allow'
-       elif token == 'deny':
-           effect = 'Deny'                       # → 403 Forbidden
-       else:
-           raise Exception('Unauthorized')       # message "Unauthorized" → 401
-       return {
-           "principalId": "user",
-           "policyDocument": {
-               "Version": "2012-10-17",
-               "Statement": [{"Action": "execute-api:Invoke",
-                              "Effect": effect, "Resource": arn}]
-           },
-           "context": {"who": "week4-lab"}        # (tuỳ chọn) đẩy xuống backend
-       }
+   ```javascript
+   // index.mjs
+   export const handler = async (event) => {
+     const token = event.authorizationToken || "";
+     const arn = event.methodArn;
+     let effect;
+     if (token === "allow") {
+       effect = "Allow";
+     } else if (token === "deny") {
+       effect = "Deny";                          // → 403 Forbidden
+     } else {
+       throw new Error("Unauthorized");          // message "Unauthorized" → 401
+     }
+     return {
+       principalId: "user",
+       policyDocument: {
+         Version: "2012-10-17",
+         Statement: [{
+           Action: "execute-api:Invoke",
+           Effect: effect,
+           Resource: arn,
+         }],
+       },
+       context: { who: "week4-lab" },             // (tuỳ chọn) đẩy xuống backend
+     };
+   };
    ```
    ```bash
-   zip authorizer.zip authorizer.py
+   zip function.zip index.mjs
    aws lambda create-function --function-name week4-authorizer \
-     --runtime python3.12 --handler authorizer.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role arn:aws:iam::$ACCOUNT_ID:role/week4-crud-role \
-     --zip-file fileb://authorizer.zip --timeout 10 --region $AWS_REGION
+     --zip-file fileb://function.zip --timeout 10 --region $AWS_REGION
    AUTH_ARN=$(aws lambda get-function --function-name week4-authorizer \
      --query 'Configuration.FunctionArn' --output text --region $AWS_REGION)
    ```

@@ -29,14 +29,14 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
 ---
 
 ## Lab 9.1 — `X-Ray` active tracing cho `Lambda` + `API Gateway` ⭐
-**🎯 Mục tiêu:** Bật **active tracing**, instrument code bằng `aws-xray-sdk`, thêm **annotation** (index → filter được) và **metadata** (không index), xem **service map** `API GW → Lambda → STS` và **filter trace theo annotation** ngay bằng CLI.
+**🎯 Mục tiêu:** Bật **active tracing**, instrument code bằng `aws-xray-sdk-core`, thêm **annotation** (index → filter được) và **metadata** (không index), xem **service map** `API GW → Lambda → STS` và **filter trace theo annotation** ngay bằng CLI.
 **🧩 Luyện kỹ năng (liên quan đề):**
 - Câu bẫy số 1 của tuần: **annotation vs metadata** — chỉ annotation mới filter/query được.
 - Bật `X-Ray` cho `Lambda` = **active tracing** (`--tracing-config Mode=Active`) + role có `AWSXRayDaemonWriteAccess`.
-- `patch_all()` tự tạo **subsegment downstream** → hiện node trên service map.
+- `captureAWSv3Client()` bọc client SDK v3 → tự tạo **subsegment downstream** (hiện node trên service map).
 - Tích hợp sync `API Gateway (REST) → Lambda` (proxy `AWS_PROXY`) + tracing trên **stage**.
 
-**⏱️ ~40 phút** · **Yêu cầu trước:** Chuẩn bị chung; có `python3` + `pip`.
+**⏱️ ~40 phút** · **Yêu cầu trước:** Chuẩn bị chung; có `node` 24 + `npm`.
 
 ### Các bước
 1. Tạo execution role (basic logs + quyền ghi `X-Ray`).
@@ -55,35 +55,41 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
    ```
 
 2. Viết handler có annotation + metadata + 1 lời gọi downstream (STS) để service map có node.
-   ```python
-   # handler.py
-   import json, boto3
-   from aws_xray_sdk.core import xray_recorder, patch_all
-   patch_all()                      # instrument boto3 -> tạo subsegment downstream (STS)
-   sts = boto3.client("sts")
+   ```javascript
+   // index.mjs
+   import AWSXRay from "aws-xray-sdk-core";
+   import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 
-   def handler(event, context):
-       qs = event.get("queryStringParameters") or {}
-       order_type = qs.get("orderType", "STANDARD")
+   // captureAWSv3Client bọc client -> tạo subsegment downstream (STS) trên service map
+   const sts = AWSXRay.captureAWSv3Client(new STSClient({}));
 
-       sub = xray_recorder.begin_subsegment("processOrder")
-       sub.put_annotation("orderType", order_type)   # ✅ INDEXED -> filter được
-       sub.put_metadata("rawEvent", event)            # ❌ KHÔNG index -> không filter được
-       account = sts.get_caller_identity()["Account"] # -> node STS trên service map
-       xray_recorder.end_subsegment()
+   export const handler = async (event) => {
+     const qs = event.queryStringParameters || {};
+     const orderType = qs.orderType || "STANDARD";
 
-       return {"statusCode": 200,
-               "body": json.dumps({"orderType": order_type, "account": account})}
+     const seg = AWSXRay.getSegment();                 // facade segment do active tracing tạo
+     const sub = seg.addNewSubsegment("processOrder");
+     sub.addAnnotation("orderType", orderType);        // ✅ INDEXED -> filter được
+     sub.addMetadata("rawEvent", event);               // ❌ KHÔNG index -> không filter được
+     const { Account } = await sts.send(new GetCallerIdentityCommand({})); // -> node STS trên service map
+     sub.close();
+
+     return {
+       statusCode: 200,
+       body: JSON.stringify({ orderType, account: Account }),
+     };
+   };
    ```
 
-3. Đóng gói kèm thư viện `aws-xray-sdk` rồi tạo function **bật active tracing**.
+3. Đóng gói kèm thư viện `aws-xray-sdk-core` rồi tạo function **bật active tracing**.
+   > ⚠️ Runtime `nodejs24.x` đã bundle sẵn `@aws-sdk/client-*`, nhưng **`aws-xray-sdk-core` KHÔNG được bundle** → phải `npm install` và đóng gói kèm `node_modules` vào zip.
    ```bash
-   mkdir -p build && cp handler.py build/
-   pip install aws-xray-sdk -t build/ >/dev/null
-   (cd build && zip -qr ../xray-fn.zip .)
+   mkdir -p build && cp index.mjs build/
+   (cd build && npm init -y >/dev/null && npm install aws-xray-sdk-core >/dev/null)
+   (cd build && zip -qr ../xray-fn.zip .)   # zip gồm index.mjs + node_modules
 
    aws lambda create-function --function-name lab9-xray-fn \
-     --runtime python3.12 --handler handler.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role "$ROLE_ARN" --zip-file fileb://xray-fn.zip --timeout 15 \
      --tracing-config Mode=Active
    aws lambda wait function-active-v2 --function-name lab9-xray-fn
@@ -150,7 +156,7 @@ aws iam detach-role-policy --role-name lab9-xray-role \
 aws iam detach-role-policy --role-name lab9-xray-role \
   --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
 aws iam delete-role --role-name lab9-xray-role
-rm -rf build xray-fn.zip handler.py trust-lambda.json
+rm -rf build xray-fn.zip index.mjs trust-lambda.json
 ```
 
 ### 🧠 Ý nghĩa với đề thi
@@ -161,14 +167,14 @@ rm -rf build xray-fn.zip handler.py trust-lambda.json
 
 ---
 
-## Lab 9.2 — Custom metric: `PutMetricData` (boto3) + EMF từ log `Lambda`
+## Lab 9.2 — Custom metric: `PutMetricData` (AWS SDK v3) + EMF từ log `Lambda`
 **🎯 Mục tiêu:** Đẩy số liệu app tùy chỉnh vào `CloudWatch` bằng **2 cách**: gọi trực tiếp API **`PutMetricData`** (high-resolution + dimension), và ghi log **EMF (Embedded Metric Format)** từ `Lambda` để `CloudWatch` **tự trích metric từ log** (không gọi API riêng).
 **🧩 Luyện kỹ năng (liên quan đề):**
 - `PutMetricData`: namespace + dimension + **StorageResolution=1** (high-resolution tới 1 giây).
 - EMF: cấu trúc `_aws.CloudWatchMetrics` trong log → hợp với `Lambda` ("log ra là có metric").
 - Mỗi tổ hợp dimension = **một metric riêng**; không có default namespace.
 
-**⏱️ ~20 phút** · **Yêu cầu trước:** Chuẩn bị chung; `pip install boto3` (thường có sẵn).
+**⏱️ ~20 phút** · **Yêu cầu trước:** Chuẩn bị chung; có `node` 24 + `npm` (cho script chạy local).
 
 ### Các bước
 1. **Cách A — `PutMetricData` trực tiếp** (one-liner nhanh):
@@ -176,27 +182,32 @@ rm -rf build xray-fn.zip handler.py trust-lambda.json
    aws cloudwatch put-metric-data --namespace "MyApp" \
      --metric-name OrdersProcessed --value 1 --unit Count
    ```
-   Bản đầy đủ (dimension + high-resolution) bằng `boto3`:
-   ```python
-   # push_metric.py
-   import boto3, random, time
-   cw = boto3.client("cloudwatch")
-   for _ in range(5):
-       cw.put_metric_data(
-           Namespace="MyApp",
-           MetricData=[{
-               "MetricName": "OrdersProcessed",
-               "Dimensions": [{"Name": "Environment", "Value": "prod"}],
-               "Value": random.randint(1, 10),
-               "Unit": "Count",
-               "StorageResolution": 1,     # high-resolution (hạt 1 giây)
-           }],
-       )
-       time.sleep(1)
-   print("Đã đẩy 5 điểm dữ liệu high-resolution vào MyApp/OrdersProcessed")
+   Bản đầy đủ (dimension + high-resolution) bằng **AWS SDK v3** — đây là **script chạy local**, nên cần cài SDK:
+   ```bash
+   npm init -y >/dev/null && npm install @aws-sdk/client-cloudwatch >/dev/null
+   ```
+   ```javascript
+   // push_metric.mjs
+   import { CloudWatchClient, PutMetricDataCommand } from "@aws-sdk/client-cloudwatch";
+   const cw = new CloudWatchClient({ region: "us-east-1" });
+
+   for (let i = 0; i < 5; i++) {
+     await cw.send(new PutMetricDataCommand({
+       Namespace: "MyApp",
+       MetricData: [{
+         MetricName: "OrdersProcessed",
+         Dimensions: [{ Name: "Environment", Value: "prod" }],
+         Value: Math.floor(Math.random() * 10) + 1,
+         Unit: "Count",
+         StorageResolution: 1,     // high-resolution (hạt 1 giây)
+       }],
+     }));
+     await new Promise((r) => setTimeout(r, 1000));
+   }
+   console.log("Đã đẩy 5 điểm dữ liệu high-resolution vào MyApp/OrdersProcessed");
    ```
    ```bash
-   python3 push_metric.py
+   node push_metric.mjs
    ```
 
 2. **Cách B — EMF từ `Lambda`.** Tạo role cơ bản + function ghi log EMF (không gọi `PutMetricData`).
@@ -211,29 +222,29 @@ rm -rf build xray-fn.zip handler.py trust-lambda.json
      --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
    EMF_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/lab9-emf-role"
    ```
-   ```python
-   # emf.py
-   import json, time, random
-   def handler(event, context):
-       emf = {
-         "_aws": {
-           "Timestamp": int(time.time() * 1000),
-           "CloudWatchMetrics": [{
-             "Namespace": "MyApp/EMF",
-             "Dimensions": [["FunctionName"]],
-             "Metrics": [{"Name": "OrdersProcessed", "Unit": "Count"}]
-           }]
-         },
-         "FunctionName": context.function_name,   # dimension value
-         "OrdersProcessed": random.randint(1, 5)  # giá trị metric
-       }
-       print(json.dumps(emf))     # CloudWatch tự trích metric từ dòng log này
-       return {"ok": True}
+   ```javascript
+   // index.mjs
+   export const handler = async (event, context) => {
+     const emf = {
+       _aws: {
+         Timestamp: Date.now(),
+         CloudWatchMetrics: [{
+           Namespace: "MyApp/EMF",
+           Dimensions: [["FunctionName"]],
+           Metrics: [{ Name: "OrdersProcessed", Unit: "Count" }],
+         }],
+       },
+       FunctionName: context.functionName,                 // dimension value
+       OrdersProcessed: Math.floor(Math.random() * 5) + 1, // giá trị metric
+     };
+     console.log(JSON.stringify(emf));   // CloudWatch tự trích metric từ dòng log này
+     return { ok: true };
+   };
    ```
    ```bash
-   zip emf.zip emf.py
+   zip emf.zip index.mjs
    aws lambda create-function --function-name lab9-emf-fn \
-     --runtime python3.12 --handler emf.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role "$EMF_ROLE_ARN" --zip-file fileb://emf.zip --timeout 10
    aws lambda wait function-active-v2 --function-name lab9-emf-fn
    for i in 1 2 3; do aws lambda invoke --function-name lab9-emf-fn /dev/null >/dev/null; done
@@ -256,7 +267,8 @@ aws lambda delete-function --function-name lab9-emf-fn
 aws iam detach-role-policy --role-name lab9-emf-role \
   --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 aws iam delete-role --role-name lab9-emf-role
-rm -f push_metric.py emf.py emf.zip trust-lambda.json
+rm -f push_metric.mjs index.mjs emf.zip trust-lambda.json package.json package-lock.json
+rm -rf node_modules
 ```
 > ℹ️ Metric **không xóa được** thủ công — tự hết hạn sau **15 tháng** nếu không có data mới (không phát sinh phí lưu trữ).
 
@@ -370,17 +382,17 @@ aws sns delete-topic --topic-arn "$TOPIC_ARN"
      --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
    TICK_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/lab9-tick-role"
    ```
-   ```python
-   # tick.py
-   from datetime import datetime, timezone
-   def handler(event, context):
-       print(f"[TICK] chạy lúc {datetime.now(timezone.utc).isoformat()} source={event.get('source','manual')}")
-       return {"ok": True}
+   ```javascript
+   // index.mjs
+   export const handler = async (event) => {
+     console.log(`[TICK] chạy lúc ${new Date().toISOString()} source=${event.source ?? "manual"}`);
+     return { ok: true };
+   };
    ```
    ```bash
-   zip tick.zip tick.py
+   zip tick.zip index.mjs
    aws lambda create-function --function-name lab9-tick-fn \
-     --runtime python3.12 --handler tick.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role "$TICK_ROLE_ARN" --zip-file fileb://tick.zip --timeout 10
    aws lambda wait function-active-v2 --function-name lab9-tick-fn
    FN_ARN=$(aws lambda get-function --function-name lab9-tick-fn \
@@ -448,7 +460,7 @@ aws iam delete-role --role-name lab9-scheduler-role
 aws iam detach-role-policy --role-name lab9-tick-role \
   --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 aws iam delete-role --role-name lab9-tick-role
-rm -f tick.py tick.zip trust-lambda.json trust-scheduler.json
+rm -f index.mjs tick.zip trust-lambda.json trust-scheduler.json
 ```
 
 ### 🧠 Ý nghĩa với đề thi
@@ -480,17 +492,19 @@ rm -f tick.py tick.zip trust-lambda.json trust-scheduler.json
      --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
    FLAKY_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/lab9-flaky-role"
    ```
-   ```python
-   # flaky.py
-   def handler(event, context):
-       if event.get("fail"):
-           raise RuntimeError("ERROR: downstream dependency failed")  # -> metric Errors + traceback trong log
-       return {"ok": True}
+   ```javascript
+   // index.mjs
+   export const handler = async (event) => {
+     if (event.fail) {
+       throw new Error("ERROR: downstream dependency failed");  // -> metric Errors + stack trace trong log
+     }
+     return { ok: true };
+   };
    ```
    ```bash
-   zip flaky.zip flaky.py
+   zip flaky.zip index.mjs
    aws lambda create-function --function-name lab9-flaky-fn \
-     --runtime python3.12 --handler flaky.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role "$FLAKY_ROLE_ARN" --zip-file fileb://flaky.zip --timeout 10
    aws lambda wait function-active-v2 --function-name lab9-flaky-fn
    ```
@@ -557,7 +571,7 @@ aws lambda delete-function --function-name lab9-flaky-fn
 aws iam detach-role-policy --role-name lab9-flaky-role \
   --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 aws iam delete-role --role-name lab9-flaky-role
-rm -f flaky.py flaky.zip trust-lambda.json
+rm -f index.mjs flaky.zip trust-lambda.json
 ```
 
 ### 🧠 Ý nghĩa với đề thi

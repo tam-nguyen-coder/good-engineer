@@ -244,17 +244,16 @@ rm -f trust-policy.json
      --auth-parameters USERNAME=demo@example.com,PASSWORD='Passw0rd!' \
      --query 'AuthenticationResult.IdToken' --output text)
    ```
-   Decode bằng Python (xử lý padding base64url an toàn):
-   ```python
-   # decode_jwt.py — chạy: python3 decode_jwt.py "$ID_TOKEN"
-   import sys, base64, json
-   payload = sys.argv[1].split('.')[1]
-   payload += '=' * (-len(payload) % 4)          # bù padding base64url
-   claims = json.loads(base64.urlsafe_b64decode(payload))
-   print(json.dumps(claims, indent=2))
+   Decode bằng Node.js (`base64url` của `Buffer` tự xử lý padding):
+   ```javascript
+   // decode_jwt.mjs — chạy: node decode_jwt.mjs "$ID_TOKEN"
+   const payload = process.argv[2].split(".")[1];                        // JWT = header.payload.signature
+   const claims = JSON.parse(Buffer.from(payload, "base64url").toString()); // "base64url" tự bù padding
+   console.log(JSON.stringify(claims, null, 2));
    ```
+   > 💡 Không cần tạo file cũng được — one-liner: `node -e 'console.log(Buffer.from(process.argv[1].split(".")[1],"base64url").toString())' "$ID_TOKEN"`
    ```bash
-   python3 decode_jwt.py "$ID_TOKEN"
+   node decode_jwt.mjs "$ID_TOKEN"        # runtime Node.js 24 có sẵn (không cần npm install)
    # Quan sát: "token_use":"id", "aud":<CLIENT_ID>, "iss":".../<POOL_ID>",
    #           "sub":<uuid>, "email":"demo@example.com", "exp" (=iat+3600)
    ```
@@ -262,14 +261,14 @@ rm -f trust-policy.json
 
 ### ✅ Kiểm chứng
 - `admin-initiate-auth` trả về đủ **IdToken + AccessToken + RefreshToken** với `ExpiresIn: 3600`.
-- `decode_jwt.py` in ra claims: ID token có `token_use:"id"` + `email`; thử decode Access token sẽ thấy `token_use:"access"` + `scope` (khác nhau rõ giữa hai loại token).
+- `decode_jwt.mjs` in ra claims: ID token có `token_use:"id"` + `email`; thử decode Access token sẽ thấy `token_use:"access"` + `scope` (khác nhau rõ giữa hai loại token).
 
 ### 🧹 Dọn dẹp (tránh tính phí)
 ```bash
 # (Nếu định làm Lab 6.4 -> GIỮ LẠI $POOL_ID và $CLIENT_ID, dọn sau.)
 # aws cognito-idp delete-user-pool-domain --domain <prefix> --user-pool-id "$POOL_ID"  # nếu đã tạo Hosted UI
 aws cognito-idp delete-user-pool --user-pool-id "$POOL_ID"   # xoá luôn user + app client
-rm -f decode_jwt.py
+rm -f decode_jwt.mjs
 ```
 
 ### 🧠 Ý nghĩa với đề thi
@@ -470,28 +469,43 @@ aws cognito-idp delete-user-pool --user-pool-id "$POOL_ID"   # dọn nốt User 
 
 ### 🧩 Biến thể — **Lambda authorizer** (thay cho Cognito authorizer)
 Khi cần logic tuỳ biến (verify token của IdP khác, kiểm tenant, IP allow-list…), dùng **Lambda authorizer** (`--type TOKEN` hoặc `REQUEST`): API Gateway gọi một `Lambda` trả về **IAM policy** `Allow`/`Deny` cho request.
-```python
-# authorizer.py — TOKEN authorizer đơn giản
-def handler(event, context):
-    token = event.get("authorizationToken", "")   # giá trị header Authorization
-    effect = "Allow" if token == "let-me-in" else "Deny"
-    return {
-        "principalId": "user",
-        "policyDocument": {
-            "Version": "2012-10-17",
-            "Statement": [{
-                "Action": "execute-api:Invoke",
-                "Effect": effect,
-                "Resource": event["methodArn"]
-            }]
-        }
-    }
+```javascript
+// index.mjs — TOKEN authorizer đơn giản (tạo Lambda với --handler index.handler)
+export const handler = async (event) => {
+  const token = event.authorizationToken ?? "";          // giá trị header Authorization
+  const effect = token === "let-me-in" ? "Allow" : "Deny";
+  return {
+    principalId: "user",
+    policyDocument: {
+      Version: "2012-10-17",
+      Statement: [{
+        Action: "execute-api:Invoke",
+        Effect: effect,
+        Resource: event.methodArn,
+      }],
+    },
+  };
+};
 ```
 ```bash
-# Gắn kiểu authorizer này (sau khi đã tạo Lambda + cấp lambda add-permission cho apigateway.amazonaws.com):
+# Tạo Lambda authorizer (runtime Node.js 24 đã bundle sẵn, chỉ cần zip index.mjs — KHÔNG cần npm install):
+zip function.zip index.mjs
+aws lambda create-function --function-name lab-lambda-authorizer \
+  --runtime nodejs24.x --handler index.handler \
+  --zip-file fileb://function.zip \
+  --role "arn:aws:iam::${ACCOUNT_ID}:role/<LAMBDA_EXEC_ROLE>"
+export LAMBDA_ARN=$(aws lambda get-function --function-name lab-lambda-authorizer \
+  --query 'Configuration.FunctionArn' --output text)
+
+# Cho phép API Gateway gọi Lambda này:
+aws lambda add-permission --function-name lab-lambda-authorizer \
+  --statement-id apigw-invoke --action lambda:InvokeFunction \
+  --principal apigateway.amazonaws.com
+
+# Gắn kiểu authorizer này (dùng $LAMBDA_ARN vừa tạo):
 aws apigateway create-authorizer --rest-api-id "$API_ID" \
   --name lambda-auth --type TOKEN \
-  --authorizer-uri "arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/<LAMBDA_ARN>/invocations" \
+  --authorizer-uri "arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/${LAMBDA_ARN}/invocations" \
   --identity-source 'method.request.header.Authorization'
 ```
 

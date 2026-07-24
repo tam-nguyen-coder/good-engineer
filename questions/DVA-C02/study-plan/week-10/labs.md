@@ -145,58 +145,76 @@ mkdir -p ~/capstone && cd ~/capstone
    ```
 
 3. Viết handler `notes-api` (proxy). Đã chừa sẵn route `/uploads` cho Part 2.
-   ```python
-   # api.py
-   import json, os, time, uuid, boto3
-   from boto3.dynamodb.conditions import Key
+   ```javascript
+   // api/index.mjs
+   import { randomUUID } from "crypto";
+   import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+   import { DynamoDBDocumentClient, PutCommand, QueryCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
+   import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+   import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-   ddb   = boto3.resource("dynamodb")
-   table = ddb.Table(os.environ["TABLE_NAME"])
-   s3    = boto3.client("s3")
-   BUCKET = os.environ.get("MEDIA_BUCKET")
+   const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({ region: "us-east-1" }));
+   const s3  = new S3Client({ region: "us-east-1" });
+   const TABLE_NAME = process.env.TABLE_NAME;
+   const BUCKET = process.env.MEDIA_BUCKET;
 
-   def _resp(code, body):
-       return {"statusCode": code,
-               "headers": {"Content-Type": "application/json"},
-               "body": json.dumps(body, default=str)}
+   const _resp = (code, body) => ({
+     statusCode: code,
+     headers: { "Content-Type": "application/json" },
+     body: JSON.stringify(body),           // body PHẢI là string
+   });
 
-   def handler(event, context):
-       method = event["httpMethod"]
-       path   = event.get("resource") or event.get("path") or ""
-       # Part 4 sẽ thay bằng Cognito sub; tạm hard-code để test Part 1
-       user = "demo-user"
+   export const handler = async (event) => {
+     const method = event.httpMethod;
+     const path   = event.resource ?? event.path ?? "";
+     // Part 4 sẽ thay bằng Cognito sub; tạm hard-code để test Part 1
+     const user = "demo-user";
 
-       # --- Part 2: xin presigned URL để upload media ---
-       if "uploads" in path and method == "POST":
-           b = json.loads(event.get("body") or "{}")
-           key = f"{user}/{uuid.uuid4()}-{b.get('filename','file.bin')}"
-           url = s3.generate_presigned_url(
-               "put_object", Params={"Bucket": BUCKET, "Key": key}, ExpiresIn=300)
-           return _resp(200, {"uploadUrl": url, "key": key})
+     // --- Part 2: xin presigned URL để upload media ---
+     if (path.includes("uploads") && method === "POST") {
+       const b = JSON.parse(event.body || "{}");
+       const key = `${user}/${randomUUID()}-${b.filename ?? "file.bin"}`;
+       const url = await getSignedUrl(
+         s3, new PutObjectCommand({ Bucket: BUCKET, Key: key }), { expiresIn: 300 });
+       return _resp(200, { uploadUrl: url, key });
+     }
 
-       # --- Part 1: CRUD notes ---
-       if method == "POST":
-           b = json.loads(event.get("body") or "{}")
-           item = {"userId": user, "noteId": str(uuid.uuid4()),
-                   "title": b.get("title",""), "body": b.get("body",""),
-                   "createdAt": int(time.time())}
-           table.put_item(Item=item)
-           return _resp(201, item)
-       if method == "GET":
-           r = table.query(KeyConditionExpression=Key("userId").eq(user))
-           return _resp(200, r["Items"])
-       if method == "DELETE":
-           nid = (event.get("queryStringParameters") or {}).get("noteId")
-           table.delete_item(Key={"userId": user, "noteId": nid})
-           return _resp(200, {"deleted": nid})
-       return _resp(405, {"error": "method not allowed"})
+     // --- Part 1: CRUD notes ---
+     if (method === "POST") {
+       const b = JSON.parse(event.body || "{}");
+       const item = {
+         userId: user, noteId: randomUUID(),
+         title: b.title ?? "", body: b.body ?? "",
+         createdAt: Math.floor(Date.now() / 1000),
+       };
+       await ddb.send(new PutCommand({ TableName: TABLE_NAME, Item: item }));
+       return _resp(201, item);
+     }
+     if (method === "GET") {
+       const r = await ddb.send(new QueryCommand({
+         TableName: TABLE_NAME,
+         KeyConditionExpression: "userId = :u",
+         ExpressionAttributeValues: { ":u": user },
+       }));
+       return _resp(200, r.Items);
+     }
+     if (method === "DELETE") {
+       const nid = (event.queryStringParameters ?? {}).noteId;
+       await ddb.send(new DeleteCommand({ TableName: TABLE_NAME, Key: { userId: user, noteId: nid } }));
+       return _resp(200, { deleted: nid });
+     }
+     return _resp(405, { error: "method not allowed" });
+   };
    ```
 
 4. Đóng gói + tạo function (truyền env `TABLE_NAME`, `MEDIA_BUCKET`).
    ```bash
-   zip api.zip api.py
+   # Lưu code trên vào api/index.mjs. Runtime nodejs24.x ĐÃ bundle sẵn AWS SDK v3
+   # (@aws-sdk/client-*, lib-dynamodb, s3-request-presigner) -> chỉ cần zip index.mjs, KHÔNG npm install.
+   mkdir -p api                           # (dán handler vào api/index.mjs)
+   zip -j api.zip api/index.mjs           # -j: đưa index.mjs ra gốc zip -> handler = index.handler
    aws lambda create-function --function-name ${APP}-api \
-     --runtime python3.12 --handler api.handler --role "$API_ROLE_ARN" \
+     --runtime nodejs24.x --handler index.handler --role "$API_ROLE_ARN" \
      --zip-file fileb://api.zip --timeout 15 \
      --environment "Variables={TABLE_NAME=$TABLE_NAME,MEDIA_BUCKET=$MEDIA_BUCKET}"
    aws lambda wait function-active-v2 --function-name ${APP}-api
@@ -273,7 +291,7 @@ curl -s "$API_URL/notes"
 **🧩 Luyện kỹ năng (liên quan đề):**
 - **Presigned URL**: offload upload khỏi backend, không lộ credential; hết hạn theo `ExpiresIn`.
 - `S3` → `Lambda` là **asynchronous** qua **bucket notification** — KHÔNG phải event source mapping; cần `add-permission` principal `s3.amazonaws.com`.
-- Cấu trúc event `Records[].s3.object.key` (nhớ `urllib.parse.unquote_plus`).
+- Cấu trúc event `Records[].s3.object.key` (nhớ decode: `decodeURIComponent(key.replace(/\+/g, " "))`).
 
 **⏱️ ~35 phút** · **Yêu cầu trước:** xong Part 1.
 
@@ -303,32 +321,42 @@ curl -s "$API_URL/notes"
    export PROC_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/${APP}-proc-role"
    sleep 10
    ```
-   ```python
-   # processor.py
-   import os, json, urllib.parse, boto3
+   ```javascript
+   // processor/index.mjs
+   import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+   import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
+   import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
-   ddb   = boto3.resource("dynamodb")
-   table = ddb.Table(os.environ["TABLE_NAME"])
-   sns   = boto3.client("sns")
-   TOPIC = os.environ.get("TOPIC_ARN")   # rỗng ở Part 2, có ở Part 3
+   const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({ region: "us-east-1" }));
+   const sns = new SNSClient({ region: "us-east-1" });
+   const TABLE_NAME = process.env.TABLE_NAME;
+   const TOPIC = process.env.TOPIC_ARN;   // rỗng ở Part 2, có ở Part 3
 
-   def handler(event, context):
-       for rec in event["Records"]:
-           key  = urllib.parse.unquote_plus(rec["s3"]["object"]["key"])
-           size = rec["s3"]["object"]["size"]
-           user = key.split("/")[0]
-           table.put_item(Item={"userId": user, "noteId": f"media#{key}",
-                                 "type": "media", "s3key": key, "size": size})
-           print(f"[proc] wrote metadata for {key} ({size} bytes)")
-           if TOPIC:
-               sns.publish(TopicArn=TOPIC, Subject="New media uploaded",
-                           Message=json.dumps({"user": user, "key": key, "size": size}))
-       return {"processed": len(event["Records"])}
+   export const handler = async (event) => {      // S3 -> Lambda là ASYNC push
+     for (const rec of event.Records) {
+       const key  = decodeURIComponent(rec.s3.object.key.replace(/\+/g, " "));  // ~ unquote_plus
+       const size = rec.s3.object.size;
+       const user = key.split("/")[0];
+       await ddb.send(new PutCommand({
+         TableName: TABLE_NAME,
+         Item: { userId: user, noteId: `media#${key}`, type: "media", s3key: key, size },
+       }));
+       console.log(`[proc] wrote metadata for ${key} (${size} bytes)`);
+       if (TOPIC) {
+         await sns.send(new PublishCommand({
+           TopicArn: TOPIC, Subject: "New media uploaded",
+           Message: JSON.stringify({ user, key, size }),
+         }));
+       }
+     }
+     return { processed: event.Records.length };
+   };
    ```
    ```bash
-   zip processor.zip processor.py
+   mkdir -p processor                            # (dán handler vào processor/index.mjs)
+   zip -j processor.zip processor/index.mjs
    aws lambda create-function --function-name ${APP}-processor \
-     --runtime python3.12 --handler processor.handler --role "$PROC_ROLE_ARN" \
+     --runtime nodejs24.x --handler index.handler --role "$PROC_ROLE_ARN" \
      --zip-file fileb://processor.zip --timeout 30 \
      --environment "Variables={TABLE_NAME=$TABLE_NAME}"
    aws lambda wait function-active-v2 --function-name ${APP}-processor
@@ -356,7 +384,7 @@ curl -s "$API_URL/notes"
 # 1) Xin presigned URL qua API
 UP=$(curl -s -X POST "$API_URL/uploads" -d '{"filename":"cat.png"}')
 echo "$UP"
-URL=$(echo "$UP" | python3 -c 'import sys,json;print(json.load(sys.stdin)["uploadUrl"])')
+URL=$(echo "$UP" | node -pe 'JSON.parse(require("fs").readFileSync(0,"utf8")).uploadUrl')
 
 # 2) Upload 1 file bất kỳ bằng chính presigned URL (PUT) — không cần credential
 echo "hello media" > cat.png
@@ -437,20 +465,22 @@ curl -s -X PUT --upload-file cat.png "$URL" -o /dev/null -w "%{http_code}\n"   #
    WORKER_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/${APP}-worker-role"
    sleep 10
    ```
-   ```python
-   # worker.py
-   import json
-   def handler(event, context):
-       for rec in event["Records"]:
-           body = json.loads(rec["body"])          # raw delivery -> body = message gốc
-           print(f"[worker] xử lý media {body['key']} của {body['user']} ({body['size']} bytes)")
-           # ... ở đây có thể tạo thumbnail, transcode, quét virus ...
-       return {"handled": len(event["Records"])}
+   ```javascript
+   // worker/index.mjs — SQS -> Lambda qua event source mapping (POLL)
+   export const handler = async (event) => {
+     for (const rec of event.Records) {
+       const body = JSON.parse(rec.body);          // raw delivery -> body = message gốc
+       console.log(`[worker] xử lý media ${body.key} của ${body.user} (${body.size} bytes)`);
+       // ... ở đây có thể tạo thumbnail, transcode, quét virus ...
+     }
+     return { handled: event.Records.length };
+   };
    ```
    ```bash
-   zip worker.zip worker.py
+   mkdir -p worker                               # (dán handler vào worker/index.mjs)
+   zip -j worker.zip worker/index.mjs
    aws lambda create-function --function-name ${APP}-worker \
-     --runtime python3.12 --handler worker.handler --role "$WORKER_ROLE_ARN" \
+     --runtime nodejs24.x --handler index.handler --role "$WORKER_ROLE_ARN" \
      --zip-file fileb://worker.zip --timeout 30
    aws lambda wait function-active-v2 --function-name ${APP}-worker
 
@@ -503,15 +533,15 @@ aws logs tail /aws/lambda/${APP}-worker --since 5m       # thấy [worker] xử 
      --username alice --password 'Passw0rd!23' --permanent
    ```
 
-2. Đọc `sub` từ token trong handler — sửa dòng `user = "demo-user"` trong `api.py`.
-   ```python
-   # THAY: user = "demo-user"
-   # BẰNG: lấy identity thật từ authorizer (fallback demo-user khi test cục bộ)
-   claims = (event.get("requestContext", {}).get("authorizer", {}) or {}).get("claims", {})
-   user = claims.get("sub", "demo-user")
+2. Đọc `sub` từ token trong handler — sửa dòng `const user = "demo-user";` trong `api/index.mjs`.
+   ```javascript
+   // THAY: const user = "demo-user";
+   // BẰNG: lấy identity thật từ authorizer (fallback demo-user khi test cục bộ)
+   const claims = event.requestContext?.authorizer?.claims ?? {};
+   const user = claims.sub ?? "demo-user";
    ```
    ```bash
-   zip api.zip api.py
+   zip -j api.zip api/index.mjs
    aws lambda update-function-code --function-name ${APP}-api --zip-file fileb://api.zip
    aws lambda wait function-updated-v2 --function-name ${APP}-api
    ```
@@ -611,39 +641,49 @@ curl -s "$API_URL/notes" -H "Authorization: $TOKEN"   # note gắn với sub c�
      --patch-operations op=replace,path=/tracingEnabled,value=true
    ```
 
-2. (Tuỳ chọn) Instrument code + thêm **annotation** (patch mọi boto3 call; đánh dấu subsegment).
-   > ⚠️ **Đọc kỹ trước khi làm:** `aws_xray_sdk` KHÔNG có sẵn trong runtime `Lambda`. Nếu bạn thêm `import aws_xray_sdk` vào `api.py` rồi `update-function-code` mà **chưa bundle** thư viện, function sẽ `ImportError` ngay khi khởi động → API trả `502`. Chọn 1 trong 2:
-   > - **Cách A — muốn xem annotation ngay ở Part 5:** thêm đoạn dưới vào `api.py`, RỒI bundle kèm dependency và deploy (bắt buộc cả 3 lệnh):
+2. (Tuỳ chọn) Instrument code + thêm **annotation** (bọc mọi client SDK v3 bằng `captureAWSv3Client`; đánh dấu subsegment).
+   > ⚠️ **Đọc kỹ trước khi làm:** `aws-xray-sdk-core` KHÔNG được bundle sẵn trong runtime `nodejs24.x` (khác với `@aws-sdk/*` vốn đã có sẵn). Nếu bạn thêm `import AWSXRay from "aws-xray-sdk-core"` vào `api/index.mjs` rồi `update-function-code` mà **chưa bundle** `node_modules`, function sẽ lỗi `ERR_MODULE_NOT_FOUND` ngay khi khởi động → API trả `502`. Chọn 1 trong 2:
+   > - **Cách A — muốn xem annotation ngay ở Part 5:** thêm đoạn dưới vào `api/index.mjs`, RỒI bundle kèm dependency và deploy (bắt buộc cả các lệnh):
    >   ```bash
-   >   mkdir -p ~/capstone/build && cp ~/capstone/api.py ~/capstone/build/ && cd ~/capstone/build
-   >   pip install aws-xray-sdk -t .            # cài lib + deps (wrapt, jsonpickle...) vào cùng thư mục
-   >   zip -r ../api.zip .                      # đóng gói code KÈM toàn bộ dependency
+   >   cd ~/capstone/api
+   >   npm init -y                              # tạo package.json (đủ để npm install)
+   >   npm install aws-xray-sdk-core            # cài lib + deps vào node_modules/
+   >   zip -r ../api.zip index.mjs node_modules package.json   # đóng gói code KÈM dependency
    >   aws lambda update-function-code --function-name ${APP}-api --zip-file fileb://../api.zip
    >   aws lambda wait function-updated-v2 --function-name ${APP}-api
    >   ```
-   > - **Cách B — không muốn cài lib:** **BỎ QUA** việc thêm `import`/annotation ở bước này. `patch_all()` cùng dependency sẽ do **Part 6/`SAM`** tự đóng gói (`requirements.txt`); active tracing ở bước 1 vẫn cho bạn service map cơ bản.
+   > - **Cách B — không muốn cài lib:** **BỎ QUA** việc thêm `import`/annotation ở bước này. Việc bọc client X-Ray cùng dependency sẽ do **Part 6/`SAM`** tự đóng gói (`package.json`); active tracing ở bước 1 vẫn cho bạn service map cơ bản.
 
-   Đoạn instrument (chỉ dùng ở **Cách A**):
-   ```python
-   # thêm ĐẦU api.py
-   from aws_xray_sdk.core import xray_recorder, patch_all
-   patch_all()   # tự trace boto3 (DynamoDB/S3) thành subsegment
+   Đoạn instrument (chỉ dùng ở **Cách A** — thay 2 dòng khởi tạo `ddb`/`s3` ở đầu file bằng bản có `captureAWSv3Client`):
+   ```javascript
+   // thêm ĐẦU api/index.mjs
+   import AWSXRay from "aws-xray-sdk-core";
 
-   # trong handler, sau khi tính được user & method:
-   xray_recorder.put_annotation("userId", user)      # INDEX -> filter được trên console
-   xray_recorder.put_annotation("httpMethod", method)
-   xray_recorder.put_metadata("event_path", path)    # metadata: xem chi tiết, KHÔNG filter
+   // bọc client SDK v3 -> tự trace call DynamoDB/S3 thành subsegment:
+   const ddb = DynamoDBDocumentClient.from(AWSXRay.captureAWSv3Client(new DynamoDBClient({ region: "us-east-1" })));
+   const s3  = AWSXRay.captureAWSv3Client(new S3Client({ region: "us-east-1" }));
+
+   // trong handler, sau khi tính được user & method:
+   const seg = AWSXRay.getSegment();
+   seg.addAnnotation("userId", user);      // INDEX -> filter được trên console
+   seg.addAnnotation("httpMethod", method);
+   seg.addMetadata("event_path", path);    // metadata: xem chi tiết, KHÔNG filter
    ```
 
 3. Custom metric bằng **EMF** (Embedded Metric Format) — chỉ cần `print` JSON đúng schema, `CloudWatch` tự bóc thành metric (không tốn API call).
-   ```python
-   # ví dụ log EMF khi tạo note (đặt trong nhánh POST của api.py)
-   print(json.dumps({
-     "_aws": {"Timestamp": int(time.time()*1000),
-              "CloudWatchMetrics": [{"Namespace": "NotesApp",
-                 "Dimensions": [["Service"]],
-                 "Metrics": [{"Name": "NotesCreated", "Unit": "Count"}]}]},
-     "Service": "notes-api", "NotesCreated": 1}))
+   ```javascript
+   // ví dụ log EMF khi tạo note (đặt trong nhánh POST của api/index.mjs)
+   console.log(JSON.stringify({
+     _aws: {
+       Timestamp: Date.now(),
+       CloudWatchMetrics: [{
+         Namespace: "NotesApp",
+         Dimensions: [["Service"]],
+         Metrics: [{ Name: "NotesCreated", Unit: "Count" }],
+       }],
+     },
+     Service: "notes-api", NotesCreated: 1,
+   }));
    ```
 
 4. Tạo **alarm** trên số lỗi của function `notes-api`.
@@ -688,10 +728,15 @@ for i in 1 2 3; do curl -s -X POST "$API_URL/notes" -H "Authorization: $TOKEN" -
 ### Các bước
 1. Bố trí project `SAM`.
    ```bash
-   mkdir -p ~/capstone-sam/src && cd ~/capstone-sam
-   cp ~/capstone/api.py src/          # tái dùng handler (giữ dòng đọc claims Cognito)
-   cp ~/capstone/processor.py src/
-   printf "aws-xray-sdk\n" > src/requirements.txt
+   # Mỗi function 1 thư mục riêng chứa index.mjs (Handler = index.handler cho cả hai)
+   mkdir -p ~/capstone-sam/api ~/capstone-sam/processor && cd ~/capstone-sam
+   cp ~/capstone/api/index.mjs api/            # tái dùng handler (giữ dòng đọc claims Cognito)
+   cp ~/capstone/processor/index.mjs processor/
+   # aws-xray-sdk-core KHÔNG bundle sẵn -> khai báo trong package.json để `sam build` tự `npm install`.
+   # (@aws-sdk/* đã có sẵn trong runtime nên KHÔNG cần liệt kê.)
+   cat > api/package.json <<'EOF'
+   { "name": "notes-api", "version": "1.0.0", "dependencies": { "aws-xray-sdk-core": "^3.10.0" } }
+   EOF
    ```
 
 2. Viết `template.yaml` (bản **rút gọn tiêu biểu** — đủ để deploy chạy được; **không** gồm `SNS`/`SQS`/worker của Part 3 hay `Secrets`/`KMS` của Part 4 — coi như bài tập mở rộng).
@@ -702,7 +747,7 @@ for i in 1 2 3; do curl -s -X POST "$API_URL/notes" -H "Authorization: $TOKEN" -
 
    Globals:
      Function:
-       Runtime: python3.12
+       Runtime: nodejs24.x
        Timeout: 15
        Tracing: Active            # X-Ray cho mọi function
        Environment:
@@ -714,7 +759,7 @@ for i in 1 2 3; do curl -s -X POST "$API_URL/notes" -H "Authorization: $TOKEN" -
      NotesTable:
        # KHÔNG dùng AWS::Serverless::SimpleTable: nó chỉ có 1 khoá chính (HASH),
        # trong khi app dùng composite key (userId HASH + noteId RANGE). Nếu chỉ 1 khoá:
-       # put_item cùng userId sẽ ĐÈ note cũ, và delete_item với {userId,noteId} -> ValidationException (DELETE 500).
+       # PutCommand cùng userId sẽ ĐÈ note cũ, và DeleteCommand với {userId,noteId} -> ValidationException (DELETE 500).
        Type: AWS::DynamoDB::Table
        Properties:
          BillingMode: PAY_PER_REQUEST
@@ -756,8 +801,8 @@ for i in 1 2 3; do curl -s -X POST "$API_URL/notes" -H "Authorization: $TOKEN" -
      NotesApiFunction:
        Type: AWS::Serverless::Function
        Properties:
-         CodeUri: src/
-         Handler: api.handler
+         CodeUri: api/
+         Handler: index.handler
          AutoPublishAlias: live               # tạo alias 'live' -> bật canary
          DeploymentPreference:
            Type: Canary10Percent5Minutes      # 10% traffic 5', rồi 100%
@@ -776,8 +821,8 @@ for i in 1 2 3; do curl -s -X POST "$API_URL/notes" -H "Authorization: $TOKEN" -
      ProcessorFunction:
        Type: AWS::Serverless::Function
        Properties:
-         CodeUri: src/
-         Handler: processor.handler
+         CodeUri: processor/
+         Handler: index.handler
          Policies:
            - DynamoDBWritePolicy: { TableName: !Ref NotesTable }
          Events:
@@ -909,7 +954,9 @@ for R in ${APP}-api-role ${APP}-proc-role ${APP}-worker-role; do
 done
 
 rm -f trust-lambda.json notif.json qattr.json qpolicy.json \
-      api.zip processor.zip worker.zip api.py processor.py worker.py cat.png
+      api.zip processor.zip worker.zip cat.png
+# xoá thư mục handler (index.mjs + node_modules/package.json nếu đã cài X-Ray ở Part 5):
+rm -rf api processor worker
 ```
 
 ### B) Stack `SAM` (Part 6)

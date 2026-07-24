@@ -42,10 +42,15 @@
    Output có 3 trường: `Account`, `Arn`, `UserId`.
 4. **Thực nghiệm chọn region** (không đổi credentials): cờ dòng lệnh thắng biến môi trường thắng profile.
    ```bash
-   aws configure get region                                  # region trong profile
-   AWS_REGION=eu-west-1 aws configure list | grep region     # env var override profile
-   aws configure list --region ap-northeast-1 | grep region   # cờ --region thắng tất cả
+   aws configure get region                                  # region trong profile (~/.aws/config)
+   AWS_REGION=eu-west-1 aws configure list | grep region     # env var override profile (nạp từ env)
+
+   # Chứng minh cờ --region thắng tất cả khi gọi API thực tế (dùng --debug để xem endpoint):
+   AWS_REGION=eu-west-1 aws sts get-caller-identity --region ap-northeast-1 --debug 2>&1 | grep "Making request"
+   # → Endpoint gửi tới https://sts.ap-northeast-1.amazonaws.com/ (cờ --region thắng cả env var và profile)
    ```
+   > ⚠️ **Lưu ý về `aws configure list`:** Lệnh này liệt kê nguồn nạp cấu hình (file hoặc `env`). Cờ CLI `--region` là tham số thực thi thời gian thực chứ không phải giá trị cấu hình tĩnh nạp từ env/file, do đó `aws configure list` vẫn hiện nguồn từ config file/env var. Tuy nhiên khi thực thi API thực tế, `--region` luôn có độ ưu tiên cao nhất.
+   
 5. **Thực nghiệm credential chain — env var thắng file.** Cố tình đặt env var credentials SAI rồi gọi lại: nếu lệnh báo lỗi token không hợp lệ (thay vì fallback về profile hợp lệ) nghĩa là SDK/CLI đã **dừng ở env var** — env đứng trước file.
    ```bash
    # Đang OK nhờ [default] trong file:
@@ -84,11 +89,11 @@ unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_REGION
 ---
 
 ## Lab 1.2 — Tạo & invoke `Lambda` bằng 3 cách (Console · CLI · SDK) + đọc `CloudWatch Logs`
-**🎯 Mục tiêu:** Tạo 1 execution role, tạo 1 hàm `Lambda` Python, invoke nó bằng **cả 3 cách** (Console, CLI với zip, SDK `boto3`) và đọc log ở `CloudWatch Logs`.
+**🎯 Mục tiêu:** Tạo 1 execution role, tạo 1 hàm `Lambda` Node.js (`nodejs24.x`), invoke nó bằng **cả 3 cách** (Console, CLI với zip, SDK v3 `@aws-sdk/client-lambda`) và đọc log ở `CloudWatch Logs`.
 **🧩 Luyện kỹ năng (liên quan đề):**
 - `aws lambda create-function` với deployment package (`.zip`).
 - Trust policy `lambda.amazonaws.com` + managed policy `AWSLambdaBasicExecutionRole` để ghi log.
-- Cấu trúc handler `handler(event, context)`; log tự động đẩy vào group `/aws/lambda/<tên>`.
+- Cấu trúc handler ESM `export const handler = async (event, context) => {...}`; log tự động đẩy vào group `/aws/lambda/<tên>`.
 **⏱️ ~40 phút** · **Yêu cầu trước:** đã làm Lab 1.1 (CLI + biến shell dùng chung).
 
 ### Các bước
@@ -113,22 +118,22 @@ unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_REGION
      --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
    ```
 2. Viết handler tối giản và đóng gói `.zip`.
-   ```python
-   # index.py
-   import json
-   def handler(event, context):
-       print("event:", json.dumps(event))
-       print("requestId:", context.aws_request_id)
-       return {"statusCode": 200, "body": "hello DVA"}
+   ```javascript
+   // index.mjs
+   export const handler = async (event, context) => {
+     console.log("event:", JSON.stringify(event));
+     console.log("requestId:", context.awsRequestId);
+     return { statusCode: 200, body: "hello DVA" };
+   };
    ```
    ```bash
-   zip function.zip index.py
+   zip function.zip index.mjs
    ```
 3. **Cách 1 — CLI:** tạo hàm từ zip (chờ vài giây cho role kịp propagate nếu gặp lỗi `InvalidParameterValueException` về role).
    ```bash
    aws lambda create-function \
      --function-name dva-lab-fn \
-     --runtime python3.12 \
+     --runtime nodejs24.x \
      --role "$ROLE_ARN" \
      --handler index.handler \
      --zip-file fileb://function.zip \
@@ -145,21 +150,24 @@ unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_REGION
    cat out.json    # → {"statusCode": 200, "body": "hello DVA"}
    ```
 4. **Cách 2 — Console:** vào `Lambda` → hàm `dva-lab-fn` → tab **Test** → tạo test event JSON `{"name":"console"}` → **Test**. (Hoặc **Create function** → *Author from scratch* → **Use an existing role** = `dva-lab-lambda-role` → dán code → **Deploy** → **Test**.) Quan sát panel *Execution results*.
-5. **Cách 3 — SDK (`boto3`):** invoke bằng code.
-   ```python
-   # invoke_sdk.py
-   import boto3, json, os
-   lam = boto3.client("lambda", region_name=os.environ.get("REGION", "us-east-1"))
-   resp = lam.invoke(
-       FunctionName="dva-lab-fn",
-       InvocationType="RequestResponse",           # synchronous
-       Payload=json.dumps({"name": "sdk"}).encode(),
-   )
-   print("StatusCode:", resp["StatusCode"])         # 200
-   print("Payload:", resp["Payload"].read().decode())
+5. **Cách 3 — SDK v3 (`@aws-sdk/client-lambda`):** invoke bằng code.
+   ```javascript
+   // invoke_sdk.mjs
+   import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
+
+   const lambda = new LambdaClient({ region: process.env.REGION || "us-east-1" });
+   const resp = await lambda.send(new InvokeCommand({
+     FunctionName: "dva-lab-fn",
+     InvocationType: "RequestResponse",              // synchronous
+     Payload: Buffer.from(JSON.stringify({ name: "sdk" })),
+   }));
+   console.log("StatusCode:", resp.StatusCode);        // 200
+   console.log("Payload:", Buffer.from(resp.Payload).toString());
    ```
    ```bash
-   python3 invoke_sdk.py
+   # Script chạy LOCAL (không phải Lambda) → phải tự cài SDK v3
+   npm init -y && npm install @aws-sdk/client-lambda
+   node invoke_sdk.mjs
    ```
 6. Đọc log ở `CloudWatch Logs` (group tự sinh `/aws/lambda/<tên>`).
    ```bash
@@ -181,13 +189,13 @@ aws logs delete-log-group --log-group-name /aws/lambda/dva-lab-fn --region "$REG
 
 ### 🧠 Ý nghĩa với đề thi
 - Log không hiện trong `CloudWatch` → nghi **execution role thiếu quyền `logs:*`** (thiếu `AWSLambdaBasicExecutionRole`), không phải lỗi code.
-- Handler nhận `event` (payload) + `context` (`aws_request_id`, thời gian còn lại...); code khai báo ngoài handler được tái sử dụng giữa các invoke → tạo SDK client ở init.
+- Handler nhận `event` (payload) + `context` (`context.awsRequestId`, thời gian còn lại...); code khai báo ngoài handler được tái sử dụng giữa các invoke → tạo SDK client ở init.
 - `InvocationType`: `RequestResponse` (sync) vs `Event` (async) — nhớ phân biệt cho các lab tuần sau.
 
 ---
 
 ## Lab 1.3 — ⭐ `Lambda` gọi `DynamoDB` + `S3` qua execution role (thấy `AccessDenied` → fix bằng IAM policy)
-**🎯 Mục tiêu:** Viết handler `boto3` ghi 1 item vào `DynamoDB` và put 1 object lên `S3`. Cố tình chạy khi execution role **thiếu quyền** để thấy `AccessDenied`, rồi gắn IAM policy least-privilege để fix và chạy lại thành công.
+**🎯 Mục tiêu:** Viết handler Node.js (SDK v3: `DynamoDBDocumentClient` + `S3Client`) ghi 1 item vào `DynamoDB` và put 1 object lên `S3`. Cố tình chạy khi execution role **thiếu quyền** để thấy `AccessDenied`, rồi gắn IAM policy least-privilege để fix và chạy lại thành công.
 **🧩 Luyện kỹ năng (liên quan đề):**
 - **Execution role** = quyền để function **gọi service khác** (đọc/ghi `S3`, `DynamoDB`) — nền tảng của mọi tích hợp `Lambda`.
 - Đọc lỗi `AccessDeniedException` / `not authorized to perform: dynamodb:PutItem` trong `CloudWatch Logs`.
@@ -215,38 +223,47 @@ aws logs delete-log-group --log-group-name /aws/lambda/dva-lab-fn --region "$REG
    # us-east-1 là default → KHÔNG cần LocationConstraint. (Region khác: thêm --create-bucket-configuration LocationConstraint=<region>)
    ```
 2. Viết handler tích hợp và đóng gói lại.
-   ```python
-   # app.py
-   import json, os, time, uuid
-   import boto3
+   ```javascript
+   // index.mjs
+   import { randomUUID } from "crypto";
+   import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+   import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
+   import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
-   TABLE  = os.environ["TABLE_NAME"]
-   BUCKET = os.environ["BUCKET_NAME"]
+   const TABLE  = process.env.TABLE_NAME;
+   const BUCKET = process.env.BUCKET_NAME;
 
-   ddb = boto3.resource("dynamodb")     # client tạo ở init → tái sử dụng
-   s3  = boto3.client("s3")
+   // client tạo ở init → tái sử dụng giữa các invoke
+   const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+   const s3  = new S3Client({});
 
-   def handler(event, context):
-       item_id = str(uuid.uuid4())
-       # (1) Ghi item vào DynamoDB — cần dynamodb:PutItem trong execution role
-       ddb.Table(TABLE).put_item(
-           Item={"id": item_id, "ts": int(time.time()), "msg": event.get("msg", "hi")}
-       )
-       # (2) Put object lên S3 — cần s3:PutObject
-       s3.put_object(Bucket=BUCKET, Key=f"events/{item_id}.json",
-                     Body=json.dumps(event).encode())
-       return {"ok": True, "id": item_id}
+   export const handler = async (event, context) => {
+     const itemId = randomUUID();
+     // (1) Ghi item vào DynamoDB — cần dynamodb:PutItem trong execution role
+     await ddb.send(new PutCommand({
+       TableName: TABLE,
+       Item: { id: itemId, ts: Math.floor(Date.now() / 1000), msg: event.msg ?? "hi" },
+     }));
+     // (2) Put object lên S3 — cần s3:PutObject
+     await s3.send(new PutObjectCommand({
+       Bucket: BUCKET,
+       Key: `events/${itemId}.json`,
+       Body: JSON.stringify(event),
+     }));
+     return { ok: true, id: itemId };
+   };
    ```
    ```bash
-   zip app.zip app.py
+   # nodejs24.x đã bundle sẵn @aws-sdk/client-dynamodb, lib-dynamodb, client-s3 → chỉ cần zip index.mjs
+   zip app.zip index.mjs
    ```
 3. Tạo hàm mới, truyền tên bảng/bucket qua **environment variables**. Role hiện chỉ có `AWSLambdaBasicExecutionRole` → **chưa có** quyền `DynamoDB`/`S3`.
    ```bash
    aws lambda create-function \
      --function-name dva-lab-integrate \
-     --runtime python3.12 \
+     --runtime nodejs24.x \
      --role "$ROLE_ARN" \
-     --handler app.handler \
+     --handler index.handler \
      --zip-file fileb://app.zip \
      --environment "Variables={TABLE_NAME=$TABLE,BUCKET_NAME=$BUCKET}" \
      --region "$REGION"
@@ -325,10 +342,10 @@ aws s3api delete-bucket --bucket "$BUCKET" --region "$REGION"
 
 ---
 
-## Lab 1.4 — `boto3`: retry/exponential backoff (`Config(retries=...)`) + paginator
-**🎯 Mục tiêu:** Viết script `boto3` cấu hình **retry mode + max attempts** qua `botocore.config.Config`, và dùng **paginator** để liệt kê **toàn bộ** object trong bucket / bảng trong account (không sót trang).
+## Lab 1.4 — SDK v3: retry/exponential backoff (`maxAttempts`/`retryMode`) + paginator
+**🎯 Mục tiêu:** Viết script Node.js (SDK v3) cấu hình **retry mode + max attempts** qua option `maxAttempts`/`retryMode` của client, và dùng **paginator** (`paginateListObjectsV2`, `paginateListTables`) để liệt kê **toàn bộ** object trong bucket / bảng trong account (không sót trang).
 **🧩 Luyện kỹ năng (liên quan đề):**
-- `Config(retries={"max_attempts": N, "mode": "standard|adaptive|legacy"})` — SDK tự backoff + full jitter khi throttle.
+- `new Client({ maxAttempts: N, retryMode: "standard|adaptive" })` — SDK tự backoff + full jitter khi throttle.
 - Paginator xử lý `NextToken`/`Marker` tự động → tránh sót dữ liệu ở trang sau.
 - Phân biệt lỗi nên retry (throttling/transient) vs không (`AccessDenied`, `Validation`).
 **⏱️ ~30 phút** · **Yêu cầu trước:** đã có `AWS CLI v2`; nên có sẵn 1 bucket nhiều object để thấy phân trang (tạo tạm nếu cần).
@@ -342,49 +359,52 @@ aws s3api delete-bucket --bucket "$BUCKET" --region "$REGION"
    for i in $(seq 1 30); do echo "obj $i" | aws s3 cp - "s3://$BUCKET/k/$i.txt"; done
    ```
 2. Viết script có **retry config** + **paginator**.
-   ```python
-   # sdk_retry_paginate.py
-   import os
-   import boto3
-   from botocore.config import Config
+   ```javascript
+   // sdk_retry_paginate.mjs
+   import { S3Client, paginateListObjectsV2, ListObjectsV2Command } from "@aws-sdk/client-s3";
+   import { DynamoDBClient, paginateListTables } from "@aws-sdk/client-dynamodb";
 
-   REGION = os.environ.get("REGION", "us-east-1")
-   BUCKET = os.environ["BUCKET"]
+   const REGION = process.env.REGION || "us-east-1";
+   const BUCKET = process.env.BUCKET;
 
-   # retries.mode: standard (mặc định) | adaptive (single-resource, throttle nhiều) | legacy
-   # max_attempts = TỔNG số lần thử kể cả lần đầu (3 = 1 đầu + 2 retry)
-   cfg = Config(retries={"max_attempts": 5, "mode": "adaptive"})
+   // retryMode: standard (mặc định) | adaptive (single-resource, throttle nhiều)
+   // maxAttempts = TỔNG số lần thử kể cả lần đầu (3 = 1 đầu + 2 retry); mặc định = 3
+   const retryOpts = { maxAttempts: 5, retryMode: "adaptive" };
 
-   s3 = boto3.client("s3", region_name=REGION, config=cfg)
+   const s3 = new S3Client({ region: REGION, ...retryOpts });
 
-   # (A) Paginator liệt kê TOÀN BỘ object (tự lặp NextContinuationToken)
-   count = 0
-   paginator = s3.get_paginator("list_objects_v2")
-   for page in paginator.paginate(Bucket=BUCKET, PaginationConfig={"PageSize": 10}):
-       for obj in page.get("Contents", []):
-           print(obj["Key"])
-           count += 1
-   print(f"[S3] tổng object = {count}")
+   // (A) Paginator liệt kê TOÀN BỘ object (tự lặp ContinuationToken)
+   let count = 0;
+   for await (const page of paginateListObjectsV2({ client: s3, pageSize: 10 }, { Bucket: BUCKET })) {
+     for (const obj of page.Contents ?? []) {
+       console.log(obj.Key);
+       count++;
+     }
+   }
+   console.log(`[S3] tổng object = ${count}`);
 
-   # (B) Paginator liệt kê TOÀN BỘ bảng DynamoDB trong account/region
-   ddb = boto3.client("dynamodb", region_name=REGION, config=cfg)
-   tables = []
-   for page in ddb.get_paginator("list_tables").paginate():
-       tables.extend(page.get("TableNames", []))
-   print(f"[DynamoDB] tổng bảng = {len(tables)} → {tables}")
+   // (B) Paginator liệt kê TOÀN BỘ bảng DynamoDB trong account/region
+   const ddb = new DynamoDBClient({ region: REGION, ...retryOpts });
+   const tables = [];
+   for await (const page of paginateListTables({ client: ddb }, {})) {
+     tables.push(...(page.TableNames ?? []));
+   }
+   console.log(`[DynamoDB] tổng bảng = ${tables.length} → ${tables}`);
    ```
    ```bash
-   python3 sdk_retry_paginate.py
+   # Script chạy LOCAL (không phải Lambda) → phải tự cài SDK v3 trước khi chạy
+   npm init -y && npm install @aws-sdk/client-s3 @aws-sdk/client-dynamodb
+   node sdk_retry_paginate.mjs
    ```
 3. (Tuỳ chọn) Chứng minh cấu hình retry qua **env var** (precedence: code > env > config file). Không đổi code, chỉ set env:
    ```bash
-   AWS_RETRY_MODE=standard AWS_MAX_ATTEMPTS=8 python3 sdk_retry_paginate.py
+   AWS_RETRY_MODE=standard AWS_MAX_ATTEMPTS=8 node sdk_retry_paginate.mjs
    ```
 
 ### ✅ Kiểm chứng
 - `[S3] tổng object = 30` (khớp số object đã tạo — paginator không sót dù `PageSize=10`).
 - `[DynamoDB]` in ra danh sách đầy đủ các bảng trong region.
-- So sánh: nếu chỉ gọi `s3.list_objects_v2(Bucket=...)` một lần và bỏ qua `NextContinuationToken`, kết quả bị cắt ở ~1000 object đầu → thấy rõ vì sao cần paginator.
+- So sánh: nếu chỉ gọi `s3.send(new ListObjectsV2Command({ Bucket }))` một lần và bỏ qua `NextContinuationToken`, kết quả bị cắt ở ~1000 object đầu → thấy rõ vì sao cần paginator.
 
 ### 🧹 Dọn dẹp (tránh tính phí)
 ```bash
@@ -396,40 +416,41 @@ aws s3api delete-bucket --bucket "$BUCKET" --region "$REGION"
 - Gặp `ThrottlingException` / `Rate exceeded` → **retry + exponential backoff + jitter** (cân nhắc `adaptive`), KHÔNG phải tăng timeout.
 - `adaptive` chỉ hợp khi client nhắm **1 resource** và bị throttle nhiều; nhắm nhiều resource → dùng `standard`.
 - "List trả về thiếu / có `NextToken`/`Marker`" → dùng **paginator**, không phải bug API.
-- Precedence retry setting: code `Config(...)` > env `AWS_RETRY_MODE`/`AWS_MAX_ATTEMPTS` > `~/.aws/config`.
+- Precedence retry setting: code `{ maxAttempts, retryMode }` > env `AWS_RETRY_MODE`/`AWS_MAX_ATTEMPTS` > `~/.aws/config`.
 
 ---
 
 ## Lab 1.5 — Environment variables cho `Lambda` (+ mã hoá `KMS`) và đọc lúc runtime
-**🎯 Mục tiêu:** Gắn environment variables cho hàm `Lambda`, đọc chúng lúc runtime bằng `os.environ`, và hiểu cơ chế mã hoá at-rest bằng `KMS` (AWS managed key mặc định; tuỳ chọn Customer Managed Key).
+**🎯 Mục tiêu:** Gắn environment variables cho hàm `Lambda`, đọc chúng lúc runtime bằng `process.env`, và hiểu cơ chế mã hoá at-rest bằng `KMS` (AWS managed key mặc định; tuỳ chọn Customer Managed Key).
 **🧩 Luyện kỹ năng (liên quan đề):**
-- `--environment "Variables={...}"` qua CLI; đọc bằng `os.environ[...]` trong handler.
+- `--environment "Variables={...}"` qua CLI; đọc bằng `process.env.XXX` trong handler.
 - Env vars **mã hoá at-rest mặc định** bằng AWS managed key `aws/lambda`; có thể chỉ định **CMK** qua `--kms-key-arn`.
 - Secret thật nên để ở `Secrets Manager`/`SSM Parameter Store`, không nhét plaintext vào env var.
 **⏱️ ~30 phút** · **Yêu cầu trước:** đã có role `dva-lab-lambda-role` (Lab 1.2).
 
 ### Các bước
 1. Handler đọc env var lúc runtime.
-   ```python
-   # env_app.py
-   import os
-   def handler(event, context):
-       stage    = os.environ.get("STAGE", "dev")
-       feature  = os.environ.get("FEATURE_FLAG", "off")
-       api_base = os.environ["API_BASE_URL"]     # KeyError nếu thiếu → dễ phát hiện cấu hình sai
-       print(f"STAGE={stage} FEATURE_FLAG={feature} API_BASE_URL={api_base}")
-       return {"stage": stage, "feature": feature, "api_base": api_base}
+   ```javascript
+   // index.mjs
+   export const handler = async (event, context) => {
+     const stage   = process.env.STAGE ?? "dev";
+     const feature = process.env.FEATURE_FLAG ?? "off";
+     const apiBase = process.env.API_BASE_URL;                       // bắt buộc phải có
+     if (!apiBase) throw new Error("Missing env var API_BASE_URL");  // thiếu → lỗi rõ ràng, dễ phát hiện cấu hình sai
+     console.log(`STAGE=${stage} FEATURE_FLAG=${feature} API_BASE_URL=${apiBase}`);
+     return { stage, feature, api_base: apiBase };
+   };
    ```
    ```bash
-   zip env_app.zip env_app.py
+   zip env_app.zip index.mjs
    ```
 2. Tạo hàm với environment variables ban đầu.
    ```bash
    aws lambda create-function \
      --function-name dva-lab-env \
-     --runtime python3.12 \
+     --runtime nodejs24.x \
      --role "$ROLE_ARN" \
-     --handler env_app.handler \
+     --handler index.handler \
      --zip-file fileb://env_app.zip \
      --environment "Variables={STAGE=dev,FEATURE_FLAG=off,API_BASE_URL=https://api.example.com}" \
      --region "$REGION"

@@ -129,20 +129,22 @@ rm -f sqs-policy.json policy-analytics.json policy-billing.json
    ```
 
 2. Viết handler ghi log nội dung message.
-   ```python
-   # handler.py
-   def handler(event, context):
-       for rec in event["Records"]:
-           sns = rec["Sns"]
-           print(f"[SNS] subject={sns.get('Subject')} message={sns['Message']}")
-       return {"status": "ok"}
+   ```javascript
+   // index.mjs
+   export const handler = async (event) => {
+     for (const rec of event.Records) {
+       const sns = rec.Sns;
+       console.log(`[SNS] subject=${sns.Subject} message=${sns.Message}`);
+     }
+     return { status: "ok" };
+   };
    ```
 
-3. Đóng gói + tạo function.
+3. Đóng gói + tạo function. (Runtime `nodejs24.x` đã bundle sẵn AWS SDK v3 — handler này không import gì nên chỉ cần zip `index.mjs`, KHÔNG cần `npm install`.)
    ```bash
-   zip function.zip handler.py
+   zip function.zip index.mjs
    aws lambda create-function --function-name sns-consumer \
-     --runtime python3.12 --handler handler.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role "$ROLE_ARN" --zip-file fileb://function.zip --timeout 15
    aws lambda wait function-active-v2 --function-name sns-consumer
    FUNCTION_ARN=$(aws lambda get-function --function-name sns-consumer \
@@ -179,7 +181,7 @@ aws lambda delete-function --function-name sns-consumer
 aws iam detach-role-policy --role-name lab5-lambda-basic-role \
   --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 aws iam delete-role --role-name lab5-lambda-basic-role
-rm -f handler.py function.zip trust-lambda.json
+rm -f index.mjs function.zip trust-lambda.json
 ```
 
 ### 🧠 Ý nghĩa với đề thi
@@ -296,23 +298,24 @@ rm -f redrive.json
    ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/lab5-lambda-kinesis-role"
    ```
 
-3. Handler giải mã record + in shard/partition key.
-   ```python
-   # handler.py
-   import base64
-   def handler(event, context):
-       print(f"Batch nhận {len(event['Records'])} record")
-       for r in event["Records"]:
-           data = base64.b64decode(r["kinesis"]["data"]).decode("utf-8")
-           print(f"eventID={r['eventID']} pk={r['kinesis']['partitionKey']} data={data}")
-       return {"status": "ok"}
+3. Handler giải mã record + in shard/partition key. (`kinesis.data` là base64 → dùng `Buffer.from(..., "base64")`.)
+   ```javascript
+   // index.mjs
+   export const handler = async (event) => {
+     console.log(`Batch nhận ${event.Records.length} record`);
+     for (const r of event.Records) {
+       const data = Buffer.from(r.kinesis.data, "base64").toString("utf-8");
+       console.log(`eventID=${r.eventID} pk=${r.kinesis.partitionKey} data=${data}`);
+     }
+     return { status: "ok" };
+   };
    ```
 
 4. Tạo function rồi gắn **event source mapping**.
    ```bash
-   zip function.zip handler.py
+   zip function.zip index.mjs
    aws lambda create-function --function-name kinesis-consumer \
-     --runtime python3.12 --handler handler.handler \
+     --runtime nodejs24.x --handler index.handler \
      --role "$ROLE_ARN" --zip-file fileb://function.zip --timeout 30
    aws lambda wait function-active-v2 --function-name kinesis-consumer
 
@@ -353,7 +356,7 @@ aws kinesis delete-stream --stream-name lab-stream --enforce-consumer-deletion
 aws iam detach-role-policy --role-name lab5-lambda-kinesis-role \
   --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaKinesisExecutionRole
 aws iam delete-role --role-name lab5-lambda-kinesis-role
-rm -f handler.py function.zip trust-lambda.json
+rm -f index.mjs function.zip trust-lambda.json
 ```
 
 ### 🧠 Ý nghĩa với đề thi
@@ -385,23 +388,26 @@ rm -f handler.py function.zip trust-lambda.json
      --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
    LAMBDA_ROLE="arn:aws:iam::${ACCOUNT_ID}:role/lab5-sfn-lambda-role"
    ```
-   ```python
-   # charge.py
-   def handler(event, context):
-       if event.get("fail"):
-           raise Exception("payment gateway timeout")   # ép Retry/Catch
-       return {"charged": True, "amount": event.get("amount")}
+   ```javascript
+   // charge.mjs — nhận JSON event, return JSON (Step Functions Task)
+   export const handler = async (event) => {
+     if (event.fail) {
+       throw new Error("payment gateway timeout");   // ép Retry/Catch
+     }
+     return { charged: true, amount: event.amount };
+   };
    ```
-   ```python
-   # review.py
-   def handler(event, context):
-       return {"review": "queued", "amount": event.get("amount")}
+   ```javascript
+   // review.mjs — nhận JSON event, return JSON (Step Functions Task)
+   export const handler = async (event) => {
+     return { review: "queued", amount: event.amount };
+   };
    ```
    ```bash
-   zip charge.zip charge.py && zip review.zip review.py
-   aws lambda create-function --function-name charge-card --runtime python3.12 \
+   zip charge.zip charge.mjs && zip review.zip review.mjs
+   aws lambda create-function --function-name charge-card --runtime nodejs24.x \
      --handler charge.handler --role "$LAMBDA_ROLE" --zip-file fileb://charge.zip
-   aws lambda create-function --function-name manual-review --runtime python3.12 \
+   aws lambda create-function --function-name manual-review --runtime nodejs24.x \
      --handler review.handler --role "$LAMBDA_ROLE" --zip-file fileb://review.zip
    aws lambda wait function-active-v2 --function-name charge-card
    aws lambda wait function-active-v2 --function-name manual-review
@@ -491,7 +497,7 @@ aws iam delete-role --role-name lab5-sfn-role
 aws iam detach-role-policy --role-name lab5-sfn-lambda-role \
   --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 aws iam delete-role --role-name lab5-sfn-lambda-role
-rm -f charge.py review.py charge.zip review.zip trust-lambda.json trust-sfn.json \
+rm -f charge.mjs review.mjs charge.zip review.zip trust-lambda.json trust-sfn.json \
       order-flow.asl.json order-flow.final.json
 ```
 
@@ -508,42 +514,52 @@ rm -f charge.py review.py charge.zip review.zip trust-lambda.json trust-sfn.json
 - Lazy loading vs write-through; vai trò TTL chống stale.
 - `Redis` vs `Memcached`; khi nào dùng `RDS Proxy` (connection storm).
 
-**⏱️ ~25 phút** · **Yêu cầu trước:** Python 3 + `pip install redis`.
+**⏱️ ~25 phút** · **Yêu cầu trước:** Node.js 24 + `npm install redis` (node-redis).
 
 > 💸 **LƯU Ý CHI PHÍ:** `ElastiCache` (kể cả Serverless) và `RDS`/`RDS Proxy` **KHÔNG** hoàn toàn Free Tier và nằm **trong VPC** (không nối trực tiếp từ laptop). Để học **pattern** miễn phí, dùng **Option A** (Redis local bằng Docker). Option B/C chỉ làm nếu bạn chấp nhận phát sinh phí và **xóa ngay** sau khi thử.
 
 ### Option A — Lazy loading demo (miễn phí, học pattern) ✅ khuyến nghị
-1. Chạy Redis local.
+1. Chạy Redis local + khởi tạo project Node (script chạy LOCAL nên phải `npm install` — khác Lambda vốn đã bundle SDK).
    ```bash
    docker run -d --name lab-redis -p 6379:6379 redis:7
-   pip install redis
+   npm init -y
+   npm install redis
    ```
-2. Cache-aside + TTL bằng `redis` client.
-   ```python
-   # cache_aside.py
-   import json, time, redis
-   r = redis.Redis(host="localhost", port=6379, decode_responses=True)
+2. Cache-aside + TTL bằng `redis` client (node-redis v4, API promise-based).
+   ```javascript
+   // cache_aside.mjs
+   import { createClient } from "redis";
 
-   def query_db(product_id):
-       time.sleep(0.5)                       # giả lập DB chậm
-       return {"id": product_id, "name": f"Product {product_id}", "price": 100}
+   const r = createClient({ url: "redis://localhost:6379" });
+   await r.connect();
 
-   def get_product(product_id, ttl=60):
-       key = f"product:{product_id}"
-       cached = r.get(key)
-       if cached:                            # HIT
-           print("CACHE HIT"); return json.loads(cached)
-       print("CACHE MISS -> query DB")       # MISS -> lazy load
-       data = query_db(product_id)
-       r.set(key, json.dumps(data), ex=ttl)  # ghi cache kèm TTL (chống stale)
-       return data
+   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-   if __name__ == "__main__":
-       print(get_product("42"))   # MISS (chậm ~0.5s, ghi cache)
-       print(get_product("42"))   # HIT  (nhanh, đọc cache)
+   async function queryDb(productId) {
+     await sleep(500);                        // giả lập DB chậm
+     return { id: productId, name: `Product ${productId}`, price: 100 };
+   }
+
+   async function getProduct(productId, ttl = 60) {
+     const key = `product:${productId}`;
+     const cached = await r.get(key);
+     if (cached) {                            // HIT
+       console.log("CACHE HIT");
+       return JSON.parse(cached);
+     }
+     console.log("CACHE MISS -> query DB");   // MISS -> lazy load
+     const data = await queryDb(productId);
+     await r.set(key, JSON.stringify(data), { EX: ttl }); // ghi cache kèm TTL (chống stale)
+     return data;
+   }
+
+   console.log(await getProduct("42"));   // MISS (chậm ~0.5s, ghi cache)
+   console.log(await getProduct("42"));   // HIT  (nhanh, đọc cache)
+
+   await r.quit();
    ```
    ```bash
-   python3 cache_aside.py
+   node cache_aside.mjs
    ```
 
 ### ✅ Kiểm chứng (Option A)
@@ -555,7 +571,7 @@ rm -f charge.py review.py charge.zip review.zip trust-lambda.json trust-sfn.json
 aws elasticache create-serverless-cache \
   --serverless-cache-name lab-cache --engine valkey
 # Endpoint chỉ truy cập ĐƯỢC từ EC2/Cloud9 CÙNG VPC (mở Security Group cổng 6379).
-# Trỏ host=<endpoint> port=6379 trong cache_aside.py rồi chạy TỪ trong VPC.
+# Trỏ url="redis://<endpoint>:6379" trong cache_aside.mjs rồi chạy TỪ trong VPC.
 
 # DỌN DẸP ngay:
 aws elasticache delete-serverless-cache --serverless-cache-name lab-cache
@@ -578,7 +594,8 @@ aws rds delete-db-proxy --db-proxy-name lab-proxy   # DỌN DẸP
 ### 🧹 Dọn dẹp (Option A)
 ```bash
 docker rm -f lab-redis
-rm -f cache_aside.py
+rm -f cache_aside.mjs package.json package-lock.json
+rm -rf node_modules
 ```
 
 ### 🧠 Ý nghĩa với đề thi
