@@ -9,7 +9,7 @@
 > export REGION=us-east-1
 > export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 > export ROLE_NAME=dva-lab-lambda-role
-> export ROLE_ARN=arn:aws:iam::$ACCOUNT_ID:role/$ROLE_NAME
+> export ROLE_ARN=arn:aws:iam::${ACCOUNT_ID}:role/$ROLE_NAME
 > ```
 
 ---
@@ -289,7 +289,7 @@ aws logs delete-log-group --log-group-name /aws/lambda/dva-lab-fn --region "$REG
        {
          "Effect": "Allow",
          "Action": "dynamodb:PutItem",
-         "Resource": "arn:aws:dynamodb:$REGION:$ACCOUNT_ID:table/$TABLE"
+         "Resource": "arn:aws:dynamodb:$REGION:${ACCOUNT_ID}:table/$TABLE"
        },
        {
          "Effect": "Allow",

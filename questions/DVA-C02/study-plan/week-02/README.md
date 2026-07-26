@@ -70,9 +70,9 @@ aws lambda update-alias --function-name myFn --name prod \
 
 **Bước 4 — Tạo và gắn layer:**
 ```bash
-# đóng gói dependency vào layer.zip (thư mục python/ hoặc nodejs/)
+# đóng gói dependency vào layer.zip (thư mục nodejs/node_modules/)
 aws lambda publish-layer-version --layer-name my-deps \
-  --zip-file fileb://layer.zip --compatible-runtimes python3.12
+  --zip-file fileb://layer.zip --compatible-runtimes nodejs24.x
 # gắn layer vào function
 aws lambda update-function-configuration --function-name myFn \
   --layers <layer-version-arn>

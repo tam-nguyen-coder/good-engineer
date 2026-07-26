@@ -98,7 +98,7 @@ EOF
    sleep 10   # chờ role propagate
    aws lambda create-function --function-name week4-s3-processor \
      --runtime nodejs24.x --handler index.handler \
-     --role arn:aws:iam::$ACCOUNT_ID:role/week4-s3lambda-role \
+     --role arn:aws:iam::${ACCOUNT_ID}:role/week4-s3lambda-role \
      --zip-file fileb://function.zip --timeout 30 --region $AWS_REGION
    ```
 4. **Cấp quyền cho S3 gọi Lambda** (principal `s3.amazonaws.com`) — phải làm TRƯỚC khi gắn notification, nếu không `put-bucket-notification` sẽ báo lỗi thiếu quyền.
@@ -185,7 +185,7 @@ aws iam delete-role --role-name week4-s3lambda-role
    aws iam attach-role-policy --role-name week4-crud-role \
      --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
    aws iam put-role-policy --role-name week4-crud-role --policy-name ddb-crud \
-     --policy-document "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"dynamodb:PutItem\",\"dynamodb:GetItem\",\"dynamodb:DeleteItem\",\"dynamodb:Scan\"],\"Resource\":\"arn:aws:dynamodb:$AWS_REGION:$ACCOUNT_ID:table/Items\"}]}"
+     --policy-document "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"dynamodb:PutItem\",\"dynamodb:GetItem\",\"dynamodb:DeleteItem\",\"dynamodb:Scan\"],\"Resource\":\"arn:aws:dynamodb:$AWS_REGION:${ACCOUNT_ID}:table/Items\"}]}"
    ```
 3. Viết handler CRUD (đọc `event.httpMethod` để phân nhánh; trả đúng format proxy).
    ```javascript
@@ -249,7 +249,7 @@ aws iam delete-role --role-name week4-s3lambda-role
    sleep 10
    aws lambda create-function --function-name week4-crud \
      --runtime nodejs24.x --handler index.handler \
-     --role arn:aws:iam::$ACCOUNT_ID:role/week4-crud-role \
+     --role arn:aws:iam::${ACCOUNT_ID}:role/week4-crud-role \
      --zip-file fileb://function.zip --timeout 30 \
      --environment "Variables={TABLE_NAME=Items}" --region $AWS_REGION
    CRUD_ARN=$(aws lambda get-function --function-name week4-crud \
@@ -269,7 +269,7 @@ aws iam delete-role --role-name week4-s3lambda-role
    ```
 5. Tạo method + integration **`AWS_PROXY`** cho từng cặp (resource, method). Dùng vòng lặp cho gọn.
    ```bash
-   URI=arn:aws:apigateway:$AWS_REGION:lambda:path/2015-03-31/functions/$CRUD_ARN/invocations
+   URI=arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/$CRUD_ARN/invocations
 
    # /items → POST, GET  |  /items/{id} → GET, PUT, DELETE
    for pair in "$ITEMS_ID POST" "$ITEMS_ID GET" "$ITEM_ID GET" "$ITEM_ID PUT" "$ITEM_ID DELETE"; do
@@ -352,11 +352,11 @@ aws iam delete-role --role-name week4-crud-role
    zip function.zip index.mjs
    aws lambda create-function --function-name week4-square \
      --runtime nodejs24.x --handler index.handler \
-     --role arn:aws:iam::$ACCOUNT_ID:role/week4-crud-role \
+     --role arn:aws:iam::${ACCOUNT_ID}:role/week4-crud-role \
      --zip-file fileb://function.zip --timeout 15 --region $AWS_REGION
    SQ_ARN=$(aws lambda get-function --function-name week4-square \
      --query 'Configuration.FunctionArn' --output text --region $AWS_REGION)
-   SQ_URI=arn:aws:apigateway:$AWS_REGION:lambda:path/2015-03-31/functions/$SQ_ARN/invocations
+   SQ_URI=arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/$SQ_ARN/invocations
    aws lambda add-permission --function-name week4-square --statement-id apigw \
      --action lambda:InvokeFunction --principal apigateway.amazonaws.com \
      --source-arn "arn:aws:execute-api:$AWS_REGION:$ACCOUNT_ID:$API_ID/*/*/*" --region $AWS_REGION
@@ -666,7 +666,7 @@ aws s3 rm s3://$B45 --recursive && aws s3api delete-bucket --bucket $B45 --regio
    zip function.zip index.mjs
    aws lambda create-function --function-name week4-authorizer \
      --runtime nodejs24.x --handler index.handler \
-     --role arn:aws:iam::$ACCOUNT_ID:role/week4-crud-role \
+     --role arn:aws:iam::${ACCOUNT_ID}:role/week4-crud-role \
      --zip-file fileb://function.zip --timeout 10 --region $AWS_REGION
    AUTH_ARN=$(aws lambda get-function --function-name week4-authorizer \
      --query 'Configuration.FunctionArn' --output text --region $AWS_REGION)
@@ -675,7 +675,7 @@ aws s3 rm s3://$B45 --recursive && aws s3api delete-bucket --bucket $B45 --regio
    ```bash
    AUTHZ_ID=$(aws apigateway create-authorizer --rest-api-id $API_ID \
      --name tokenAuth --type TOKEN \
-     --authorizer-uri arn:aws:apigateway:$AWS_REGION:lambda:path/2015-03-31/functions/$AUTH_ARN/invocations \
+     --authorizer-uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/$AUTH_ARN/invocations \
      --identity-source method.request.header.Authorization \
      --query id --output text --region $AWS_REGION)
 
@@ -736,7 +736,7 @@ CLIENT_ID=$(aws cognito-idp create-user-pool-client --user-pool-id $POOL_ID \
   --query 'UserPoolClient.ClientId' --output text --region $AWS_REGION)
 aws apigateway create-authorizer --rest-api-id $API_ID --name cognitoAuth \
   --type COGNITO_USER_POOLS --identity-source method.request.header.Authorization \
-  --provider-arns arn:aws:cognito-idp:$AWS_REGION:$ACCOUNT_ID:userpool/$POOL_ID --region $AWS_REGION
+  --provider-arns arn:aws:cognito-idp:$AWS_REGION:${ACCOUNT_ID}:userpool/$POOL_ID --region $AWS_REGION
 # Gọi API kèm IdToken (JWT) lấy từ InitiateAuth trong header Authorization.
 ```
 

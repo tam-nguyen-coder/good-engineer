@@ -135,8 +135,8 @@ zip function.zip index.mjs
 
 aws lambda create-function \
   --function-name dva-lab-fn \
-  --runtime nodejs20.x \
-  --role arn:aws:iam::<ACCOUNT_ID>:role/dva-lab-lambda-role \
+  --runtime nodejs24.x \
+  --role arn:aws:iam::$(aws sts get-caller-identity --query Account --output text):role/dva-lab-lambda-role \
   --handler index.handler \
   --zip-file fileb://function.zip
 ```

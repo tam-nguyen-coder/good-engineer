@@ -176,7 +176,7 @@ rm -f buildspec.yml source.zip trust-cb.json cb-policy.json project.json
 ### Các bước
 1. Khởi tạo project rồi vào thư mục.
    ```bash
-   sam init --name lab8-sam --runtime nodejs22.x --dependency-manager npm \
+   sam init --name lab8-sam --runtime nodejs24.x --dependency-manager npm \
      --app-template hello-world --no-tracing --no-application-insights
    cd lab8-sam
    rm -rf hello-world hello_world tests events && mkdir -p src events
@@ -372,7 +372,7 @@ cd .. && rm -rf lab8-sam
 - Gọi alias nhiều lần → khoảng 10% trả `v2`, 90% trả `v1`:
   ```bash
   for i in $(seq 1 20); do
-    aws lambda invoke --function-name "$FN:live" out.json >/dev/null && cat out.json && echo
+    aws lambda invoke --function-name "${FN}:live" out.json >/dev/null && cat out.json && echo
   done | sort | uniq -c
   ```
 - Sau ~5 phút: alias `live` chuyển hẳn sang version 2, `RoutingConfig` = null.
