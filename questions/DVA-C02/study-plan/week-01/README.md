@@ -198,10 +198,21 @@ console.log(new TextDecoder().decode(res.Payload));
 | Gắn ở đâu | IAM role của function | Ngay trên chính function |
 | Ví dụ | Function đọc `S3`, ghi `DynamoDB` | Cho `API Gateway`/`S3` quyền gọi function |
 
-**3. Đọc tài liệu**
+**3. Lambda invocation models: Sync / Async / Poll-based** (nền tảng cho toàn bộ Part 2 của [questions.md](questions.md) — đề rất hay bẫy nhầm nhóm)
+
+| Model | Ai chủ động | Ai giữ retry | Payload limit | Ví dụ service |
+|---|---|---|---|---|
+| **Synchronous** (RequestResponse) | Caller gọi, chờ response | **Caller** (`Lambda` không tự retry) | 6 MB | `API Gateway`, ALB, `Cognito`, `Step Functions`, Lex/Alexa, `Lambda@Edge`, `S3 Batch Operations`, SDK/CLI invoke trực tiếp |
+| **Asynchronous** (Event) | Service đẩy event vào queue nội bộ, nhận `202` ngay | **`Lambda`** (retry tối đa 2 lần → DLQ/on-failure destination) | 1 MB | `S3` notifications, `SNS`, `EventBridge`, SES, CloudFormation, IoT, CloudWatch Logs, Config |
+| **Event source mapping** (poll-based) | **`Lambda` tự poll** nguồn, gom batch | `Lambda` (theo cấu hình batch/retry riêng của event source mapping) | — | `SQS` (standard & FIFO), `Kinesis Data Streams`, `DynamoDB Streams`, Amazon MQ, MSK/Kafka, DocumentDB |
+
+- **Bẫy hay gặp:** `S3`/`EventBridge` **trông giống** sự kiện tức thời nhưng là **async push**, không phải poll — chỉ `SQS`/`Kinesis`/`DynamoDB Streams`/MQ/Kafka mới poll.
+- **SQS + `Lambda` (poll-based) có riêng 3 cơ chế xử lý lỗi cần phân biệt:** visibility timeout (chống xử lý trùng), `ReportBatchItemFailures`/partial batch response (chỉ retry message fail trong batch, không phải cả batch), và redrive policy trên chính SQS queue (DLQ — khác với on-failure destination của async).
+
+**4. Đọc tài liệu**
 - AWS CLI User Guide — *Configuration and credential files*, *Named profiles*.
 - SDK Developer Guide — *Credential provider chain*, *Retries and timeouts*, *Paginators*, *Waiters*.
-- `Lambda` Developer Guide — *Lambda programming model*, *Execution role*.
+- `Lambda` Developer Guide — *Lambda programming model*, *Execution role*, *Invocation types (sync/async/poll)*.
 
 ### 🅳 Buổi D — Practice + Review (~2h)
 > 📝 **Bộ câu hỏi luyện tập của tuần:** [questions.md](questions.md) — đáp án & giải thích: [answers.md](answers.md). *(bằng tiếng Anh — văn phong đề thật để làm quen đề.)*
