@@ -18,6 +18,7 @@
 ### 🅰️ Buổi A — Lý thuyết (~3h)
 
 **1. Data model & giới hạn item**
+
 - `DynamoDB` là NoSQL key-value + document. Primary key có 2 kiểu:
   - **Partition key (hash key)** đơn: giá trị được băm để chọn partition.
   - **Partition key + Sort key (range key)** (composite): cùng partition key gom vào 1 partition, sắp theo sort key → cho phép Query theo dải.
@@ -25,18 +26,19 @@
 - **Vì sao quan trọng với đề:** đề hay hỏi "item 400KB có lưu được không", "chọn key nào để query hiệu quả", "vì sao Scan chậm".
 
 **2. Capacity & throughput — tính WCU/RCU (CỐT LÕI, hỏi nhiều)**
+
 - **1 WCU** = 1 write/giây cho item **≤ 1 KB**. Item lớn hơn → **làm tròn LÊN** bội số 1 KB.
 - **1 RCU** = **1 strongly consistent read/giây** cho item **≤ 4 KB**; **HOẶC 2 eventually consistent reads/giây** cho item ≤ 4 KB. Item lớn hơn → làm tròn LÊN bội số 4 KB.
 - **Transactional read = 2× RCU**; **transactional write = 2× WCU**. Mỗi transaction tối đa **100 action / 100 item / 4 MB**.
 - **Ví dụ tính (thuộc lòng cách làm):**
 
-| Kịch bản | Cách tính | Kết quả |
-|---|---|---|
-| Đọc item **8 KB**, **strongly consistent**, 10 lần/s | mỗi read = ceil(8/4)=2 RCU → ×10 | **20 RCU** |
-| Cũng item 8 KB nhưng **eventually consistent**, 10 lần/s | eventual chia đôi → 20/2 | **10 RCU** |
-| Ghi item **3 KB**, 6 lần/s | mỗi write = ceil(3/1)=3 WCU → ×6 | **18 WCU** |
-| Đọc item **1 KB**, strongly, 100 lần/s | ceil(1/4)=1 RCU → ×100 | **100 RCU** |
-| **Transactional** write item 2 KB, 5 lần/s | ceil(2/1)=2 WCU ×2 (transaction) ×5 | **20 WCU** |
+| Kịch bản                                                         | Cách tính                           | Kết quả         |
+| ------------------------------------------------------------------ | ------------------------------------- | ----------------- |
+| Đọc item**8 KB**, **strongly consistent**, 10 lần/s | mỗi read = ceil(8/4)=2 RCU → ×10   | **20 RCU**  |
+| Cũng item 8 KB nhưng**eventually consistent**, 10 lần/s   | eventual chia đôi → 20/2           | **10 RCU**  |
+| Ghi item**3 KB**, 6 lần/s                                   | mỗi write = ceil(3/1)=3 WCU → ×6   | **18 WCU**  |
+| Đọc item**1 KB**, strongly, 100 lần/s                     | ceil(1/4)=1 RCU → ×100              | **100 RCU** |
+| **Transactional** write item 2 KB, 5 lần/s                  | ceil(2/1)=2 WCU ×2 (transaction) ×5 | **20 WCU**  |
 
 - **On-demand vs Provisioned:**
   - **On-demand**: tự co giãn, trả theo request — hợp workload không dự đoán được / spiky / mới.
@@ -44,6 +46,7 @@
   - **Lưu ý:** on-demand hiện là **mặc định** & được AWS **khuyến nghị** cho hầu hết workload (không cần capacity planning).
 
 **3. Query vs Scan**
+
 - **Query**: truy vấn theo **partition key** (bắt buộc) + tuỳ chọn điều kiện trên **sort key**. Nhanh, chỉ đọc phần dữ liệu liên quan → **luôn ưu tiên Query**.
 - **Scan**: đọc **toàn bộ bảng** rồi lọc → tốn RCU, chậm. Chỉ dùng khi bất đắc dĩ; có thể bật **Parallel Scan** để chia segment.
 - **Filter expression**: áp dụng **SAU** khi đọc dữ liệu → **vẫn tính RCU trên dữ liệu đã đọc**, không tiết kiệm capacity, chỉ giảm dữ liệu trả về.
@@ -51,14 +54,14 @@
 
 **4. Index — GSI vs LSI**
 
-| Tiêu chí | **GSI** (Global Secondary Index) | **LSI** (Local Secondary Index) |
-|---|---|---|
-| Partition key | **Khác** bảng gốc | **Cùng** partition key với bảng |
-| Sort key | Khác (tuỳ chọn) | **Khác** sort key |
-| Throughput | **RIÊNG** (WCU/RCU riêng) | **DÙNG CHUNG** với bảng gốc |
-| Consistency | **CHỈ eventually consistent** | **Hỗ trợ strongly consistent** |
+| Tiêu chí        | **GSI** (Global Secondary Index)          | **LSI** (Local Secondary Index)                   |
+| ----------------- | ----------------------------------------------- | ------------------------------------------------------- |
+| Partition key     | **Khác** bảng gốc                      | **Cùng** partition key với bảng                |
+| Sort key          | Khác (tuỳ chọn)                              | **Khác** sort key                                |
+| Throughput        | **RIÊNG** (WCU/RCU riêng)               | **DÙNG CHUNG** với bảng gốc                   |
+| Consistency       | **CHỈ eventually consistent**            | **Hỗ trợ strongly consistent**                  |
 | Thời điểm tạo | **Bất kỳ lúc nào** (tạo/xoá tự do) | **BẮT BUỘC lúc tạo bảng** (không thêm sau) |
-| Giới hạn | mặc định **20 GSI/bảng** | **Tối đa 5 LSI/bảng** |
+| Giới hạn        | mặc định**20 GSI/bảng**               | **Tối đa 5 LSI/bảng**                          |
 
 - **Chọn khi nào:** cần query theo **thuộc tính khác partition key** → **bắt buộc GSI** (LSI không đổi được partition key). Cần **strongly consistent read** trên index + cùng partition key → LSI.
 
@@ -67,6 +70,7 @@
 > 🧪 **Lab cầm tay chỉ việc (từng bước + lệnh + code):** [labs.md](labs.md).
 
 **Bước 1 — Tạo bảng có composite key + LSI (LSI phải khai lúc tạo):**
+
 ```bash
 aws dynamodb create-table \
   --table-name Orders \
@@ -83,6 +87,7 @@ aws dynamodb create-table \
 ```
 
 **Bước 2 — Thêm GSI SAU khi bảng đã tồn tại (chứng minh GSI tạo bất kỳ lúc nào):**
+
 ```bash
 aws dynamodb update-table --table-name Orders \
   --attribute-definitions AttributeName=Status,AttributeType=S \
@@ -91,12 +96,16 @@ aws dynamodb update-table --table-name Orders \
 ```
 
 **Bước 3 — Bật `DynamoDB Streams` và trigger `Lambda`:**
+
 - Bật Streams với view type mong muốn (`NEW_AND_OLD_IMAGES` để thấy cả trước/sau).
+
 ```bash
 aws dynamodb update-table --table-name Orders \
   --stream-specification StreamEnabled=true,StreamViewType=NEW_AND_OLD_IMAGES
 ```
+
 - Tạo **event source mapping** để `Lambda` đọc stream (nhớ role Lambda cần quyền đọc stream):
+
 ```bash
 aws lambda create-event-source-mapping \
   --function-name ProcessOrderStream \
@@ -105,6 +114,7 @@ aws lambda create-event-source-mapping \
 ```
 
 **Bước 4 — Conditional write + optimistic locking (version number):**
+
 ```bash
 # Chỉ ghi nếu item CHƯA tồn tại (chống ghi đè)
 aws dynamodb put-item --table-name Orders \
@@ -118,9 +128,11 @@ aws dynamodb update-item --table-name Orders \
   --condition-expression "Version = :curv" \
   --expression-attribute-values '{":a":{"N":"500"},":newv":{"N":"2"},":curv":{"N":"1"}}'
 ```
+
 - Nếu điều kiện sai → trả về `ConditionalCheckFailedException` (không tốn ghi đè). Đây là nền tảng của **atomic counters** (`SET x = x + :inc`) và tránh race condition.
 
 **Bước 5 — `TransactWriteItems` (all-or-nothing, ACID trên nhiều item/bảng):**
+
 ```bash
 aws dynamodb transact-write-items --transact-items '[
   {"Put":{"TableName":"Orders","Item":{"CustomerId":{"S":"C2"},"OrderDate":{"S":"2026-02-01"}}}},
@@ -153,20 +165,20 @@ aws dynamodb transact-write-items --transact-items '[
 
 ## 🧠 PHẢI NHỚ tuần này
 
-| Fact | Con số / Quy tắc |
-|---|---|
-| Item tối đa | **400 KB** |
-| 1 WCU | 1 write/s cho item ≤ **1 KB** (làm tròn LÊN bội số 1 KB) |
-| 1 RCU (strong) | 1 strongly consistent read/s cho item ≤ **4 KB** |
-| 1 RCU (eventual) | **2** eventually consistent reads/s cho item ≤ 4 KB |
-| Transaction | read = **2× RCU**; write = **2× WCU**; mỗi transaction tối đa **100 action / 100 item / 4 MB** |
-| Query/Scan trả về | tối đa **1 MB/lần** → phải paginate bằng **`LastEvaluatedKey`** |
-| GSI | key khác bảng, **throughput riêng**, **chỉ eventual**, tạo/xoá **bất kỳ lúc nào** |
-| LSI | **cùng partition key**, khác sort key, **chung throughput**, **hỗ trợ strong**, **tạo lúc tạo bảng**, tối đa **5/bảng** |
-| Streams | giữ **24 giờ**; view: `KEYS_ONLY`/`NEW_IMAGE`/`OLD_IMAGE`/`NEW_AND_OLD_IMAGES` |
-| `DAX` | cache **micro-giây**, in-VPC, **write-through**, tăng tốc **read** (**chỉ eventual read**; strong = pass-through, không cache) |
-| Throttling | `ProvisionedThroughputExceededException` → SDK retry **exponential backoff** |
-| TTL | attribute **epoch**; xoá **trong vài ngày** sau khi hết hạn (không tức thì; không tốn WCU) — *đề cũ hay ghi ~48h* |
+| Fact                | Con số / Quy tắc                                                                                                                                               |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Item tối đa       | **400 KB**                                                                                                                                                 |
+| 1 WCU               | 1 write/s cho item ≤**1 KB** (làm tròn LÊN bội số 1 KB)                                                                                              |
+| 1 RCU (strong)      | 1 strongly consistent read/s cho item ≤**4 KB**                                                                                                           |
+| 1 RCU (eventual)    | **2** eventually consistent reads/s cho item ≤ 4 KB                                                                                                       |
+| Transaction         | read =**2× RCU**; write = **2× WCU**; mỗi transaction tối đa **100 action / 100 item / 4 MB**                                             |
+| Query/Scan trả về | tối đa**1 MB/lần** → phải paginate bằng **`LastEvaluatedKey`**                                                                               |
+| GSI                 | key khác bảng,**throughput riêng**, **chỉ eventual**, tạo/xoá **bất kỳ lúc nào**                                                     |
+| LSI                 | **cùng partition key**, khác sort key, **chung throughput**, **hỗ trợ strong**, **tạo lúc tạo bảng**, tối đa **5/bảng** |
+| Streams             | giữ**24 giờ**; view: `KEYS_ONLY`/`NEW_IMAGE`/`OLD_IMAGE`/`NEW_AND_OLD_IMAGES`                                                                    |
+| `DAX`             | cache**micro-giây**, in-VPC, **write-through**, tăng tốc **read** (**chỉ eventual read**; strong = pass-through, không cache)       |
+| Throttling          | `ProvisionedThroughputExceededException` → SDK retry **exponential backoff**                                                                            |
+| TTL                 | attribute**epoch**; xoá **trong vài ngày** sau khi hết hạn (không tức thì; không tốn WCU) — *đề cũ hay ghi ~48h*                     |
 
 ## ⚠️ Bẫy đề hay gặp
 
@@ -182,21 +194,21 @@ aws dynamodb transact-write-items --transact-items '[
 
 ## 🔁 Phản xạ nhanh (keyword → đáp án)
 
-| Thấy từ khoá | Bật ngay |
-|---|---|
-| "query theo attribute khác key gốc" | **GSI** |
-| "thêm index sau khi bảng đã tồn tại" | **GSI** (LSI không được) |
-| "strongly consistent read trên index" | **LSI** |
-| "toàn bảng chậm / đọc hết bảng" | **Scan** (nên đổi sang **Query**) |
-| "kết quả bị cắt / còn dữ liệu" | pagination bằng **`LastEvaluatedKey`** |
-| "tránh ghi đè / cập nhật khi chưa đổi" | **conditional write / optimistic locking (version)** |
-| "đếm tăng giảm an toàn" | **atomic counter** (`SET x = x + :n`) |
-| "nhiều thao tác all-or-nothing" | **`TransactWriteItems`** (2× WCU) |
-| "cache đọc micro-giây, in-VPC" | **`DAX`** |
-| "phản ứng khi item thay đổi / trigger Lambda" | **`DynamoDB Streams`** + event source mapping |
-| "tự xoá dữ liệu hết hạn" | **TTL** (**trong vài ngày**, không tức thì; *đề cũ hay ghi ~48h*) |
-| "`ProvisionedThroughputExceededException`" | **retry exponential backoff** / tăng capacity / chống hot partition |
-| "SQL-like trên DynamoDB" | **PartiQL** |
+| Thấy từ khoá                                   | Bật ngay                                                                               |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| "query theo attribute khác key gốc"             | **GSI**                                                                           |
+| "thêm index sau khi bảng đã tồn tại"        | **GSI** (LSI không được)                                                      |
+| "strongly consistent read trên index"            | **LSI**                                                                           |
+| "toàn bảng chậm / đọc hết bảng"            | **Scan** (nên đổi sang **Query**)                                        |
+| "kết quả bị cắt / còn dữ liệu"             | pagination bằng**`LastEvaluatedKey`**                                          |
+| "tránh ghi đè / cập nhật khi chưa đổi"    | **conditional write / optimistic locking (version)**                              |
+| "đếm tăng giảm an toàn"                      | **atomic counter** (`SET x = x + :n`)                                           |
+| "nhiều thao tác all-or-nothing"                 | **`TransactWriteItems`** (2× WCU)                                              |
+| "cache đọc micro-giây, in-VPC"                 | **`DAX`**                                                                       |
+| "phản ứng khi item thay đổi / trigger Lambda" | **`DynamoDB Streams`** + event source mapping                                   |
+| "tự xoá dữ liệu hết hạn"                    | **TTL** (**trong vài ngày**, không tức thì; *đề cũ hay ghi ~48h*) |
+| "`ProvisionedThroughputExceededException`"      | **retry exponential backoff** / tăng capacity / chống hot partition             |
+| "SQL-like trên DynamoDB"                         | **PartiQL**                                                                       |
 
 ## 🧪 Lab checklist
 
