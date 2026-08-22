@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - DynamoDB có **2 chế độ throughput**: `On-demand` (serverless, pay-per-request) và `Provisioned` (tự khai báo RCU/WCU trước).
 - `On-demand` là **mặc định và khuyến nghị** cho hầu hết workload — không cần capacity planning, tự scale từ nhỏ tới hàng triệu request/giây, chỉ trả tiền theo request thực dùng (scale-to-zero).
 - `Provisioned` phù hợp workload **ổn định, dự đoán được**; bạn trả tiền theo capacity đã cấp phát theo giờ (RCU/WCU) **bất kể có dùng hết hay không** → chi phí dự đoán được, khống chế request rate.
@@ -21,6 +22,7 @@
 This section provides an overview of the two throughput modes available for your DynamoDB table and considerations in selecting the appropriate capacity mode for your application. A table's throughput mode determines how the capacity of a table is managed. Throughput mode also determines how you're charged for the read and write operations on your tables. In Amazon DynamoDB, you can choose between **on-demand mode** and **provisioned mode** for your tables to accommodate different workload requirements.
 
 **Topics**
+
 - On-demand mode
 - Provisioned mode
 - DynamoDB on-demand capacity mode (`on-demand-capacity-mode.html`)
