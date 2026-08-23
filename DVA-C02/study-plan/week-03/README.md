@@ -27,6 +27,8 @@
 
 **2. Capacity & throughput — tính WCU/RCU (CỐT LÕI, hỏi nhiều)**
 
+> 🧮 **Cheat sheet chuyên sâu (công thức 3 bước, bảng tra, 12 bẫy, bài tập):** [rcu-wcu-cheatsheet.md](rcu-wcu-cheatsheet.md).
+
 - **1 WCU** = 1 write/giây cho item **≤ 1 KB**. Item lớn hơn → **làm tròn LÊN** bội số 1 KB.
 - **1 RCU** = **1 strongly consistent read/giây** cho item **≤ 4 KB**; **HOẶC 2 eventually consistent reads/giây** cho item ≤ 4 KB. Item lớn hơn → làm tròn LÊN bội số 4 KB.
 - **Transactional read = 2× RCU**; **transactional write = 2× WCU**. Mỗi transaction tối đa **100 action / 100 item / 4 MB**.

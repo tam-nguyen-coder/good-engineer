@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - **GSI (Global Secondary Index):** partition key + (tùy chọn) sort key **khác** base table; scale/throughput **riêng**; chỉ **eventual consistency**; tạo/xóa **bất cứ lúc nào** (kể cả sau khi tạo table); tối đa **20 GSI/table** (default quota).
 - **LSI (Local Secondary Index):** **cùng partition key** với base table, sort key khác; **phải tạo cùng lúc với table**, **không thể thêm/xóa sau**; hỗ trợ **cả eventual & strong consistency**; tối đa **5 LSI/table**.
 - **Giới hạn 10 GB:** LSI có ràng buộc — tổng size mọi item cho mỗi partition key value **≤ 10 GB**. GSI **không** có giới hạn size này.
@@ -12,6 +13,103 @@
 - **Projected attributes:** với **GSI**, query chỉ trả về attribute đã project (DynamoDB **không** fetch từ table). Với **LSI**, có thể xin cả attribute chưa project — DynamoDB tự fetch từ table (tốn thêm capacity).
 - Key attribute của index phải là top-level scalar: `String`, `Number`, hoặc `Binary` (không dùng document/set làm key).
 - Bẫy: cần đổi partition key để query → dùng **GSI**; cần strong consistency trên index → chỉ **LSI** làm được; cần thêm index sau khi table đã chạy → chỉ **GSI**.
+
+## 🧩 Đào sâu: `ProjectionType` là gì?
+
+**`ProjectionType` = bạn chọn COPY bao nhiêu attribute từ bảng gốc sang index.**
+
+Nền tảng để hiểu: **index về mặt vật lý là một BẢNG RIÊNG** mà DynamoDB tự đồng bộ giúp bạn. Vậy khi tạo index bạn phải trả lời: *"bảng riêng đó chứa những cột nào?"* — `ProjectionType` chính là câu trả lời.
+
+### 1. Ba giá trị, minh hoạ cụ thể
+
+Bảng `Orders`: PK=`CustomerId`, SK=`OrderDate`, item ~**4 KB** (phần lớn là `Items[]`). Tạo GSI `ByStatus` (PK=`Status`, SK=`OrderDate`):
+
+```
+BASE TABLE  Orders   (item ~4 KB)
+┌────────────┬───────────┬────────┬────────┬─────────────────┬──────────┐
+│ CustomerId │ OrderDate │ Status │ Amount │ ShippingAddress │ Items[]  │
+│    (PK)    │   (SK)    │        │        │                 │ (~3.5KB) │
+└────────────┴───────────┴────────┴────────┴─────────────────┴──────────┘
+
+── GSI "ByStatus" chứa gì? Tuỳ ProjectionType ──────────────────────────
+
+KEYS_ONLY  → chỉ key của INDEX + key của TABLE (tự động thêm)
+┌────────┬───────────┬────────────┐
+│ Status │ OrderDate │ CustomerId │              ~0.1 KB  →  1 WCU/write
+│  (PK)  │   (SK)    │  (auto)    │
+└────────┴───────────┴────────────┘
+
+INCLUDE ["Amount"]  → KEYS_ONLY + đúng những attribute bạn liệt kê
+┌────────┬───────────┬────────────┬────────┐
+│ Status │ OrderDate │ CustomerId │ Amount │      ~0.2 KB  →  1 WCU/write
+└────────┴───────────┴────────────┴────────┘
+
+ALL  → copy NGUYÊN item
+┌────────┬───────────┬────────────┬────────┬─────────────────┬──────────┐
+│ Status │ OrderDate │ CustomerId │ Amount │ ShippingAddress │ Items[]  │
+└────────┴───────────┴────────────┴────────┴─────────────────┴──────────┘
+                                                        ~4 KB  →  4 WCU/write
+```
+
+⇒ **`KEYS_ONLY` vs `ALL` chênh nhau 4× WCU mỗi lần ghi**, và chênh cả tiền storage.
+
+> 📌 Key của **bảng gốc** LUÔN được project tự động — bạn không cần (và không được) liệt kê.
+
+### 2. Đánh đổi
+
+|                                 | `KEYS_ONLY`         | `INCLUDE`               | `ALL`                        |
+| ------------------------------- | --------------------- | ------------------------- | ------------------------------ |
+| **Kích thước index**      | Nhỏ nhất          | Vừa                     | Lớn nhất (~= bảng gốc) |
+| **WCU mỗi write**         | Thấp nhất         | Vừa                     | Cao nhất                    |
+| **Chi phí storage**         | Thấp nhất         | Vừa                     | **Nhân đôi** dữ liệu   |
+| **Query có đủ dữ liệu?** | ❌ chỉ có key      | ⚠️ đủ nếu đã liệt kê | ✅ luôn đủ                  |
+| **Cần đọc thêm bảng gốc?** | ✅ hầu như luôn | Tuỳ                      | ❌ không bao giờ            |
+| **Latency đọc**            | Cao (2 vòng)        | Vừa                     | **Thấp nhất**            |
+
+**Quy tắc quyết định — so tỉ lệ read/write:**
+- Ghi nhiều, đọc ít → **`KEYS_ONLY`** / **`INCLUDE`**
+- Đọc nhiều, ghi ít → **`ALL`** (index tự cấp tự túc, không cần quay lại bảng)
+- **`INCLUDE`** thường là **điểm ngọt**: chỉ copy đúng vài cột mà query thực sự cần.
+
+### 3. ⚠️ Khác biệt SỐNG CÒN giữa GSI và LSI khi thiếu attribute
+
+Query xin một attribute **chưa được project**:
+
+```
+LSI  →  ✅ ĐƯỢC. DynamoDB TỰ ĐỘNG fetch từ bảng gốc
+        (trong suốt với bạn, nhưng TỐN THÊM RCU — fetch từng item, rất đắt)
+
+GSI  →  ❌ KHÔNG. Query chỉ trả về attribute đã project, hết.
+        DynamoDB KHÔNG fetch giúp. Bạn phải tự gọi GetItem/BatchGetItem
+        trên bảng gốc ở vòng thứ hai.
+```
+
+⇒ Với **GSI**, `ProjectionType` là **quyết định gần như không sửa được** — chọn sai thì code buộc phải đi 2 vòng mãi mãi.
+
+### 4. 🪤 Ba cái bẫy
+
+| Bẫy                                        | Chi tiết                                                                                                         |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Không đổi được sau khi tạo**       | **GSI:** phải **xoá và tạo lại index** (backfill lại toàn bộ, tốn WCU + thời gian). **LSI:** **không sửa được bằng bất kỳ cách nào** — phải **tạo lại cả BẢNG** |
+| **Giới hạn 100 attribute**              | Tổng attribute do bạn tự liệt kê (`INCLUDE`) trên **TẤT CẢ** index của một bảng ≤ **100**. `ALL` **không** tính vào hạn mức này |
+| **LSI + `ALL` dễ chạm trần 10 GB**    | LSI bị ràng buộc **tổng size mọi item cho mỗi partition key value ≤ 10 GB**, và **projection TÍNH VÀO đó**. Projection rộng → chạm trần nhanh gấp đôi |
+
+### 5. Cú pháp
+
+```bash
+# KEYS_ONLY
+Projection={ProjectionType=KEYS_ONLY}
+
+# INCLUDE — bắt buộc kèm NonKeyAttributes
+Projection={ProjectionType=INCLUDE,NonKeyAttributes=[Amount,Currency]}
+
+# ALL
+Projection={ProjectionType=ALL}
+```
+
+> 🧠 **Memory hook:** *"`ProjectionType` = **copy bao nhiêu cột sang bảng-index**. Copy ít thì **ghi rẻ đọc đắt**; copy nhiều thì **ghi đắt đọc rẻ**. Và **chọn rồi là khoá luôn**."*
+
+---
 
 ---
 
@@ -31,25 +129,27 @@ Every secondary index is associated with exactly one table, from which it obtain
 Every secondary index is automatically maintained by DynamoDB. When you add, modify, or delete items in the base table, any indexes on that table are also updated to reflect these changes.
 
 DynamoDB supports two types of secondary indexes:
+
 - **Global secondary index (GSI)** — An index with a partition key and a sort key that can be **different** from those on the base table. A global secondary index is considered "global" because queries on the index can span all of the data in the base table, across all partitions. A global secondary index is stored in its own partition space away from the base table and **scales separately** from the base table.
 - **Local secondary index (LSI)** — An index that has the **same partition key** as the base table, but a different sort key. A local secondary index is "local" in the sense that every partition of a local secondary index is scoped to a base table partition that has the same partition key value.
 
 ## Comparison: GSI vs LSI
 
-| Characteristic | Global secondary index | Local secondary index |
-| --- | --- | --- |
-| Key Schema | Primary key can be either simple (partition key) or composite (partition key + sort key). | Primary key **must be composite** (partition key + sort key). |
-| Key Attributes | Index partition key and sort key (if present) can be any base table attribute of type string, number, or binary. | Partition key is the **same** attribute as the base table partition key. Sort key can be any base table attribute of type string, number, or binary. |
-| Size Restrictions Per Partition Key Value | **No size restrictions.** | For each partition key value, the total size of all indexed items must be **10 GB or less**. |
-| Online Index Operations | Can be created at the same time as the table. You can also **add** a new GSI to an existing table, or **delete** an existing GSI. | Created **at the same time** as the table. You **cannot add** an LSI to an existing table, nor **delete** any existing LSIs. |
-| Queries and Partitions | Lets you query over the **entire table**, across all partitions. | Lets you query over a **single partition**, as specified by the partition key value in the query. |
-| Read Consistency | Queries support **eventual consistency only**. | You can choose **either eventual consistency or strong consistency**. |
-| Provisioned Throughput Consumption | Every GSI has its **own** provisioned throughput settings. Queries/scans consume capacity units **from the index**, not the base table. GSI on global tables consumes write capacity units. | Queries/scans consume RCU **from the base table**. Writes to the table also update its LSIs, consuming WCU **from the base table**. |
-| Projected Attributes | You can only request attributes **projected into the index**. DynamoDB does **not** fetch other attributes from the table. | You can request attributes **not projected** into the index. DynamoDB **automatically fetches** those from the table. |
+| Characteristic                            | Global secondary index                                                                                                                                                                                 | Local secondary index                                                                                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Key Schema                                | Primary key can be either simple (partition key) or composite (partition key + sort key).                                                                                                              | Primary key**must be composite** (partition key + sort key).                                                                                        |
+| Key Attributes                            | Index partition key and sort key (if present) can be any base table attribute of type string, number, or binary.                                                                                       | Partition key is the**same** attribute as the base table partition key. Sort key can be any base table attribute of type string, number, or binary. |
+| Size Restrictions Per Partition Key Value | **No size restrictions.**                                                                                                                                                                        | For each partition key value, the total size of all indexed items must be**10 GB or less**.                                                         |
+| Online Index Operations                   | Can be created at the same time as the table. You can also**add** a new GSI to an existing table, or **delete** an existing GSI.                                                           | Created**at the same time** as the table. You **cannot add** an LSI to an existing table, nor **delete** any existing LSIs.             |
+| Queries and Partitions                    | Lets you query over the**entire table**, across all partitions.                                                                                                                                  | Lets you query over a**single partition**, as specified by the partition key value in the query.                                                    |
+| Read Consistency                          | Queries support**eventual consistency only**.                                                                                                                                                    | You can choose**either eventual consistency or strong consistency**.                                                                                |
+| Provisioned Throughput Consumption        | Every GSI has its**own** provisioned throughput settings. Queries/scans consume capacity units **from the index**, not the base table. GSI on global tables consumes write capacity units. | Queries/scans consume RCU**from the base table**. Writes to the table also update its LSIs, consuming WCU **from the base table**.            |
+| Projected Attributes                      | You can only request attributes**projected into the index**. DynamoDB does **not** fetch other attributes from the table.                                                                  | You can request attributes**not projected** into the index. DynamoDB **automatically fetches** those from the table.                          |
 
 If you want to create more than one table with secondary indexes, you must do so **sequentially**. If you try to concurrently create more than one table with a secondary index, DynamoDB returns a `LimitExceededException`.
 
 Each secondary index uses the same **table class** and **capacity mode** as the base table it is associated with. For each secondary index, you must specify:
+
 - The type of index — GSI or LSI.
 - A name for the index (naming rules same as tables; must be unique for the base table).
 - The key schema for the index. Every attribute in the index key schema must be a top-level attribute of type `String`, `Number`, or `Binary`. Documents and sets are **not allowed** as keys.

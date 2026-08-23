@@ -16,6 +16,103 @@
 - **DynamoDB Streams vs Kinesis Data Streams:** Streams giữ 24h, exactly-once + ordering; Kinesis giữ lâu hơn, throughput cao hơn nhưng **KHÔNG** đảm bảo ordering/deduplication.
 - Thường dùng với **AWS Lambda triggers** (xử lý event khi item thay đổi) và là **điều kiện tiên quyết cho Global Tables**.
 
+## 🧩 Đào sâu: Shard, parent shard vs child shard
+
+### 1. Shard KHÔNG phải phân vùng dữ liệu — nó là "cuộn băng ghi có hạn"
+
+Tên gọi "parent/child" gây hiểu sai: nghe như quan hệ **chứa nhau** (cha bao con), nhưng thực tế là quan hệ **NỐI TIẾP NHAU theo thời gian** — giống **cuộn băng cassette hết chỗ thì lắp cuộn mới**. Cuộn cũ = **parent**, cuộn mới = **child**. Từ AWS dùng là **lineage** (dòng dõi), **không** phải hierarchy.
+
+⇒ *"Xử lý parent trước child"* thực chất chỉ là *"nghe cuộn băng cũ trước cuộn băng mới"*.
+
+### 2. Shard đóng và sinh child — chuyện gì xảy ra
+
+```
+Table partition P1  (chứa item Order#123)
+│
+t0 ──────────────────── t1 ───────────────────── t2 ──────▶
+
+   ┌─ Shard-A  (OPEN → rồi CLOSED tại t1) ────────┐
+   │  seq 100  INSERT  Order#123                  │
+   │  seq 101  MODIFY  Order#123 status=PAID      │
+   │  seq 102  MODIFY  Order#123 status=SHIPPED   │
+   └───────────────────┬──────────────────────────┘
+                       │  shard đóng lại, sinh successor
+                       ▼
+              ┌─ Shard-B  (child, OPEN) ──────────┐
+              │  seq 103  MODIFY status=DELIVERED │
+              │  seq 104  REMOVE Order#123        │
+              └───────────────────────────────────┘
+
+   Shard-A = PARENT                    Shard-B = CHILD
+   (đã CLOSED, vẫn đọc được 24h)      (đang nhận record mới)
+```
+
+**Vì sao shard đóng?**
+
+| Lý do                                                                            | Kết quả                                                     |
+| ---------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **Table partition split** (item collection > 10 GB, hoặc cần thêm throughput) | 1 parent → **2 child** (nhánh đôi)                    |
+| **Shard rollover** — shard có tuổi thọ, DynamoDB tự đóng & mở cái mới     | 1 parent → **1 child** (nối tiếp)                       |
+| **Disable stream**                                                           | Mọi shard đóng, **KHÔNG có child**; data còn đọc 24h |
+
+> 🧠 Số shard ≈ **số partition của bảng**. Bảng to ra → nhiều partition hơn → nhiều shard hơn.
+
+### 3. Vì sao BẮT BUỘC đọc parent trước child
+
+```
+❌ Đọc Shard-B (child) trước Shard-A (parent):
+
+   App nhận:  REMOVE Order#123          ← "xoá đơn hàng không tồn tại"?!
+              MODIFY status=DELIVERED
+              INSERT Order#123           ← đến sau cùng
+
+   → Index OpenSearch: Order#123 TỒN TẠI với status=null
+   → Cache: xoá rồi mới tạo lại → dữ liệu sống lại từ cõi chết
+   → Analytics: đếm sai hoàn toàn
+```
+
+Record của **cùng một partition key** luôn đi vào **cùng một dòng dõi shard**. Đọc sai thứ tự shard = **đảo lộn lịch sử của chính item đó**. Đây là toàn bộ lý do của quy tắc.
+
+⚠️ **Chiều ngược lại:** thứ tự **CHỈ** được đảm bảo **trong một dòng dõi shard / cho một partition key**. **KHÔNG** có thứ tự toàn cục giữa các shard khác nhau — `Order#123` và `Order#999` ở 2 shard khác nhau thì không có khái niệm "cái nào trước".
+
+### 4. Có cần quan tâm không? — tuỳ bạn đọc stream bằng gì
+
+| Cách đọc stream                                                               | Tự xử lý parent/child? | Ghi chú                                                                                            |
+| ---------------------------------------------------------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **`Lambda` trigger** (event source mapping)                                  | ❌ **KHÔNG**        | Lambda poller tự lo: shard discovery, parent-trước-child, checkpoint, resharding. **99% dùng cách này — và là đáp án đề thi.** |
+| **`Kinesis Adapter` + KCL**                                                  | ❌ **KHÔNG**        | KCL tự lo hết (AWS docs nói rõ)                                                                |
+| **Low-level API** (`DescribeStream` + `GetShardIterator` + `GetRecords`)      | ✅ **CÓ**           | Tự dựng topology, tự đảm bảo thứ tự, dùng **`ShardFilter`** để tìm child của một parent  |
+
+**Kết luận thực dụng:** dùng `Lambda` thì **không cần quan tâm** ở mức code. Cần biết **khái niệm** để trả lời câu hỏi thi và để debug khi thấy event đến "sai thứ tự".
+
+### 5. 💡 Chỗ shard THẬT SỰ quan trọng: concurrency của Lambda
+
+Với DynamoDB Streams event source mapping, Lambda mặc định chạy **1 instance đồng thời cho MỖI SHARD**.
+⇒ Bảng có **4 shard** ⇒ tối đa **4 Lambda** chạy song song, **bất kể** reserved concurrency đặt bao nhiêu.
+
+Đây là đáp án cho dạng đề *"Lambda xử lý stream bị chậm / tồn đọng (`IteratorAge` tăng), làm sao tăng throughput?"*:
+
+- **`ParallelizationFactor`** (**1–10**) — cho Lambda xử lý tới **10 batch đồng thời trên CÙNG 1 shard**, mà **vẫn giữ đúng thứ tự cho từng partition key** (Lambda gom record theo partition key). Tăng throughput **không cần** đổi thiết kế bảng.
+- Các cần khác: `BatchSize`, `MaximumBatchingWindowInSeconds`, `ReportBatchItemFailures` (chỉ retry record lỗi thay vì cả batch), `MaximumRetryAttempts` + **on-failure destination** (SQS/SNS) để tránh **poison pill** chặn shard.
+
+> 🧠 **Memory hook:** *"**1 shard = 1 Lambda**. Muốn nhanh hơn mà không sửa bảng ⇒ **ParallelizationFactor**."*
+>
+> ⚠️ Đừng nhầm: giới hạn *"tối đa 2 process đọc cùng 1 shard"* áp cho **consumer tự viết**. `ParallelizationFactor` do Lambda quản lý nên không vi phạm giới hạn đó.
+
+### 6. 📌 Chốt cho đề thi DVA-C02
+
+| Phải nhớ                                | Chi tiết                                                                  |
+| ------------------------------------------- | --------------------------------------------------------------------------- |
+| Shard là **ephemeral**              | Tự tạo / tự xoá, có **lineage** (parent → child)                 |
+| **Parent trước child**              | Để giữ đúng thứ tự thay đổi của **từng item**                  |
+| Thứ tự đảm bảo ở mức nào?       | **Theo từng partition key**, KHÔNG phải toàn cục                     |
+| Ai lo giúp bạn?                        | **`Lambda` trigger** và **KCL / Kinesis Adapter**                   |
+| Tự viết consumer                        | Tối đa **2 process / shard** (quá → throttling) · dùng `ShardFilter` |
+| Retention                                   | **24 giờ**, kể cả sau khi disable stream                            |
+| Shard ↔ Lambda concurrency               | **1 shard = 1 Lambda**; tăng bằng **`ParallelizationFactor` (1–10)**  |
+
+---
+
 ---
 
 ## 📄 Nội dung (trích từ tài liệu gốc)
