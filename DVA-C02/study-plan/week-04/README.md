@@ -5,6 +5,7 @@
 > **Điều hướng:** [⬅️ Tuần 3](../week-03/README.md) · [🏠 Kế hoạch tổng](../../DVA-C02-STUDY-PLAN.md) · [Tuần 5 ➡️](../week-05/README.md)
 
 ## 🎯 Mục tiêu tuần này
+
 - Tự tay dựng được `REST API` → `Lambda` → `DynamoDB` với CRUD đầy đủ (POST/GET/PUT/DELETE).
 - Giải thích được sự khác biệt `REST API` vs `HTTP API` vs `WebSocket API` và chọn đúng loại theo yêu cầu đề.
 - Phân biệt được `Lambda proxy (AWS_PROXY)` vs non-proxy và biết khi nào cần mapping template `VTL`.
@@ -18,15 +19,16 @@
 
 **1. Ba loại API — chọn cái nào?**
 
-| Loại | Dùng khi | Điểm mạnh |
-|------|----------|-----------|
-| `REST API` | Cần đầy đủ tính năng doanh nghiệp | `API keys` + `usage plans`, mapping request/response `VTL`, `caching`, tích hợp `WAF`, `Private API` |
-| `HTTP API` | Proxy đơn giản tới `Lambda`/`HTTP` | Rẻ hơn, độ trễ thấp hơn, hỗ trợ `JWT authorizer`/`OIDC` — nhưng ít tính năng hơn `REST` |
-| `WebSocket API` | Real-time hai chiều (chat, dashboard live) | Kết nối bền, server đẩy dữ liệu về client |
+| Loại             | Dùng khi                                   | Điểm mạnh                                                                                                       |
+| ----------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `REST API`      | Cần đầy đủ tính năng doanh nghiệp   | `API keys` + `usage plans`, mapping request/response `VTL`, `caching`, tích hợp `WAF`, `Private API` |
+| `HTTP API`      | Proxy đơn giản tới`Lambda`/`HTTP`   | Rẻ hơn, độ trễ thấp hơn, hỗ trợ`JWT authorizer`/`OIDC` — nhưng ít tính năng hơn `REST`        |
+| `WebSocket API` | Real-time hai chiều (chat, dashboard live) | Kết nối bền, server đẩy dữ liệu về client                                                                  |
 
 > **Neo thi:** Đề hỏi "rẻ nhất / độ trễ thấp nhất cho proxy tới Lambda" → `HTTP API`. Đề nhắc `API keys`, `usage plans`, `caching`, mapping `VTL`, `WAF`, `Private API` → phải là `REST API`. Đề nhắc "đẩy dữ liệu real-time hai chiều" → `WebSocket API`.
 
 **2. Integration types (kiểu tích hợp backend)**
+
 - `Lambda proxy (AWS_PROXY)`: truyền **nguyên** request (headers, query, path, body) vào `Lambda` dưới dạng event chuẩn; `Lambda` **tự chịu trách nhiệm** trả về đúng format `{ statusCode, headers, body }`. Ít cấu hình nhất, phổ biến nhất.
 - `Lambda` (non-proxy): dùng **mapping template `VTL`** để biến đổi request trước khi vào backend và biến đổi response trước khi trả client. Kiểm soát chi tiết nhưng phức tạp.
 - `HTTP` / `HTTP proxy`: gọi tới một HTTP endpoint bất kỳ.
@@ -34,23 +36,26 @@
 - `Mock`: trả response tĩnh, không gọi backend — hữu ích test / trả CORS preflight.
 
 **3. Mapping templates (`VTL`) & Gateway Responses**
+
 - Mapping template dùng ngôn ngữ `VTL` (Velocity) để nhào nặn payload — chỉ có ở non-proxy integration.
 - `Gateway Responses`: tuỳ biến response khi lỗi xảy ra **ở tầng gateway** (vd 401 do authorizer, 429 do throttling) trước khi tới backend.
 
 **4. Stages + stage variables**
+
 - `Stage` = một bản deploy có tên (vd `dev`, `prod`), mỗi stage có URL riêng.
 - `Stage variables` = cặp key-value theo stage, hoạt động như biến môi trường. Kinh điển: trỏ tới **`Lambda alias`** khác nhau theo stage (vd `${stageVariables.lambdaAlias}` → stage `prod` gọi alias `PROD`, stage `dev` gọi alias `DEV`) — cùng một API definition, backend khác nhau.
 
 **5. Authorizers (xác thực/uỷ quyền)**
 
-| Authorizer | Cơ chế | Ghi chú |
-|------------|--------|---------|
-| `IAM` | Ký `SigV4` bằng credential AWS | Dùng cho service-to-service, người dùng có IAM cred |
-| `Cognito User Pool` | Kiểm `JWT` do User Pool cấp | Người dùng đăng nhập app |
-| `Lambda authorizer` — `TOKEN` | Nhận **1 token** ở header (vd `Authorization`) | Trả về IAM policy Allow/Deny |
-| `Lambda authorizer` — `REQUEST` | Xét **nhiều tham số** request (headers, query, path, context) | Linh hoạt hơn TOKEN |
+| Authorizer                           | Cơ chế                                                              | Ghi chú                                                 |
+| ------------------------------------ | --------------------------------------------------------------------- | -------------------------------------------------------- |
+| `IAM`                              | Ký`SigV4` bằng credential AWS                                     | Dùng cho service-to-service, người dùng có IAM cred |
+| `Cognito User Pool`                | Kiểm`JWT` do User Pool cấp                                        | Người dùng đăng nhập app                           |
+| `Lambda authorizer` — `TOKEN`   | Nhận**1 token** ở header (vd `Authorization`)               | Trả về IAM policy Allow/Deny                           |
+| `Lambda authorizer` — `REQUEST` | Xét**nhiều tham số** request (headers, query, path, context) | Linh hoạt hơn TOKEN                                    |
 
 **6. Usage plans, API keys, throttling, caching, CORS**
+
 - `API keys` + `usage plans`: giới hạn/định lượng lượng gọi theo từng khách hàng (chỉ `REST API`).
 - Throttling mặc định mức account: **10.000 request/giây**, burst **5.000**.
 - `Caching`: bật **theo stage**, giảm tải backend, TTL mặc định **300 giây** (chỉnh trong khoảng 0–3600s). Chỉ `REST API`.
@@ -103,17 +108,17 @@ aws s3 cp big-file.bin s3://my-bucket/big-file.bin
 
 4. **Encryption** — nắm 4 kiểu:
 
-| Kiểu | Ai giữ khoá | Ghi chú thi |
-|------|-------------|-------------|
-| `SSE-S3` | AWS quản lý (AES-256) | **Mặc định TỰ ĐỘNG** cho MỌI object mới từ 01/2023 (không cần bật); đơn giản, không audit theo khoá |
-| `SSE-KMS` | Khoá `KMS` | Có **audit** (`CloudTrail`) + **rotation**; kiểm soát quyền dùng khoá |
-| `SSE-C` | **Khách tự cung cấp khoá** mỗi request | AWS không lưu khoá |
-| Client-side | Khách mã hoá **trước khi upload** | AWS chỉ thấy ciphertext |
+| Kiểu       | Ai giữ khoá                                     | Ghi chú thi                                                                                                               |
+| ----------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `SSE-S3`  | AWS quản lý (AES-256)                           | **Mặc định TỰ ĐỘNG** cho MỌI object mới từ 01/2023 (không cần bật); đơn giản, không audit theo khoá |
+| `SSE-KMS` | Khoá`KMS`                                      | Có**audit** (`CloudTrail`) + **rotation**; kiểm soát quyền dùng khoá                                   |
+| `SSE-C`   | **Khách tự cung cấp khoá** mỗi request | AWS không lưu khoá                                                                                                      |
+| Client-side | Khách mã hoá**trước khi upload**       | AWS chỉ thấy ciphertext                                                                                                  |
 
 5. **Versioning** + **event notifications**: bật versioning; cấu hình `S3 event notification` (vd `s3:ObjectCreated:*`) bắn tới **`Lambda`** (đích khác có thể là `SQS` / `SNS` / `EventBridge`). Test bằng cách upload file và xem `Lambda` được kích hoạt.
 6. Ghi nhớ: `S3` hiện có **strong read-after-write consistency** cho mọi thao tác — không còn lo "đọc ngay sau ghi bị dữ liệu cũ".
-
 7. **`CloudFront` — phân phối nội dung private (góc Developer)**
+
    - **Signed URL** vs **Signed cookies** (cả hai ký bằng **trusted key group**):
      - `Signed URL`: cấp quyền cho **1 file**; hợp khi client **không hỗ trợ cookie** (vd app RTMP cũ, tải file lẻ).
      - `Signed cookies`: cấp quyền cho **nhiều file** cùng lúc mà **giữ nguyên URL gốc** (vd cả thư mục media, streaming HLS).
@@ -122,8 +127,8 @@ aws s3 cp big-file.bin s3://my-bucket/big-file.bin
      - `CloudFront` signed URL: truy cập **qua edge/cache** (nhanh, gần user), ký bằng **key pair / trusted key group**, hợp phân phối nội dung **private toàn cầu** ở quy mô lớn.
    - **`OAC` (Origin Access Control)** thay cho **`OAI`** (đời cũ): khoá bucket `S3` **chỉ cho `CloudFront` đọc** (bucket policy chỉ allow OAC), người dùng không truy cập `S3` trực tiếp được. `OAC` là khuyến nghị hiện tại (hỗ trợ `SSE-KMS`, mọi region).
    - **Cache invalidation**: đẩy nội dung mới trước TTL bằng `CreateInvalidation` (theo path; **1000 path/tháng đầu miễn phí**, sau đó tính phí) — hoặc tốt hơn là dùng **versioned object name** (đổi tên file, vd `app.v2.js`) để không cần invalidate.
-
 8. **`AppSync` — managed GraphQL** (thay/bổ trợ `REST`)
+
    - Một **endpoint GraphQL** duy nhất; client **chọn đúng field cần** (giảm over-/under-fetch).
    - **Resolver** (viết bằng `VTL` hoặc JS) nối tới data source: `DynamoDB` / `Lambda` / HTTP endpoint.
    - **Subscription** real-time qua **WebSocket** (đẩy dữ liệu về client khi có thay đổi).
@@ -131,7 +136,9 @@ aws s3 cp big-file.bin s3://my-bucket/big-file.bin
    - **Đối chiếu:** cần REST truyền thống → `API Gateway` (REST/HTTP API); client cần **query linh hoạt / real-time** → `AppSync` (GraphQL).
 
 ### 🅳 Buổi D — Practice + Review (~2h)
+
 > 📝 **Bộ câu hỏi luyện tập của tuần:** [questions.md](questions.md) — đáp án & giải thích: [answers.md](answers.md). *(bằng tiếng Anh — văn phong đề thật để làm quen đề.)*
+
 - Làm 30–40 câu practice tập trung `API Gateway` + `S3`.
 - Ghi mọi câu sai vào sổ lỗi: ghi rõ **keyword đề** → **đáp án đúng** → **lý do**.
 - Ôn spaced repetition: xem lại flashcard tuần này ở mốc **1 / 3 / 7 ngày**; đảo lại số liệu ở mục "PHẢI NHỚ".
@@ -139,21 +146,22 @@ aws s3 cp big-file.bin s3://my-bucket/big-file.bin
 
 ## 🧠 PHẢI NHỚ tuần này
 
-| Fact | Số / Giá trị |
-|------|--------------|
-| Integration timeout của `API Gateway` | **Mặc định 29s**; tăng tới **300s** qua `Service Quotas` (chỉ Regional/private `REST API`) |
-| Throttling mặc định mức account | **10.000 req/giây**, burst **5.000** |
-| `Caching` bật theo | **Stage**, TTL mặc định **300 giây** (0–3600s) |
-| `S3` object tối đa | **5 TB** |
-| Single `PutObject` tối đa | **5 GB** |
-| `multipart upload` KHUYẾN NGHỊ khi | object **> 100 MB** |
-| `multipart upload` BẮT BUỘC khi | object **> 5 GB** |
-| `presigned URL` kế thừa quyền của | **identity đã tạo ra nó**; hạn `SigV4` tối đa **7 ngày** (Console **12h**; temp credentials → hết hạn theo credential) |
-| `API keys` + `usage plans` chỉ có ở | `REST API` (không có ở `HTTP API`) |
-| `S3` consistency | **strong read-after-write** cho mọi thao tác |
-| Đích `S3 event notification` | `Lambda` / `SQS` / `SNS` / `EventBridge` |
+| Fact                                       | Số / Giá trị                                                                                                                                       |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Integration timeout của`API Gateway`    | **Mặc định 29s**; tăng tới **300s** qua `Service Quotas` (chỉ Regional/private `REST API`)                                      |
+| Throttling mặc định mức account        | **10.000 req/giây**, burst **5.000**                                                                                                     |
+| `Caching` bật theo                      | **Stage**, TTL mặc định **300 giây** (0–3600s)                                                                                       |
+| `S3` object tối đa                     | **5 TB**                                                                                                                                        |
+| Single`PutObject` tối đa               | **5 GB**                                                                                                                                        |
+| `multipart upload` KHUYẾN NGHỊ khi     | object**> 100 MB**                                                                                                                                    |
+| `multipart upload` BẮT BUỘC khi        | object**> 5 GB**                                                                                                                                      |
+| `presigned URL` kế thừa quyền của    | **identity đã tạo ra nó**; hạn `SigV4` tối đa **7 ngày** (Console **12h**; temp credentials → hết hạn theo credential) |
+| `API keys` + `usage plans` chỉ có ở | `REST API` (không có ở `HTTP API`)                                                                                                             |
+| `S3` consistency                         | **strong read-after-write** cho mọi thao tác                                                                                                  |
+| Đích`S3 event notification`            | `Lambda` / `SQS` / `SNS` / `EventBridge`                                                                                                      |
 
 ## ⚠️ Bẫy đề hay gặp
+
 - Thấy "proxy đơn giản tới `Lambda`, rẻ nhất, độ trễ thấp" → dễ chọn `REST API`, nhưng đúng là **`HTTP API`**.
 - Thấy "cần `API keys` / `usage plans` / `caching` / mapping `VTL` / `WAF`" → **`HTTP API` KHÔNG có** những thứ này → phải là **`REST API`**.
 - Thấy "backend chạy 45 giây rồi API trả lỗi" → timeout **mặc định 29s** (có thể tăng tới **300s** qua `Service Quotas` chỉ cho Regional/private `REST API`, đổi lại giảm throttle quota); tác vụ dài vẫn nên async (trả 202 + xử lý nền).
@@ -165,28 +173,29 @@ aws s3 cp big-file.bin s3://my-bucket/big-file.bin
 
 ## 🔁 Phản xạ nhanh (keyword → đáp án)
 
-| Thấy từ khoá | Bật ngay |
-|--------------|----------|
-| Rẻ nhất / độ trễ thấp / proxy Lambda | `HTTP API` |
-| `API keys`, `usage plans`, `caching`, `VTL`, `WAF`, `Private API` | `REST API` |
-| Real-time hai chiều, server đẩy về client | `WebSocket API` |
-| Biến đổi request/response, template | Non-proxy + mapping `VTL` |
-| Truyền nguyên request, Lambda tự format | `Lambda proxy (AWS_PROXY)` |
-| Trỏ backend khác nhau theo môi trường | `Stage variables` → `Lambda alias` |
-| Cho phép upload/download tạm, không lộ key | `presigned URL` |
-| Xác thực JWT người dùng app | `Cognito User Pool authorizer` |
-| Xác thực bằng cred AWS (SigV4) | `IAM authorizer` |
-| Logic uỷ quyền tuỳ biến theo token | `Lambda authorizer` (TOKEN/REQUEST) |
-| Object > 5 GB | Bắt buộc `multipart upload` |
-| Cần audit + rotate khoá mã hoá | `SSE-KMS` |
-| Khách tự cung cấp khoá | `SSE-C` |
-| File mới vào bucket → chạy code | `S3 event notification` → `Lambda` |
-| Phân phối **nhiều file** private qua CDN | `CloudFront` **signed cookies** |
-| **1 file** private có hạn | `CloudFront` **signed URL** / `S3` **presigned URL** |
-| Khoá bucket `S3` **chỉ cho `CloudFront`** đọc | **`OAC`** (thay `OAI`) |
-| Client cần **query linh hoạt / real-time** | `AppSync` (GraphQL) |
+| Thấy từ khoá                                                               | Bật ngay                                                            |
+| ----------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Rẻ nhất / độ trễ thấp / proxy Lambda                                    | `HTTP API`                                                         |
+| `API keys`, `usage plans`, `caching`, `VTL`, `WAF`, `Private API` | `REST API`                                                         |
+| Real-time hai chiều, server đẩy về client                                 | `WebSocket API`                                                    |
+| Biến đổi request/response, template                                        | Non-proxy + mapping`VTL`                                           |
+| Truyền nguyên request, Lambda tự format                                    | `Lambda proxy (AWS_PROXY)`                                         |
+| Trỏ backend khác nhau theo môi trường                                    | `Stage variables` → `Lambda alias`                              |
+| Cho phép upload/download tạm, không lộ key                                | `presigned URL`                                                    |
+| Xác thực JWT người dùng app                                              | `Cognito User Pool authorizer`                                     |
+| Xác thực bằng cred AWS (SigV4)                                             | `IAM authorizer`                                                   |
+| Logic uỷ quyền tuỳ biến theo token                                        | `Lambda authorizer` (TOKEN/REQUEST)                                |
+| Object > 5 GB                                                                 | Bắt buộc`multipart upload`                                       |
+| Cần audit + rotate khoá mã hoá                                            | `SSE-KMS`                                                          |
+| Khách tự cung cấp khoá                                                    | `SSE-C`                                                            |
+| File mới vào bucket → chạy code                                           | `S3 event notification` → `Lambda`                              |
+| Phân phối**nhiều file** private qua CDN                              | `CloudFront` **signed cookies**                              |
+| **1 file** private có hạn                                             | `CloudFront` **signed URL** / `S3` **presigned URL** |
+| Khoá bucket`S3` **chỉ cho `CloudFront`** đọc                    | **`OAC`** (thay `OAI`)                                     |
+| Client cần**query linh hoạt / real-time**                             | `AppSync` (GraphQL)                                                |
 
 ## 🧪 Lab checklist
+
 - [ ] Dựng `REST API` → `Lambda` → `DynamoDB` CRUD đủ POST/GET/PUT/DELETE
 - [ ] Deploy 2 stage (`dev`/`prod`) + stage variable trỏ `Lambda alias`
 - [ ] Bật CORS cho resource
@@ -197,6 +206,7 @@ aws s3 cp big-file.bin s3://my-bucket/big-file.bin
 - [ ] Cấu hình `S3 event notification` → `Lambda` và xác nhận trigger
 
 ## 🚪 Cổng tự kiểm tra (phải trả lời trôi chảy mới sang tuần sau)
+
 1. `REST API` vs `HTTP API` khác gì và chọn khi nào?
    **Đáp án gọn:** `HTTP API` rẻ hơn, độ trễ thấp hơn, hợp proxy tới `Lambda`/`HTTP`, hỗ trợ `JWT`/`OIDC` — nhưng THIẾU `API keys`/`usage plans`, mapping `VTL`, `caching`, `WAF`, `Private API`. Cần các thứ đó → chọn `REST API`.
 2. `presigned URL` kế thừa quyền của ai?
@@ -211,13 +221,16 @@ aws s3 cp big-file.bin s3://my-bucket/big-file.bin
    **Đáp án gọn:** Khi cần **audit** (log qua `CloudTrail`), **rotation** và kiểm soát quyền dùng khoá; `SSE-S3` chỉ là AES-256 do AWS quản lý, không audit theo khoá.
 
 ## 📎 Tài nguyên tuần này
+
 > 📂 **Đã crawl sẵn tài liệu AWS vào** [`resources/`](resources/INDEX.md) — đọc offline được.
+
 - AWS Docs: `API Gateway` Developer Guide — REST vs HTTP API, Stages & stage variables, Integration types, Mapping templates (`VTL`), Authorizers, Usage plans & API keys, Caching, CORS.
 - AWS Docs: `Amazon S3` User Guide — Presigned URLs, Multipart upload, Byte-range fetch, Server-side encryption (`SSE-S3`/`SSE-KMS`/`SSE-C`), Versioning, Event notifications.
 - AWS FAQ: `Amazon API Gateway` FAQs; `Amazon S3` FAQs (mục consistency, encryption).
 - Khoá Stephane Maarek / Adrian Cantrill: section `API Gateway` và section `S3` (phần dành cho Developer).
 
 ## ✅ Checklist hoàn thành Tuần 4
+
 - [ ] Hoàn thành 4 buổi A/B/C/D
 - [ ] Nắm 3 loại API và tiêu chí chọn
 - [ ] Phân biệt proxy vs non-proxy + biết mapping `VTL`

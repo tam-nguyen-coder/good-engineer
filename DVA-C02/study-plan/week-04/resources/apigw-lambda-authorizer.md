@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - `Lambda authorizer` (tên cũ: *custom authorizer*): nhận **identity của caller** làm input và trả về một **IAM policy** làm output. Dùng cho scheme tuỳ biến (OAuth, SAML, kiểm token…).
 - Hai loại: **`TOKEN` authorizer** (nhận **1 bearer token** ở header, vd `Authorization` chứa JWT/OAuth token) và **`REQUEST` authorizer** (nhận **tổ hợp** headers, query string, `stageVariables`, `$context`).
 - ⚠️ AWS **khuyến nghị dùng `REQUEST`** vì kiểm soát được **nhiều identity source** (fine-grained policy) so với `TOKEN` chỉ 1 nguồn; và tách cache key theo nhiều nguồn.
@@ -187,6 +188,7 @@ var generatePolicy = function(principalId, effect, resource) {
 ```
 
 API Gateway passes the source token in `event.authorizationToken`. Behavior:
+
 - Token `allow` → `200 OK` + `Allow` policy → method succeeds.
 - Token `deny` → `200 OK` + `Deny` policy → method fails.
   - **Note:** Outside of the test environment, API Gateway returns a `403 Forbidden` HTTP response and the method request fails.
