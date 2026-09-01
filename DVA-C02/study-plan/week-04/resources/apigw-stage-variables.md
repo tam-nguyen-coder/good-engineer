@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - **Stage variables** = cặp key-value gắn theo **deployment stage**, hoạt động như **biến môi trường**; dùng trong cấu hình API và trong **mapping templates**.
 - Use case kinh điển: một API definition, mỗi stage trỏ tới **backend endpoint khác nhau** (vd `prod` → `example.com`, `beta` → `beta.example.com`) hoặc trỏ tới **tên `Lambda function`/alias khác nhau** theo stage.
 - **KHÔNG được** dùng stage variable để đổi **loại integration** (vd stage này HTTP proxy, stage kia Lambda proxy) — chỉ đổi được endpoint/tên, không đổi kiểu tích hợp.
