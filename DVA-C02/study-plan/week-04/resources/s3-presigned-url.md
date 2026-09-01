@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - `presigned URL` = cấp quyền truy cập object **có giới hạn thời gian** mà **KHÔNG cần sửa bucket policy** và **không cần chia credential AWS** cho bên nhận. Dùng `GET` để download, **`PUT` để upload**, `HEAD` đọc metadata.
 - ⚠️ CỰC HAY THI: URL **kế thừa quyền của IAM principal đã tạo ra nó**. Người tạo phải có quyền thực hiện thao tác đó (vd `s3:GetObject`) thì URL mới dùng được. presigned URL là **bearer token** — ai cầm cũng dùng được trong hạn.
 - **Hạn dùng (bẫy số liệu):**
@@ -28,6 +29,7 @@ You can also use presigned URLs to allow someone to upload a specific object to 
 You can use the presigned URL multiple times, up to the expiration date and time.
 
 When you create a presigned URL, you must provide your security credentials, and then specify the following:
+
 - An Amazon S3 bucket
 - An object key (if downloading this object will be in your Amazon S3 bucket, if uploading this is the file name to be uploaded)
 - An HTTP method (`GET` for downloading objects, `PUT` for uploading, `HEAD` for reading object metadata, etc)
@@ -40,6 +42,7 @@ When using presigned URLs to upload objects, you can verify object integrity usi
 Anyone with valid security credentials can create a presigned URL. But for someone to successfully access an object, the presigned URL must be created by someone who has permission to perform the operation that the presigned URL is based upon.
 
 Types of credentials you can use to create a presigned URL:
+
 - **IAM user** – Valid up to **7 days** when you're using AWS Signature Version 4. To create a presigned URL valid for up to 7 days, first delegate IAM user credentials (access key and secret key) to the method you're using to create the presigned URL.
 - **Temporary security credentials** – Can't be valid for longer than the credentials themselves. These include:
   - **IAM role credentials** – The presigned URL expires when the role session expires, even if you specify a longer expiration time.

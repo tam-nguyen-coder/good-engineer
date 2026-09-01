@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - **CORS** = tính năng bảo mật của trình duyệt, chặn request cross-origin từ script. Lỗi kinh điển: **`Cross-Origin Request Blocked`** → cần bật CORS. Cross-origin = khác **domain / subdomain / port / protocol**.
 - Request chia 2 loại: **simple** (chỉ `GET`/`HEAD`/`POST`, content-type giới hạn, không custom header) và **non-simple** (mọi cái khác → cần **preflight `OPTIONS`**).
 - Với **non-proxy integration**, xử lý preflight bằng **`OPTIONS` method + Mock integration**, trả 3 header ở response 200: **`Access-Control-Allow-Headers`**, **`Access-Control-Allow-Methods`**, **`Access-Control-Allow-Origin`**.
@@ -24,6 +25,7 @@ Cross-origin resource sharing (CORS) is a browser security feature that restrict
 ## Determining whether to enable CORS support
 
 A *cross-origin* HTTP request is one that is made to:
+
 - A different *domain* (for example, from `example.com` to `amazondomains.com`)
 - A different *subdomain* (for example, from `example.com` to `petstore.example.com`)
 - A different *port* (for example, from `example.com` to `example.com:10777`)
@@ -36,6 +38,7 @@ Cross-origin HTTP requests can be divided into two types: *simple* requests and 
 ## Enabling CORS for a simple request
 
 An HTTP request is *simple* if all of the following conditions are true:
+
 - It is issued against an API resource that allows only `GET`, `HEAD`, and `POST` requests.
 - If it is a `POST` method request, it must include an `Origin` header.
 - The request payload content type is `text/plain`, `multipart/form-data`, or `application/x-www-form-urlencoded`.
@@ -103,6 +106,7 @@ For a Lambda proxy integration or HTTP proxy integration, **your backend is resp
 Example Lambda functions that return the required CORS headers:
 
 **Node.js**
+
 ```javascript
 export const handler = async (event) => {
     const response = {
@@ -119,6 +123,7 @@ export const handler = async (event) => {
 ```
 
 **Python 3**
+
 ```python
 import json
 

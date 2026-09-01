@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - `multipart upload` = chia object thành **nhiều part**, upload **song song / theo thứ tự bất kỳ**, S3 ghép lại. **Best practice khi object ≥ 100 MB**. Lợi ích: throughput cao (upload song song), phục hồi nhanh khi lỗi mạng (chỉ retry part hỏng), pause/resume, upload khi chưa biết kích thước cuối.
 - Quy trình **3 bước**: (1) `CreateMultipartUpload` → nhận **upload ID**; (2) `UploadPart` nhiều lần; (3) `CompleteMultipartUpload`. Muốn huỷ → `AbortMultipartUpload` (action `s3:AbortMultipartUpload`).
 - ⚠️ Số liệu HAY THI: **part number từ 1 đến 10.000**; mỗi lần `ListParts`/`ListMultipartUploads` trả tối đa **1.000** phần tử. Ví dụ file 100 GB, part 100 MB → **1.002 API call** (1 create + 1000 upload + 1 complete).
@@ -23,12 +24,14 @@
 Multipart upload allows you to upload a single object to Amazon S3 as a set of parts. Each part is a contiguous portion of the object's data. You can upload these object parts independently, and in any order. If transmission of any part fails, you can retransmit that part without affecting other parts. After all parts of your object are uploaded, Amazon S3 assembles them to create the object. **It's a best practice to use multipart upload for objects that are 100 MB or larger** instead of uploading them in a single operation.
 
 Advantages:
+
 - **Improved throughput** – upload parts in parallel.
 - **Quick recovery from any network issues** – smaller part size minimizes the impact of restarting a failed upload.
 - **Pause and resume object uploads** – after you initiate a multipart upload, there is no expiry; you must explicitly complete or stop the multipart upload.
 - **Begin an upload before you know the final object size**.
 
 Recommended usage:
+
 - Over a stable high-bandwidth network, use multipart upload to maximize bandwidth via parallel part uploads.
 - Over a spotty network, use multipart upload to increase resiliency; you only retry interrupted parts, not restart from the beginning.
 
@@ -78,16 +81,16 @@ REST API operations: `CreateMultipartUpload`, `UploadPart`, `UploadPartCopy`, `C
 
 ## Multipart upload API and permissions
 
-| Action | Required permissions |
-| --- | --- |
-| Create / Initiate Multipart Upload | `s3:PutObject` |
-| Upload Part | `s3:PutObject` |
-| Upload Part (Copy) | `s3:PutObject` + `s3:GetObject` on the source object |
-| Complete Multipart Upload | `s3:PutObject` |
-| Stop (Abort) Multipart Upload | `s3:AbortMultipartUpload` (bucket owner + initiator by default) |
-| List Parts | `s3:ListMultipartUploadParts` |
-| List Multipart Uploads | `s3:ListBucketMultipartUploads` |
-| AWS KMS encrypt/decrypt (SSE-KMS) | `kms:Decrypt` (and related) — S3 must decrypt encrypted parts before completing |
-| SSE-C | Must provide the SSE-C key on `CompleteMultipartUpload`, or the object is created without a checksum |
+| Action                             | Required permissions                                                                                  |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Create / Initiate Multipart Upload | `s3:PutObject`                                                                                      |
+| Upload Part                        | `s3:PutObject`                                                                                      |
+| Upload Part (Copy)                 | `s3:PutObject` + `s3:GetObject` on the source object                                              |
+| Complete Multipart Upload          | `s3:PutObject`                                                                                      |
+| Stop (Abort) Multipart Upload      | `s3:AbortMultipartUpload` (bucket owner + initiator by default)                                     |
+| List Parts                         | `s3:ListMultipartUploadParts`                                                                       |
+| List Multipart Uploads             | `s3:ListBucketMultipartUploads`                                                                     |
+| AWS KMS encrypt/decrypt (SSE-KMS)  | `kms:Decrypt` (and related) — S3 must decrypt encrypted parts before completing                    |
+| SSE-C                              | Must provide the SSE-C key on`CompleteMultipartUpload`, or the object is created without a checksum |
 
 Related: `AbortIncompleteMultipartUpload` lifecycle configuration, Amazon S3 multipart upload limits (part number 1–10,000).
