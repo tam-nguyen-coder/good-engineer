@@ -21,26 +21,28 @@ Bốn "buổi" tuần này quy đổi thành **lịch mock dồn**. Nguyên tắ
 
 **Gợi ý lịch 7 ngày cuối:**
 
-| Ngày | Việc chính |
-|---|---|
-| **Ngày 1** | 🎯 **FULL MOCK #2** (canh giờ 130') → **Review 100% câu sai** + viết file phân tích 6 mục |
-| **Ngày 2** | Cày **vùng yếu** (domain điểm thấp nhất ở mock #2) + đọc lại **bảng số §6** |
-| **Ngày 3** | 🎯 **FULL MOCK #3** (canh giờ 130') → Review 100% câu sai + viết file phân tích |
-| **Ngày 4** | Cày vùng yếu còn lại + đọc lại **bảng phản xạ §7** + danh sách bẫy |
-| **Ngày 5** | 🎯 **FULL MOCK #4** *(nếu chưa đủ 3 bài ≥85%)* → Review. Nếu đã đủ → flashcard nhẹ + rà hands-on còn thiếu |
-| **Ngày 6** | **Cram:** cheat sheet + bảng số §6 + bảng phản xạ §7; chuẩn bị **giấy tờ + thiết bị/phòng** |
-| **Ngày trước thi** | **Nghỉ nhẹ** — chỉ đọc lướt cheat sheet + danh sách bẫy; **ngủ đủ**; KHÔNG học kiến thức mới |
+| Ngày                       | Việc chính                                                                                                                       |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **Ngày 1**           | 🎯**FULL MOCK #2** (canh giờ 130') → **Review 100% câu sai** + viết file phân tích 6 mục                        |
+| **Ngày 2**           | Cày**vùng yếu** (domain điểm thấp nhất ở mock #2) + đọc lại **bảng số §6**                               |
+| **Ngày 3**           | 🎯**FULL MOCK #3** (canh giờ 130') → Review 100% câu sai + viết file phân tích                                         |
+| **Ngày 4**           | Cày vùng yếu còn lại + đọc lại**bảng phản xạ §7** + danh sách bẫy                                              |
+| **Ngày 5**           | 🎯**FULL MOCK #4** *(nếu chưa đủ 3 bài ≥85%)* → Review. Nếu đã đủ → flashcard nhẹ + rà hands-on còn thiếu |
+| **Ngày 6**           | **Cram:** cheat sheet + bảng số §6 + bảng phản xạ §7; chuẩn bị **giấy tờ + thiết bị/phòng**              |
+| **Ngày trước thi** | **Nghỉ nhẹ** — chỉ đọc lướt cheat sheet + danh sách bẫy; **ngủ đủ**; KHÔNG học kiến thức mới         |
 
 ### 🅰️ Buổi A — FULL MOCK #2 + chiến lược làm bài (~2.5h)
 
 > 📝 **Mock mini cross-domain của repo (25 câu, phủ cả 4 domain theo tỉ trọng đề):** [questions.md](questions.md) — canh giờ **~50 phút** (~2 phút/câu), tự chấm + **phân tích điểm theo domain** ở [answers.md](answers.md). *(Câu hỏi & giải thích bằng tiếng Anh — văn phong đề thật.)* Dùng làm bài "khởi động" phản xạ 4 domain trước khi vào full mock 65 câu/130'.
 
 **Quy trình chạy mock (giống thi thật):**
+
 1. Chọn một bộ full-length **65 câu**, đặt đồng hồ **130 phút**, không dừng giữa chừng, không tra tài liệu.
 2. Áp dụng **chiến lược làm bài** dưới đây trong suốt bài.
 3. Chấm điểm, ghi lại **% tổng** và **% theo từng domain** để biết vùng yếu.
 
 **Chiến lược làm bài (luyện đến mức tự động):**
+
 - **Nhịp ~2 phút/câu.** ~65 câu / 130 phút → giữ đều nhịp. Một câu quá **2–3 phút** → **flag + bỏ qua**, quay lại cuối giờ (không có điểm trừ khi đoán).
 - **Đọc CÂU HỎI trước, đáp án sau.** Xác định *đề đang hỏi gì* trước khi bị 4 lựa chọn dẫn dắt.
 - **Gạch chân qualifier:** "most cost-effective", "least operational overhead", "fully managed", "real-time", "ordered", "highly available"… — qualifier quyết định đáp án đúng.
@@ -82,21 +84,21 @@ Bốn "buổi" tuần này quy đổi thành **lịch mock dồn**. Nguyên tắ
 
 **Thông tin kỳ thi (bám đúng để phân bổ giờ):**
 
-| Fact | Con số |
-|---|---|
-| Số câu | **~65 câu** |
-| Thời gian | **130 phút** (~2 phút/câu) |
-| Điểm đậu | **720 / 1000** (~**72%**) |
+| Fact                    | Con số                                                                                                                              |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Số câu                | **~65 câu**                                                                                                                   |
+| Thời gian              | **130 phút** (~2 phút/câu)                                                                                                  |
+| Điểm đậu            | **720 / 1000** (~**72%**)                                                                                                |
 | **Bar cá nhân** | **≥ 85% ổn định** → biên an toàn ~13% so với ngưỡng đậu, đủ hấp thụ độ khó dao động + áp lực phòng thi |
 
 **Tiêu chí SẴN SÀNG đăng ký thi — CHỈ đặt lịch khi ĐỦ CẢ 4** (nhắc lại từ *Cơ chế đảm bảo đậu*):
 
-| # | Tiêu chí |
-|---|---|
-| 1 | ✅ **≥ 3 full mock KHÁC NHAU đạt ≥ 85%** (ổn định, không may mắn) |
-| 2 | ✅ Đã **review hết 100% câu sai** và hiểu vì sao sai |
-| 3 | ✅ Đọc **trôi chảy** toàn bộ **bảng số §6** và **bảng phản xạ §7** |
-| 4 | ✅ Hoàn thành **toàn bộ hands-on nhóm Serverless & CI/CD** |
+| # | Tiêu chí                                                                                        |
+| - | ------------------------------------------------------------------------------------------------- |
+| 1 | ✅**≥ 3 full mock KHÁC NHAU đạt ≥ 85%** (ổn định, không may mắn)                  |
+| 2 | ✅ Đã**review hết 100% câu sai** và hiểu vì sao sai                                  |
+| 3 | ✅ Đọc**trôi chảy** toàn bộ **bảng số §6** và **bảng phản xạ §7** |
+| 4 | ✅ Hoàn thành**toàn bộ hands-on nhóm Serverless & CI/CD**                              |
 
 > 🚨 **VAN AN TOÀN:** Bất kỳ full mock nào **< 75%** → **lùi lịch thi 1 tuần**, tập trung 100% vào vùng yếu (domain điểm thấp nhất) rồi mới mock lại.
 
@@ -113,17 +115,17 @@ Bốn "buổi" tuần này quy đổi thành **lịch mock dồn**. Nguyên tắ
 
 ## 🔁 Chiến lược đọc qualifier (keyword → phản xạ)
 
-| Thấy qualifier / từ khoá | Bật ngay |
-|---|---|
-| "most cost-effective" | Phương án **rẻ nhất VẪN đáp ứng đủ yêu cầu** (không phải rẻ nhất tuyệt đối) |
-| "least operational overhead" / "fully managed" / "serverless" | Ưu tiên **managed/serverless** (`Lambda`, `Fargate`, `DynamoDB`) hơn tự quản EC2 |
-| "real-time" streaming / analytics | Nghĩ tới `Kinesis Data Streams` (không phải `SQS`) |
-| "ordered" + "no duplicates" (exactly-once) | `SQS FIFO` |
-| "decouple" / "buffer" / "smooth spikes" | `SQS` |
-| "fan-out" / một message → nhiều consumer | `SNS` (+ `SQS`) |
-| "microsecond" / cache trước `DynamoDB` | `DAX` |
-| "minimize latency toàn cầu" / static content | `CloudFront` |
-| "đúng kỹ thuật nhưng lệch yêu cầu chính của đề" | **Loại** — bám sát YÊU CẦU + qualifier |
+| Thấy qualifier / từ khoá                                   | Bật ngay                                                                                            |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| "most cost-effective"                                         | Phương án**rẻ nhất VẪN đáp ứng đủ yêu cầu** (không phải rẻ nhất tuyệt đối) |
+| "least operational overhead" / "fully managed" / "serverless" | Ưu tiên**managed/serverless** (`Lambda`, `Fargate`, `DynamoDB`) hơn tự quản EC2     |
+| "real-time" streaming / analytics                             | Nghĩ tới`Kinesis Data Streams` (không phải `SQS`)                                            |
+| "ordered" + "no duplicates" (exactly-once)                    | `SQS FIFO`                                                                                         |
+| "decouple" / "buffer" / "smooth spikes"                       | `SQS`                                                                                              |
+| "fan-out" / một message → nhiều consumer                   | `SNS` (+ `SQS`)                                                                                  |
+| "microsecond" / cache trước`DynamoDB`                     | `DAX`                                                                                              |
+| "minimize latency toàn cầu" / static content                | `CloudFront`                                                                                       |
+| "đúng kỹ thuật nhưng lệch yêu cầu chính của đề"   | **Loại** — bám sát YÊU CẦU + qualifier                                                   |
 
 ## 🧪 Checklist ngày thi
 
