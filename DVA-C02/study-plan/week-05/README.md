@@ -56,14 +56,14 @@
 - **Tính năng mở rộng:** **Distributed Map** (chạy song song tới 10.000 child execution, tối ưu duyệt hàng triệu file S3), **TestState API** (kiểm thử từng state độc lập), **HTTPS Tasks** (gọi REST API ngoài không cần Lambda).
 - **Standard vs Express:**
 
-| Tiêu chí                | `Standard`                                   | `Express`                                       |
-| ------------------------- | ---------------------------------------------- | ------------------------------------------------- |
-| Thời gian chạy tối đa | tới **1 năm**                           | tới **5 phút** *(gọi Sync từ Console timeout 60s, muốn đủ 5p dùng SDK/CLI)* |
-| Ngữ nghĩa               | **exactly-once**                         | **Asynchronous:** at-least-once · **Synchronous (`StartSyncExecution`):** at-most-once |
-| Lịch sử thực thi        | Lưu tới **90 ngày** trong Step Functions (visual audit) | **KHÔNG** lưu trong Step Functions; bắt buộc gửi ra **CloudWatch Logs** |
-| Service Integrations    | Đủ 3 pattern (Request-Response, `.sync`, `.waitForTaskToken`) | **Chỉ** Request-Response; **KHÔNG** hỗ trợ `.sync` và `.waitForTaskToken` |
-| Tính tiền               | theo **state transition**                 | theo số lần chạy + thời lượng + bộ nhớ      |
-| Hợp cho                  | workflow dài, kiểm toán, bước con người | **high-volume**, event ngắn, IoT, API sync |
+| Tiêu chí                | `Standard`                                                       | `Express`                                                                                           |
+| ------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| Thời gian chạy tối đa | tới**1 năm**                                               | tới**5 phút** *(gọi Sync từ Console timeout 60s, muốn đủ 5p dùng SDK/CLI)*            |
+| Ngữ nghĩa               | **exactly-once**                                             | **Asynchronous:** at-least-once · **Synchronous (`StartSyncExecution`):** at-most-once |
+| Lịch sử thực thi       | Lưu tới**90 ngày** trong Step Functions (visual audit)    | **KHÔNG** lưu trong Step Functions; bắt buộc gửi ra **CloudWatch Logs**              |
+| Service Integrations      | Đủ 3 pattern (Request-Response,`.sync`, `.waitForTaskToken`) | **Chỉ** Request-Response; **KHÔNG** hỗ trợ `.sync` và `.waitForTaskToken`        |
+| Tính tiền               | theo**state transition**                                     | theo số lần chạy + thời lượng + bộ nhớ                                                        |
+| Hợp cho                  | workflow dài, kiểm toán, bước con người                     | **high-volume**, event ngắn, IoT, API sync                                                     |
 
 ### 🅱️ Buổi B — Hands-on (~3.5h)
 
@@ -153,13 +153,13 @@
   - `Amazon MemoryDB for Redis/Valkey`: là **Primary In-Memory Database**, độ bền cao nhờ **Multi-AZ Transactional Log** (đáp ứng bài toán cần đọc/ghi microsecond + bền vững tuyệt đối).
 - **`Redis` vs `Memcached`:**
 
-|                           | `Redis` *(hoặc `Valkey`)*                              | `Memcached`                            |
-| ------------------------- | -------------------------------------------------------- | ---------------------------------------- |
-| Persistence               | ✅ (snapshot RDB / AOF)                                  | ❌                                       |
-| Replication + HA/failover | ✅ (Multi-AZ, Read Replicas)                            | ❌                                       |
-| Kiểu dữ liệu              | phong phú (sorted set, list, hash…), pub/sub             | key-value đơn giản                    |
-| Đa luồng (multi-thread)   | ❌ Command execution đơn luồng (đảm bảo atomic); I/O đa luồng | ✅ Thuần kiến trúc đa luồng          |
-| Chọn khi                  | cần HA, cấu trúc dữ liệu, leaderboard, session bền       | cache thuần tuý, scale ngang CPU nhiều core |
+|                           | `Redis` *(hoặc `Valkey`)*                                      | `Memcached`                                  |
+| ------------------------- | --------------------------------------------------------------------- | ---------------------------------------------- |
+| Persistence               | ✅ (snapshot RDB / AOF)                                               | ❌                                             |
+| Replication + HA/failover | ✅ (Multi-AZ, Read Replicas)                                          | ❌                                             |
+| Kiểu dữ liệu           | phong phú (sorted set, list, hash…), pub/sub                        | key-value đơn giản                          |
+| Đa luồng (multi-thread) | ❌ Command execution đơn luồng (đảm bảo atomic); I/O đa luồng | ✅ Thuần kiến trúc đa luồng               |
+| Chọn khi                 | cần HA, cấu trúc dữ liệu, leaderboard, session bền              | cache thuần tuý, scale ngang CPU nhiều core |
 
 - **Caching strategy:**
   - **Lazy loading (cache-aside):** đọc cache trước; **miss** → query DB → ghi vào cache. Ưu: chỉ cache dữ liệu thật sự được dùng. Nhược: lần miss đầu chậm; dữ liệu có thể **stale**.
@@ -189,26 +189,26 @@
 
 ## 🧠 PHẢI NHỚ tuần này
 
-| Fact                            | Con số / Ghi nhớ                                                                                                                                                                                                     |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SQS` message tối đa            | **1 MiB** (1.048.576 bytes) mới nhất (đề thi cũ hay lấy mốc **256 KB**); vượt hạn mức → SDK Extended Client + `S3`, tới **2 GB** (không hỗ trợ qua CLI/Console)                                                      |
-| Visibility timeout              | mặc định **30 giây**, tối đa **12 giờ**                                                                                                                                                                                |
-| Message retention               | mặc định **4 ngày**, cấu hình từ ~**60 giây → 14 ngày**                                                                                                                                                               |
-| Long polling `WaitTimeSeconds`  | tối đa **20 giây**                                                                                                                                                                                                    |
-| Delay queue                     | tối đa **15 phút**                                                                                                                                                                                                    |
-| `SQS FIFO` throughput           | Cơ bản: **300 msg/s** (tới **3.000 msg/s** khi batching); Bật **high throughput mode** → lên tới **70.000 TPS / 700.000 msg/s** (region chính), scale qua nhiều message group; dedup window **5 phút**              |
-| `SQS` Standard                  | at-least-once, thứ tự best-effort, throughput ~không giới hạn; hỗ trợ Fair Queues qua `MessageGroupId`                                                                                                                |
-| `SQS` DLQ Redrive               | Redrive trực tiếp từ DLQ về source queue qua Console hoặc API `StartMessageMoveTask`                                                                                                                                  |
-| `SNS` message                   | tối đa **256 KB** (luồng fan-out `SNS` → `SQS` bị giới hạn bởi SNS); hỗ trợ **filter policy** (scope: `MessageAttributes` hoặc `MessageBody`) + **FIFO topic**                                                         |
-| `Kinesis` shard (ghi)           | **1 MB/s HOẶC 1000 records/s**; đọc **2 MB/s**; record ≤ **1 MB**                                                                                                                                                     |
-| `Kinesis` retention             | mặc định **24 giờ**, tối đa **365 ngày** → **replay** được                                                                                                                                                            |
-| `Kinesis` enhanced fan-out      | **2 MB/s riêng** mỗi consumer/shard qua HTTP/2 push                                                                                                                                                                   |
-| `Kinesis` throttle              | `ProvisionedThroughputExceededException` (xử lý: backoff/retry, phân bổ partition key đều, resharding split/merge)                                                                                                    |
-| `Kinesis` capacity mode         | `on-demand` (AWS tự quản shard, trả theo throughput) vs `provisioned` (tự quản số shard)                                                                                                                              |
-| `Amazon Data Firehose`          | Near-real-time, KHÔNG replay, tự load vào S3/Redshift/OpenSearch/Splunk/Snowflake/Iceberg; transform qua Lambda                                                                                                       |
-| `Step Functions` Standard       | tới **1 năm**, **exactly-once**, tính theo state transition, lưu history 90 ngày, hỗ trợ `.sync`, `.waitForTaskToken`, Distributed Map                                                                                |
-| `Step Functions` Express        | tới **5 phút**, **Async: at-least-once**, **Sync: at-most-once**; KHÔNG lưu history trong SFN (phải dùng CloudWatch Logs); chỉ hỗ trợ Request-Response                                                                |
-| `RDS Proxy`                     | Connection pooling cho Lambda, **bắt buộc trong VPC (không public)**, hỗ trợ Reader endpoints, IAM & Secrets Manager auth                                                                                             |
+| Fact                            | Con số / Ghi nhớ                                                                                                                                                                                                                            |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SQS` message tối đa        | **1 MiB** (1.048.576 bytes) mới nhất (đề thi cũ hay lấy mốc **256 KB**); vượt hạn mức → SDK Extended Client + `S3`, tới **2 GB** (không hỗ trợ qua CLI/Console)                                           |
+| Visibility timeout              | mặc định**30 giây**, tối đa **12 giờ**                                                                                                                                                                                     |
+| Message retention               | mặc định**4 ngày**, cấu hình từ ~**60 giây → 14 ngày**                                                                                                                                                                  |
+| Long polling`WaitTimeSeconds` | tối đa**20 giây**                                                                                                                                                                                                                    |
+| Delay queue                     | tối đa**15 phút**                                                                                                                                                                                                                    |
+| `SQS FIFO` throughput         | Cơ bản:**300 msg/s** (tới **3.000 msg/s** khi batching); Bật **high throughput mode** → lên tới **70.000 TPS / 700.000 msg/s** (region chính), scale qua nhiều message group; dedup window **5 phút** |
+| `SQS` Standard                | at-least-once, thứ tự best-effort, throughput ~không giới hạn; hỗ trợ Fair Queues qua`MessageGroupId`                                                                                                                                |
+| `SQS` DLQ Redrive             | Redrive trực tiếp từ DLQ về source queue qua Console hoặc API`StartMessageMoveTask`                                                                                                                                                    |
+| `SNS` message                 | tối đa**256 KB** (luồng fan-out `SNS` → `SQS` bị giới hạn bởi SNS); hỗ trợ **filter policy** (scope: `MessageAttributes` hoặc `MessageBody`) + **FIFO topic**                                            |
+| `Kinesis` shard (ghi)         | **1 MB/s HOẶC 1000 records/s**; đọc **2 MB/s**; record ≤ **1 MB**                                                                                                                                                       |
+| `Kinesis` retention           | mặc định**24 giờ**, tối đa **365 ngày** → **replay** được                                                                                                                                                        |
+| `Kinesis` enhanced fan-out    | **2 MB/s riêng** mỗi consumer/shard qua HTTP/2 push                                                                                                                                                                                   |
+| `Kinesis` throttle            | `ProvisionedThroughputExceededException` (xử lý: backoff/retry, phân bổ partition key đều, resharding split/merge)                                                                                                                    |
+| `Kinesis` capacity mode       | `on-demand` (AWS tự quản shard, trả theo throughput) vs `provisioned` (tự quản số shard)                                                                                                                                            |
+| `Amazon Data Firehose`        | Near-real-time, KHÔNG replay, tự load vào S3/Redshift/OpenSearch/Splunk/Snowflake/Iceberg; transform qua Lambda                                                                                                                            |
+| `Step Functions` Standard     | tới**1 năm**, **exactly-once**, tính theo state transition, lưu history 90 ngày, hỗ trợ `.sync`, `.waitForTaskToken`, Distributed Map                                                                                  |
+| `Step Functions` Express      | tới**5 phút**, **Async: at-least-once**, **Sync: at-most-once**; KHÔNG lưu history trong SFN (phải dùng CloudWatch Logs); chỉ hỗ trợ Request-Response                                                              |
+| `RDS Proxy`                   | Connection pooling cho Lambda,**bắt buộc trong VPC (không public)**, hỗ trợ Reader endpoints, IAM & Secrets Manager auth                                                                                                           |
 
 ## ⚠️ Bẫy đề hay gặp
 
@@ -227,27 +227,27 @@
 
 ## 🔁 Phản xạ nhanh (keyword → đáp án)
 
-| Thấy từ khoá                                         | Bật ngay                                                                |
-| ------------------------------------------------------- | ------------------------------------------------------------------------ |
-| decouple đơn giản, 1 nhóm consumer, job queue          | **`SQS` (Standard)**                                                    |
-| đúng thứ tự + không trùng                               | **`SQS FIFO`** (`MessageGroupId` + `MessageDeduplicationId`)            |
-| poison message / message lỗi lặp lại                    | **DLQ + `maxReceiveCount`**                                             |
-| đẩy lại message từ DLQ về queue chính sau khi fix bug   | **SQS DLQ Redrive (`StartMessageMoveTask`)**                            |
-| message SQS vượt quá hạn mức (hoặc đề cho > 256 KB)     | **`SQS` Extended Client Library + `S3`** (tới 2 GB)                     |
-| broadcast / fan-out 1 → N                               | **`SNS`** (hoặc `SNS`→nhiều `SQS`)                                      |
-| chỉ nhận message khớp thuộc tính                        | **`SNS` filter policy (scope: `MessageAttributes`)**                    |
-| chỉ nhận message khớp nội dung JSON payload             | **`SNS` filter policy (scope: `MessageBody`)**                          |
-| real-time, ordered, nhiều consumer, **replay**          | **`Kinesis Data Streams`**                                              |
-| "no shard/capacity management"                          | **Kinesis on-demand**                                                   |
-| throughput riêng cho từng consumer qua HTTP/2 push      | **enhanced fan-out**                                                    |
-| tự nạp stream vào `S3`/`Redshift`/`OpenSearch`          | **`Amazon Data Firehose`** *(tên cũ `Kinesis Firehose`)*                 |
-| điều phối workflow nhiều bước, `Retry`/`Catch`          | **`Step Functions`**                                                    |
-| workflow high-volume, ngắn (<5 phút), audit qua CW Logs | **`Step Functions` Express**                                            |
-| gọi sync workflow từ API Gateway trả kết quả ngay       | **`Step Functions` Synchronous Express (`StartSyncExecution`)**         |
-| cache leaderboard / HA / pub-sub / session bền          | **`ElastiCache` for `Redis` / `Valkey`**                                |
-| cache đơn giản, đa luồng, scale ngang                   | **`ElastiCache` for `Memcached`**                                       |
-| in-memory database tốc độ cao + bền vững Multi-AZ log   | **`Amazon MemoryDB`** (Primary DB, khác ElastiCache là cache)           |
-| `Lambda` mở quá nhiều connection tới RDS (trong VPC)    | **`RDS Proxy`**                                                         |
+| Thấy từ khoá                                             | Bật ngay                                                                 |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------- |
+| decouple đơn giản, 1 nhóm consumer, job queue           | **`SQS` (Standard)**                                              |
+| đúng thứ tự + không trùng                             | **`SQS FIFO`** (`MessageGroupId` + `MessageDeduplicationId`)  |
+| poison message / message lỗi lặp lại                     | **DLQ + `maxReceiveCount`**                                       |
+| đẩy lại message từ DLQ về queue chính sau khi fix bug | **SQS DLQ Redrive (`StartMessageMoveTask`)**                      |
+| message SQS vượt quá hạn mức (hoặc đề cho > 256 KB) | **`SQS` Extended Client Library + `S3`** (tới 2 GB)            |
+| broadcast / fan-out 1 → N                                  | **`SNS`** (hoặc `SNS`→nhiều `SQS`)                         |
+| chỉ nhận message khớp thuộc tính                       | **`SNS` filter policy (scope: `MessageAttributes`)**            |
+| chỉ nhận message khớp nội dung JSON payload             | **`SNS` filter policy (scope: `MessageBody`)**                  |
+| real-time, ordered, nhiều consumer,**replay**        | **`Kinesis Data Streams`**                                        |
+| "no shard/capacity management"                              | **Kinesis on-demand**                                               |
+| throughput riêng cho từng consumer qua HTTP/2 push        | **enhanced fan-out**                                                |
+| tự nạp stream vào`S3`/`Redshift`/`OpenSearch`      | **`Amazon Data Firehose`** *(tên cũ `Kinesis Firehose`)*    |
+| điều phối workflow nhiều bước,`Retry`/`Catch`     | **`Step Functions`**                                              |
+| workflow high-volume, ngắn (<5 phút), audit qua CW Logs   | **`Step Functions` Express**                                      |
+| gọi sync workflow từ API Gateway trả kết quả ngay      | **`Step Functions` Synchronous Express (`StartSyncExecution`)** |
+| cache leaderboard / HA / pub-sub / session bền             | **`ElastiCache` for `Redis` / `Valkey`**                      |
+| cache đơn giản, đa luồng, scale ngang                  | **`ElastiCache` for `Memcached`**                               |
+| in-memory database tốc độ cao + bền vững Multi-AZ log  | **`Amazon MemoryDB`** (Primary DB, khác ElastiCache là cache)   |
+| `Lambda` mở quá nhiều connection tới RDS (trong VPC)  | **`RDS Proxy`**                                                   |
 
 ## 🧪 Lab checklist
 

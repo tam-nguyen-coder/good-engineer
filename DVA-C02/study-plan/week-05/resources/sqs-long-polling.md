@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - **Short polling (mặc định):** query **một tập con** server → trả về **ngay lập tức** kể cả khi không có message → nhiều **empty response** hơn, tốn request/chi phí hơn.
 - **Long polling:** query **TẤT CẢ** server, **chờ** tới khi có ít nhất 1 message rồi mới trả về → **giảm empty response** và **giảm chi phí**. Đây là câu trả lời kinh điển cho "làm sao giảm chi phí/empty response khi poll SQS".
 - Số PHẢI NHỚ: **long polling wait time tối đa = 20 giây** (`WaitTimeSeconds`).

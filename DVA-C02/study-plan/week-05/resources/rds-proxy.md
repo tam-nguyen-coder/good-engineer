@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - **`RDS Proxy` = connection pooling**: gom và chia sẻ (tái dùng) connection tới DB → xử lý được các đợt tăng đột biến traffic (đặc biệt do **`Lambda` scale = "connection storm"**), tránh oversubscribe DB.
 - Tăng **độ bền khi failover**: tự kết nối sang **standby DB instance** trong khi **giữ nguyên** connection của ứng dụng → giảm downtime.
 - **Bảo mật:** client kết nối proxy **bắt buộc IAM authentication** (nếu bật); proxy kết nối DB bằng **IAM database auth** hoặc credential trong **`AWS Secrets Manager`**.
@@ -52,6 +53,7 @@ Feature availability and support varies across specific versions of each databas
 - Your proxy automatically creates the protected **`rdsproxyadmin` DB user** when you register a proxy target. Deleting or modifying it can make the proxy completely unavailable.
 
 #### Engine-specific highlights
+
 - **MySQL / MariaDB:** proxies listen on port **3306**; can't use with self-managed DBs on EC2; can't use if `read_only` parameter = `1`; no compressed mode; don't set `sql_auto_is_null` to true.
 - **PostgreSQL:** proxies listen on port **5432**; the default `postgres` database must exist; no session pinning filters; no streaming replication mode; supports only version 3.0 of the PostgreSQL messaging protocol.
 - **SQL Server:** number of Secrets Manager secrets depends on collation; no Active Directory connections; does not support SQL Server 2022 or 2014 major versions; no end-to-end IAM authentication.

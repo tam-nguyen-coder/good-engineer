@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - `SQS` có **2 loại queue**: `Standard` và `FIFO`. Chọn theo yêu cầu về **throughput** hay **thứ tự**.
 - `Standard`: **throughput gần như không giới hạn**, **at-least-once delivery** (message có thể bị **trùng**), **best-effort ordering** (không đảm bảo đúng thứ tự) → code phải **idempotent**.
 - `FIFO`: **exactly-once processing** (không trùng) + **first-in-first-out** (giữ đúng thứ tự **trong mỗi message group**).
