@@ -19,6 +19,7 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
 ```
 
 > 🧠 **Bản đồ tích hợp `Lambda`** (BẮT BUỘC nhớ, hay bị nhầm):
+>
 > - `SNS` → `Lambda`: **async push** (subscribe + `add-permission` principal `sns.amazonaws.com`).
 > - `Kinesis`/`SQS`/`DynamoDB Streams` → `Lambda`: **event source mapping** (Lambda **POLL**), không phải push.
 > - `S3` → `Lambda`: async qua bucket notification. `API Gateway` → `Lambda`: sync.
@@ -26,8 +27,10 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
 ---
 
 ## Lab 5.1 — Fan-out `SNS` → nhiều `SQS` ⭐
+
 **🎯 Mục tiêu:** Publish **1** message lên `SNS` topic và thấy **2** queue `SQS` cùng nhận được bản sao — mô hình fan-out kinh điển của đề.
 **🧩 Luyện kỹ năng (liên quan đề):**
+
 - Decouple + broadcast 1→N (task statement: "nhiều hệ thống xử lý độc lập cùng 1 event").
 - Bẫy #1 của tuần: publish thành công nhưng queue **không nhận** vì thiếu **queue access policy** cho `SNS`.
 - `RawMessageDelivery=true` để `SQS` nhận đúng body gốc.
@@ -35,7 +38,9 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
 **⏱️ ~25 phút** · **Yêu cầu trước:** đã làm phần Chuẩn bị chung.
 
 ### Các bước
+
 1. Tạo 2 queue và lấy URL + ARN của chúng.
+
    ```bash
    ANALYTICS_URL=$(aws sqs create-queue --queue-name orders-analytics --query QueueUrl --output text)
    BILLING_URL=$(aws sqs create-queue --queue-name orders-billing --query QueueUrl --output text)
@@ -45,13 +50,13 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
    BILLING_ARN=$(aws sqs get-queue-attributes --queue-url "$BILLING_URL" \
      --attribute-names QueueArn --query Attributes.QueueArn --output text)
    ```
-
 2. Tạo topic.
+
    ```bash
    TOPIC_ARN=$(aws sns create-topic --name new-orders --query TopicArn --output text)
    ```
-
 3. **Cấp queue policy** cho phép `SNS` gọi `sqs:SendMessage` (điều kiện `aws:SourceArn` = ARN topic). Thiếu bước này → fan-out "im lặng" thất bại.
+
    ```bash
    cat > sqs-policy.json <<EOF
    {
@@ -65,21 +70,22 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
    aws sqs set-queue-attributes --queue-url "$ANALYTICS_URL" --attributes file://policy-analytics.json
    aws sqs set-queue-attributes --queue-url "$BILLING_URL"   --attributes file://policy-billing.json
    ```
-
 4. Subscribe từng queue vào topic (`--protocol sqs`, bật raw delivery).
+
    ```bash
    aws sns subscribe --topic-arn "$TOPIC_ARN" --protocol sqs \
      --notification-endpoint "$ANALYTICS_ARN" --attributes RawMessageDelivery=true
    aws sns subscribe --topic-arn "$TOPIC_ARN" --protocol sqs \
      --notification-endpoint "$BILLING_ARN"   --attributes RawMessageDelivery=true
    ```
-
 5. Publish **1** message.
+
    ```bash
    aws sns publish --topic-arn "$TOPIC_ARN" --message '{"orderId":"1001","total":250}'
    ```
 
 ### ✅ Kiểm chứng
+
 - Đọc **cả hai** queue → mỗi queue đều có 1 bản sao của message. Đó chính là fan-out.
   ```bash
   aws sqs receive-message --queue-url "$ANALYTICS_URL" --max-number-of-messages 1 --wait-time-seconds 5
@@ -88,6 +94,7 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
 - (Tùy chọn) Thêm **filter policy** trên 1 subscription rồi publish với `--message-attributes` để thấy chỉ subscriber khớp mới nhận.
 
 ### 🧹 Dọn dẹp (tránh tính phí)
+
 ```bash
 aws sns delete-topic --topic-arn "$TOPIC_ARN"
 aws sqs delete-queue --queue-url "$ANALYTICS_URL"
@@ -96,6 +103,7 @@ rm -f sqs-policy.json policy-analytics.json policy-billing.json
 ```
 
 ### 🧠 Ý nghĩa với đề thi
+
 - "Nhiều consumer cần **cùng** dữ liệu, xử lý độc lập" → **fan-out `SNS` → nhiều `SQS`**, KHÔNG phải 1 `SQS` (mỗi message của `SQS` chỉ 1 consumer xử lý).
 - Queue phải có **resource policy** cho phép `SNS` gửi vào — điểm hay bị bỏ sót trong câu hỏi troubleshooting.
 - `RawMessageDelivery` quyết định body thô vs bọc JSON của `SNS`.
@@ -103,8 +111,10 @@ rm -f sqs-policy.json policy-analytics.json policy-billing.json
 ---
 
 ## Lab 5.2 — `SNS` → `Lambda` (async push) ⭐
+
 **🎯 Mục tiêu:** Đăng ký một `Lambda` function làm subscriber của `SNS` topic; publish message → `SNS` **đẩy** (push) invoke function bất đồng bộ.
 **🧩 Luyện kỹ năng (liên quan đề):**
+
 - Phân biệt **push** (`SNS`→`Lambda`) vs **poll/event source mapping** (`SQS`/`Kinesis`→`Lambda`).
 - Resource-based policy: `lambda add-permission` với principal `sns.amazonaws.com`.
 - Cấu trúc event `Records[].Sns.Message`.
@@ -112,7 +122,9 @@ rm -f sqs-policy.json policy-analytics.json policy-billing.json
 **⏱️ ~25 phút** · **Yêu cầu trước:** Chuẩn bị chung.
 
 ### Các bước
+
 1. Tạo execution role cho `Lambda` (ghi CloudWatch Logs).
+
    ```bash
    cat > trust-lambda.json <<'EOF'
    { "Version": "2012-10-17",
@@ -127,8 +139,8 @@ rm -f sqs-policy.json policy-analytics.json policy-billing.json
      --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
    ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/lab5-lambda-basic-role"
    ```
-
 2. Viết handler ghi log nội dung message.
+
    ```javascript
    // index.mjs
    export const handler = async (event) => {
@@ -139,8 +151,8 @@ rm -f sqs-policy.json policy-analytics.json policy-billing.json
      return { status: "ok" };
    };
    ```
-
 3. Đóng gói + tạo function. (Runtime `nodejs24.x` đã bundle sẵn AWS SDK v3 — handler này không import gì nên chỉ cần zip `index.mjs`, KHÔNG cần `npm install`.)
+
    ```bash
    zip function.zip index.mjs
    aws lambda create-function --function-name sns-consumer \
@@ -150,16 +162,16 @@ rm -f sqs-policy.json policy-analytics.json policy-billing.json
    FUNCTION_ARN=$(aws lambda get-function --function-name sns-consumer \
      --query Configuration.FunctionArn --output text)
    ```
-
 4. Tạo topic + **cấp quyền cho `SNS`** gọi function (resource-based policy).
+
    ```bash
    TOPIC_ARN=$(aws sns create-topic --name order-events --query TopicArn --output text)
    aws lambda add-permission --function-name sns-consumer \
      --statement-id sns-invoke --action lambda:InvokeFunction \
      --principal sns.amazonaws.com --source-arn "$TOPIC_ARN"
    ```
-
 5. Subscribe function vào topic (`--protocol lambda`) rồi publish.
+
    ```bash
    aws sns subscribe --topic-arn "$TOPIC_ARN" --protocol lambda \
      --notification-endpoint "$FUNCTION_ARN"
@@ -168,6 +180,7 @@ rm -f sqs-policy.json policy-analytics.json policy-billing.json
    ```
 
 ### ✅ Kiểm chứng
+
 - Xem log CloudWatch của function thấy dòng `[SNS] ... message={"orderId":"2002"}`.
   ```bash
   aws logs tail /aws/lambda/sns-consumer --since 5m --follow
@@ -175,6 +188,7 @@ rm -f sqs-policy.json policy-analytics.json policy-billing.json
 - Nếu **không** thấy invoke: kiểm tra đã chạy `add-permission` với đúng `--source-arn` chưa (lỗi hay gặp nhất).
 
 ### 🧹 Dọn dẹp
+
 ```bash
 aws sns delete-topic --topic-arn "$TOPIC_ARN"
 aws lambda delete-function --function-name sns-consumer
@@ -185,6 +199,7 @@ rm -f index.mjs function.zip trust-lambda.json
 ```
 
 ### 🧠 Ý nghĩa với đề thi
+
 - `SNS`→`Lambda` là **asynchronous push**: `SNS` gọi thẳng function, không cần event source mapping.
 - Async invoke: `Lambda` tự **retry 2 lần** nếu function lỗi → cân nhắc **DLQ / destinations** cho function.
 - Thiếu `add-permission` cho principal `sns.amazonaws.com` = subscribe "confirmed" nhưng không bao giờ invoke.
@@ -192,8 +207,10 @@ rm -f index.mjs function.zip trust-lambda.json
 ---
 
 ## Lab 5.3 — `SQS` DLQ + `maxReceiveCount` + redrive
+
 **🎯 Mục tiêu:** Cấu hình Dead-Letter Queue, ép 1 "poison message" rơi vào DLQ sau khi vượt `maxReceiveCount`, rồi **redrive** message từ DLQ về queue gốc.
 **🧩 Luyện kỹ năng (liên quan đề):**
+
 - `RedrivePolicy` (`deadLetterTargetArn` + `maxReceiveCount`) — poison message pattern.
 - `ApproximateReceiveCount` tăng mỗi lần nhận mà không xóa.
 - Redrive bằng `start-message-move-task`.
@@ -201,14 +218,16 @@ rm -f index.mjs function.zip trust-lambda.json
 **⏱️ ~20 phút** · **Yêu cầu trước:** Chuẩn bị chung.
 
 ### Các bước
+
 1. Tạo DLQ và lấy ARN.
+
    ```bash
    DLQ_URL=$(aws sqs create-queue --queue-name payments-dlq --query QueueUrl --output text)
    DLQ_ARN=$(aws sqs get-queue-attributes --queue-url "$DLQ_URL" \
      --attribute-names QueueArn --query Attributes.QueueArn --output text)
    ```
-
 2. Tạo queue chính `payments` gắn `RedrivePolicy` (`maxReceiveCount`=3) + visibility ngắn để test nhanh.
+
    ```bash
    cat > redrive.json <<EOF
    {
@@ -219,13 +238,13 @@ rm -f index.mjs function.zip trust-lambda.json
    MAIN_URL=$(aws sqs create-queue --queue-name payments \
      --attributes file://redrive.json --query QueueUrl --output text)
    ```
-
 3. Gửi 1 message "lỗi".
+
    ```bash
    aws sqs send-message --queue-url "$MAIN_URL" --message-body '{"paymentId":"bad-001"}'
    ```
-
 4. Giả lập xử lý thất bại: nhận message nhiều lần nhưng **KHÔNG delete** (đặt visibility=0 để nó xuất hiện lại ngay). Sau 3 lần nhận, lần nhận thứ 4 → message chuyển sang DLQ.
+
    ```bash
    for i in 1 2 3 4 5; do
      echo "--- attempt $i ---"
@@ -242,6 +261,7 @@ rm -f index.mjs function.zip trust-lambda.json
    ```
 
 ### ✅ Kiểm chứng
+
 - Đọc DLQ → thấy message `bad-001` đã rơi vào đây.
   ```bash
   aws sqs receive-message --queue-url "$DLQ_URL" --wait-time-seconds 5
@@ -254,6 +274,7 @@ rm -f index.mjs function.zip trust-lambda.json
   ```
 
 ### 🧹 Dọn dẹp
+
 ```bash
 aws sqs delete-queue --queue-url "$MAIN_URL"
 aws sqs delete-queue --queue-url "$DLQ_URL"
@@ -261,6 +282,7 @@ rm -f redrive.json
 ```
 
 ### 🧠 Ý nghĩa với đề thi
+
 - Message vào DLQ **khi số lần receive vượt `maxReceiveCount` mà chưa bị xóa** (không phải hết retention).
 - DLQ đặt trên **queue** (kể cả khi nguồn là event source mapping `SQS`→`Lambda`).
 - `start-message-move-task` = cách CLI/console redrive hàng loạt sau khi vá lỗi consumer.
@@ -268,8 +290,10 @@ rm -f redrive.json
 ---
 
 ## Lab 5.4 — `Kinesis Data Streams` → `Lambda` (event source mapping) ⭐
+
 **🎯 Mục tiêu:** Tạo stream 2 shard, gắn `Lambda` bằng **event source mapping** (`--starting-position LATEST`), `put-records` và quan sát `Lambda` được invoke theo **batch, tách theo shard**.
 **🧩 Luyện kỹ năng (liên quan đề):**
+
 - `Kinesis`→`Lambda` là **poll/event source mapping**, batch theo shard (khác `SNS` push).
 - Vai trò `partition key` quyết định record vào shard nào (ordering trong shard).
 - `LATEST` chỉ xử lý record ghi **sau** khi mapping active.
@@ -277,15 +301,17 @@ rm -f redrive.json
 **⏱️ ~30 phút** · **Yêu cầu trước:** đã có execution role như Lab 5.2 (ở đây dùng role riêng có quyền đọc Kinesis).
 
 ### Các bước
+
 1. Tạo stream 2 shard (thấy rõ batch tách theo shard) và chờ ACTIVE.
+
    ```bash
    aws kinesis create-stream --stream-name lab-stream --shard-count 2
    aws kinesis wait stream-exists --stream-name lab-stream
    STREAM_ARN=$(aws kinesis describe-stream-summary --stream-name lab-stream \
      --query StreamDescriptionSummary.StreamARN --output text)
    ```
-
 2. Tạo role cho `Lambda` với quyền đọc `Kinesis` (managed policy `AWSLambdaKinesisExecutionRole` gồm cả basic logs + GetRecords/GetShardIterator/DescribeStream/ListStreams).
+
    ```bash
    cat > trust-lambda.json <<'EOF'
    { "Version":"2012-10-17","Statement":[{"Effect":"Allow",
@@ -297,8 +323,8 @@ rm -f redrive.json
      --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaKinesisExecutionRole
    ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/lab5-lambda-kinesis-role"
    ```
-
 3. Handler giải mã record + in shard/partition key. (`kinesis.data` là base64 → dùng `Buffer.from(..., "base64")`.)
+
    ```javascript
    // index.mjs
    export const handler = async (event) => {
@@ -310,8 +336,8 @@ rm -f redrive.json
      return { status: "ok" };
    };
    ```
-
 4. Tạo function rồi gắn **event source mapping**.
+
    ```bash
    zip function.zip index.mjs
    aws lambda create-function --function-name kinesis-consumer \
@@ -325,8 +351,8 @@ rm -f redrive.json
      --starting-position LATEST \
      --batch-size 100 --maximum-batching-window-in-seconds 5
    ```
-
 5. Đợi mapping `State=Enabled` (~1 phút) rồi `put-records` với partition key khác nhau để phân bổ nhiều shard.
+
    ```bash
    aws lambda list-event-source-mappings --function-name kinesis-consumer \
      --query 'EventSourceMappings[0].State'
@@ -340,6 +366,7 @@ rm -f redrive.json
    ```
 
 ### ✅ Kiểm chứng
+
 - Xem log thấy `Lambda` được invoke, mỗi invoke là 1 batch của **một shard** (record cùng partition key nằm cùng shard, giữ thứ tự).
   ```bash
   aws logs tail /aws/lambda/kinesis-consumer --since 5m --follow
@@ -347,6 +374,7 @@ rm -f redrive.json
 - Vì dùng `LATEST`: record ghi **trước** khi mapping enabled sẽ KHÔNG được xử lý (đổi `TRIM_HORIZON` nếu muốn đọc từ đầu).
 
 ### 🧹 Dọn dẹp
+
 ```bash
 UUID=$(aws lambda list-event-source-mappings --function-name kinesis-consumer \
   --query 'EventSourceMappings[0].UUID' --output text)
@@ -360,6 +388,7 @@ rm -f index.mjs function.zip trust-lambda.json
 ```
 
 ### 🧠 Ý nghĩa với đề thi
+
 - `Kinesis`→`Lambda` = **event source mapping (poll)**, batch **theo shard**, có thể **replay** (retention 24h–365 ngày) — khác hẳn `SQS`/`SNS`.
 - `partition key` → chọn shard → giữ thứ tự trong shard; scale = tăng shard (1 MB/s hoặc 1000 rec/s ghi mỗi shard).
 - `LATEST` vs `TRIM_HORIZON`: một bẫy hay hỏi khi "không thấy record nào được xử lý".
@@ -367,8 +396,10 @@ rm -f index.mjs function.zip trust-lambda.json
 ---
 
 ## Lab 5.5 — `Step Functions` state machine (`Choice` + `Retry` + `Catch`)
+
 **🎯 Mục tiêu:** Dựng state machine `Standard` (ASL) điều phối **2** `Lambda`: `Choice` rẽ nhánh theo số tiền, nhánh charge có `Retry` + `Catch`; chạy execution và xem đồ thị.
 **🧩 Luyện kỹ năng (liên quan đề):**
+
 - ASL states: `Choice`, `Task`, `Retry` (backoff), `Catch`, `Fail`.
 - Đưa retry/error-handling ra **workflow** thay vì nhồi vào code Lambda.
 - IAM role cho `Step Functions` gọi `lambda:InvokeFunction`.
@@ -376,7 +407,9 @@ rm -f index.mjs function.zip trust-lambda.json
 **⏱️ ~35 phút** · **Yêu cầu trước:** biết tạo `Lambda` + role (Lab 5.2).
 
 ### Các bước
+
 1. Tạo role cơ bản + 2 function. `charge-card` sẽ ném lỗi khi input có `"fail": true` (để demo `Retry`/`Catch`).
+
    ```bash
    cat > trust-lambda.json <<'EOF'
    { "Version":"2012-10-17","Statement":[{"Effect":"Allow",
@@ -388,6 +421,7 @@ rm -f index.mjs function.zip trust-lambda.json
      --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
    LAMBDA_ROLE="arn:aws:iam::${ACCOUNT_ID}:role/lab5-sfn-lambda-role"
    ```
+
    ```javascript
    // charge.mjs — nhận JSON event, return JSON (Step Functions Task)
    export const handler = async (event) => {
@@ -397,12 +431,14 @@ rm -f index.mjs function.zip trust-lambda.json
      return { charged: true, amount: event.amount };
    };
    ```
+
    ```javascript
    // review.mjs — nhận JSON event, return JSON (Step Functions Task)
    export const handler = async (event) => {
      return { review: "queued", amount: event.amount };
    };
    ```
+
    ```bash
    zip charge.zip charge.mjs && zip review.zip review.mjs
    aws lambda create-function --function-name charge-card --runtime nodejs24.x \
@@ -414,8 +450,8 @@ rm -f index.mjs function.zip trust-lambda.json
    CHARGE_ARN=$(aws lambda get-function --function-name charge-card   --query Configuration.FunctionArn --output text)
    REVIEW_ARN=$(aws lambda get-function --function-name manual-review --query Configuration.FunctionArn --output text)
    ```
-
 2. Tạo role cho `Step Functions` (được phép invoke 2 Lambda).
+
    ```bash
    cat > trust-sfn.json <<'EOF'
    { "Version":"2012-10-17","Statement":[{"Effect":"Allow",
@@ -427,8 +463,8 @@ rm -f index.mjs function.zip trust-lambda.json
      --policy-document "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":\"lambda:InvokeFunction\",\"Resource\":[\"$CHARGE_ARN\",\"$REVIEW_ARN\"]}]}"
    SFN_ROLE="arn:aws:iam::${ACCOUNT_ID}:role/lab5-sfn-role"
    ```
-
 3. Viết ASL (`Choice` → 2 nhánh `Task`; nhánh charge có `Retry` + `Catch`).
+
    ```json
    {
      "Comment": "Order flow: Choice + Retry + Catch",
@@ -461,7 +497,9 @@ rm -f index.mjs function.zip trust-lambda.json
      }
    }
    ```
+
    Thay ARN thật rồi tạo state machine `Standard`:
+
    ```bash
    # lưu JSON trên vào order-flow.asl.json, rồi:
    sed -e "s#CHARGE_ARN#$CHARGE_ARN#" -e "s#REVIEW_ARN#$REVIEW_ARN#" \
@@ -470,8 +508,8 @@ rm -f index.mjs function.zip trust-lambda.json
      --definition file://order-flow.final.json --role-arn "$SFN_ROLE" \
      --type STANDARD --query stateMachineArn --output text)
    ```
-
 4. Chạy 3 execution để thấy đủ 3 đường đi.
+
    ```bash
    aws stepfunctions start-execution --state-machine-arn "$SM_ARN" --input '{"amount":500}'              # -> ChargeCard (thành công)
    aws stepfunctions start-execution --state-machine-arn "$SM_ARN" --input '{"amount":2000}'             # -> ManualReview
@@ -479,6 +517,7 @@ rm -f index.mjs function.zip trust-lambda.json
    ```
 
 ### ✅ Kiểm chứng
+
 - Liệt kê + mô tả execution để xem trạng thái (`SUCCEEDED` / `FAILED`).
   ```bash
   aws stepfunctions list-executions --state-machine-arn "$SM_ARN" --max-results 5
@@ -488,6 +527,7 @@ rm -f index.mjs function.zip trust-lambda.json
 - Mở **Step Functions console → Executions**: xem **đồ thị** — execution `fail:true` sẽ hiện 3 lần retry ở `ChargeCard` (backoff 2s→4s→8s) rồi nhảy sang `ChargeFailed`.
 
 ### 🧹 Dọn dẹp
+
 ```bash
 aws stepfunctions delete-state-machine --state-machine-arn "$SM_ARN"
 aws lambda delete-function --function-name charge-card
@@ -502,6 +542,7 @@ rm -f charge.mjs review.mjs charge.zip review.zip trust-lambda.json trust-sfn.js
 ```
 
 ### 🧠 Ý nghĩa với đề thi
+
 - `Retry`/`Catch`/`Choice` xử lý lỗi & rẽ nhánh **trong workflow** → giữ code `Lambda` sạch (keyword đề: "orchestrate nhiều bước, retry, chờ").
 - `Standard` = **exactly-once**, tới **1 năm**, tính theo **state transition**; `Express` = tới **5 phút**, high-volume (`Express` **Asynchronous** = **at-least-once**; `Express` **Synchronous** = **at-most-once**).
 - `BackoffRate` × `IntervalSeconds` = độ trễ tăng dần giữa các lần retry.
@@ -509,8 +550,10 @@ rm -f charge.mjs review.mjs charge.zip review.zip trust-lambda.json trust-sfn.js
 ---
 
 ## Lab 5.6 — Caching cho `Lambda`: `ElastiCache` lazy-loading (+ concept `RDS Proxy`)
+
 **🎯 Mục tiêu:** Minh hoạ **lazy loading (cache-aside)** + **TTL** bằng client Redis; hiểu vì sao caching / connection pooling giảm tải DB khi `Lambda` scale.
 **🧩 Luyện kỹ năng (liên quan đề):**
+
 - Lazy loading vs write-through; vai trò TTL chống stale.
 - `Redis` vs `Memcached`; khi nào dùng `RDS Proxy` (connection storm).
 
@@ -519,13 +562,16 @@ rm -f charge.mjs review.mjs charge.zip review.zip trust-lambda.json trust-sfn.js
 > 💸 **LƯU Ý CHI PHÍ:** `ElastiCache` (kể cả Serverless) và `RDS`/`RDS Proxy` **KHÔNG** hoàn toàn Free Tier và nằm **trong VPC** (không nối trực tiếp từ laptop). Để học **pattern** miễn phí, dùng **Option A** (Redis local bằng Docker). Option B/C chỉ làm nếu bạn chấp nhận phát sinh phí và **xóa ngay** sau khi thử.
 
 ### Option A — Lazy loading demo (miễn phí, học pattern) ✅ khuyến nghị
+
 1. Chạy Redis local + khởi tạo project Node (script chạy LOCAL nên phải `npm install` — khác Lambda vốn đã bundle SDK).
+
    ```bash
    docker run -d --name lab-redis -p 6379:6379 redis:7
    npm init -y
    npm install redis
    ```
 2. Cache-aside + TTL bằng `redis` client (node-redis v4, API promise-based).
+
    ```javascript
    // cache_aside.mjs
    import { createClient } from "redis";
@@ -558,14 +604,17 @@ rm -f charge.mjs review.mjs charge.zip review.zip trust-lambda.json trust-sfn.js
 
    await r.quit();
    ```
+
    ```bash
    node cache_aside.mjs
    ```
 
 ### ✅ Kiểm chứng (Option A)
+
 - Lần gọi 1 in `CACHE MISS -> query DB` (chậm ~0.5s); lần gọi 2 in `CACHE HIT` (tức thì). Sau khi key hết TTL → lại MISS. Đó là **lazy loading + TTL**.
 
 ### Option B — `ElastiCache Serverless` thật (tùy chọn, có phí)
+
 ```bash
 # Tạo cache Serverless (Valkey). Xóa ngay sau khi thử!
 aws elasticache create-serverless-cache \
@@ -578,6 +627,7 @@ aws elasticache delete-serverless-cache --serverless-cache-name lab-cache
 ```
 
 ### Option C — `RDS Proxy` (concept, dùng khi có sẵn RDS)
+
 ```bash
 # CHỈ chạy nếu đã có RDS + secret + subnets. KHÔNG Free Tier.
 aws rds create-db-proxy --db-proxy-name lab-proxy \
@@ -592,6 +642,7 @@ aws rds delete-db-proxy --db-proxy-name lab-proxy   # DỌN DẸP
 ```
 
 ### 🧹 Dọn dẹp (Option A)
+
 ```bash
 docker rm -f lab-redis
 rm -f cache_aside.mjs package.json package-lock.json
@@ -599,6 +650,7 @@ rm -rf node_modules
 ```
 
 ### 🧠 Ý nghĩa với đề thi
+
 - **Lazy loading (cache-aside):** miss → query DB → ghi cache; chỉ cache dữ liệu thật sự dùng, nhưng lần miss đầu chậm & có thể stale → dùng **TTL**.
 - **Write-through:** ghi DB thì ghi luôn cache → luôn mới, nhưng tốn bộ nhớ cho dữ liệu ít đọc.
 - `Redis` (HA, persistence, cấu trúc dữ liệu, pub/sub) vs `Memcached` (đơn giản, đa luồng, scale ngang).

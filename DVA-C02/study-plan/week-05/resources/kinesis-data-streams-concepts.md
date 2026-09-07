@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - Kiến trúc: **producers** đẩy dữ liệu vào stream → **consumers** xử lý real-time; kết quả có thể lưu vào `DynamoDB`, `Redshift`, `S3`...
 - **Shard** là đơn vị scale. Số PHẢI NHỚ mỗi shard: **ghi 1 MB/s HOẶC 1.000 records/s**; **đọc 2 MB/s** và **tối đa 5 giao dịch đọc/s**; **data blob ≤ 1 MB**.
 - **Retention period:** mặc định **24 giờ**, tăng tối đa **8.760 giờ = 365 ngày** (`IncreaseStreamRetentionPeriod`), giảm tối thiểu về **24 giờ** → cho phép **replay** dữ liệu (tính phí thêm nếu > 24h).

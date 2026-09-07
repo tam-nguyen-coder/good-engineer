@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - Khi tạo state machine phải chọn **Type**: `Standard` (mặc định) hoặc `Express`. **Type KHÔNG đổi được** sau khi tạo (immutable).
 - **Standard:** chạy tới **1 năm**, **exactly-once**, phù hợp workflow dài/kiểm toán/**non-idempotent** (vd charge payment, start EMR). Tính phí theo **state transition**. Execution history giữ **90 ngày**.
 - **Express:** chạy tối đa **5 phút**, **at-least-once** (async), phù hợp **high-volume / event-processing** (IoT, streaming, mobile backend), nên dùng cho action **idempotent**. Tính phí theo **số lần chạy + thời lượng + bộ nhớ**.
@@ -27,16 +28,16 @@ When you create a state machine, you must choose a **Type** of either *Standard*
 
 ### Comparison of Standard and Express workflow types
 
-| Type / Category | Standard Workflows | Express Workflows (Synchronous and Asynchronous) |
-| --- | --- | --- |
-| **Maximum duration** | One year | Five minutes |
-| **Supported state transition rate** | See quotas related to state throttling | No limit |
-| **Pricing** | Priced by number of **state transitions** (counted each time a step completes) | Priced by number of **executions**, their **duration**, and **memory consumption** |
-| **Execution history** | Listed/described with Step Functions APIs; visually debugged in console; also in CloudWatch Logs if logging enabled | Unlimited execution history within a 5-minute period; inspected in CloudWatch Logs or console **only if logging enabled** |
-| **Execution semantics** | Exactly-once workflow execution | *Asynchronous:* At-least-once · *Synchronous:* At-most-once |
-| **Service integrations** | Supports **all** service integrations and patterns | Supports all service integrations, but **NOT** Job-run (`.sync`) or Callback (`.waitForTaskToken`) patterns |
-| **Distributed Map** | Supported | Not supported |
-| **Activities** | Supported | Not supported |
+| Type / Category                           | Standard Workflows                                                                                                  | Express Workflows (Synchronous and Asynchronous)                                                                               |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Maximum duration**                | One year                                                                                                            | Five minutes                                                                                                                   |
+| **Supported state transition rate** | See quotas related to state throttling                                                                              | No limit                                                                                                                       |
+| **Pricing**                         | Priced by number of**state transitions** (counted each time a step completes)                                 | Priced by number of**executions**, their **duration**, and **memory consumption**                            |
+| **Execution history**               | Listed/described with Step Functions APIs; visually debugged in console; also in CloudWatch Logs if logging enabled | Unlimited execution history within a 5-minute period; inspected in CloudWatch Logs or console**only if logging enabled** |
+| **Execution semantics**             | Exactly-once workflow execution                                                                                     | *Asynchronous:* At-least-once · *Synchronous:* At-most-once                                                               |
+| **Service integrations**            | Supports**all** service integrations and patterns                                                             | Supports all service integrations, but**NOT** Job-run (`.sync`) or Callback (`.waitForTaskToken`) patterns           |
+| **Distributed Map**                 | Supported                                                                                                           | Not supported                                                                                                                  |
+| **Activities**                      | Supported                                                                                                           | Not supported                                                                                                                  |
 
 ### Synchronous and Asynchronous Express Workflows
 
@@ -47,9 +48,9 @@ When you create a state machine, you must choose a **Type** of either *Standard*
 
 ### Execution guarantees
 
-| Standard Workflows | Asynchronous Express Workflows | Synchronous Express Workflows |
-| --- | --- | --- |
-| Exactly-once workflow execution | At-least-once workflow execution | At-most-once workflow execution |
-| Execution state internally **persists** between state transitions | Execution state **doesn't persist** between state transitions | Execution state **doesn't persist** between state transitions |
-| Automatically returns an idempotent response on starting an execution with the same name as a currently-running workflow (new workflow doesn't start; exception thrown once current one completes) | Idempotency **not** automatically managed; starting multiple workflows with the same name results in concurrent executions | Idempotency **not** automatically managed; Step Functions waits and returns the result on completion; workflows don't restart if an exception occurs |
-| Execution history data **removed after 90 days** (can reduce to 30 days via quota request); names reusable after removal | Execution history **not captured** by Step Functions; enable Amazon CloudWatch Logs | Execution history **not captured** by Step Functions; enable Amazon CloudWatch Logs |
+| Standard Workflows                                                                                                                                                                                 | Asynchronous Express Workflows                                                                                                  | Synchronous Express Workflows                                                                                                                             |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Exactly-once workflow execution                                                                                                                                                                    | At-least-once workflow execution                                                                                                | At-most-once workflow execution                                                                                                                           |
+| Execution state internally**persists** between state transitions                                                                                                                             | Execution state**doesn't persist** between state transitions                                                              | Execution state**doesn't persist** between state transitions                                                                                        |
+| Automatically returns an idempotent response on starting an execution with the same name as a currently-running workflow (new workflow doesn't start; exception thrown once current one completes) | Idempotency**not** automatically managed; starting multiple workflows with the same name results in concurrent executions | Idempotency**not** automatically managed; Step Functions waits and returns the result on completion; workflows don't restart if an exception occurs |
+| Execution history data**removed after 90 days** (can reduce to 30 days via quota request); names reusable after removal                                                                      | Execution history**not captured** by Step Functions; enable Amazon CloudWatch Logs                                        | Execution history**not captured** by Step Functions; enable Amazon CloudWatch Logs                                                                  |

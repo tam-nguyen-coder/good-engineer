@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - **Mặc định:** subscriber nhận **MỌI** message publish lên topic. Muốn chỉ nhận **một tập con** → gắn **filter policy** cho subscription.
 - **Filter policy** là một **JSON object** đặt trên subscription; `SNS` so khớp policy với từng message, chỉ gửi message **thỏa điều kiện** → subscriber khỏi tự lọc trong code (giảm code + giảm chi phí xử lý thừa).
 - **Filter policy scope** — 2 chế độ:

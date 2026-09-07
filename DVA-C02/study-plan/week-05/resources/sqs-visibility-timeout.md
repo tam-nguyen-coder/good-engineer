@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - **Visibility timeout** = khoảng thời gian message bị **ẩn** khỏi consumer khác sau khi được nhận, để tránh 2 consumer xử lý cùng 1 message.
 - Số liệu PHẢI NHỚ: **mặc định 30 giây**, **tối đa 12 giờ** (giới hạn 12h tính từ lần nhận đầu tiên — gia hạn KHÔNG reset lại 12h).
 - Xử lý **lâu hơn** visibility timeout → message **tái xuất hiện** và có thể bị xử lý **trùng**. Dùng `ChangeMessageVisibility` để **gia hạn** (heartbeat) hoặc **rút ngắn**.
