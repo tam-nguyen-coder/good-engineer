@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - Một policy JSON gồm các phần tử: `Version`, `Id`, `Statement`, `Sid`, `Effect`, `Principal`, `NotPrincipal`, `Action`, `NotAction`, `Resource`, `NotResource`, `Condition`.
 - **`Effect`** chỉ nhận `Allow` hoặc `Deny`. **`Principal`** CHỈ dùng trong resource-based policy (và trust policy) — thấy `Principal` là resource-based.
 - **Các cặp loại trừ lẫn nhau (mutually exclusive)** — không dùng chung trong một statement: `Action`/`NotAction`, `Principal`/`NotPrincipal`, `Resource`/`NotResource`. Đây là bẫy cú pháp hay hỏi.
@@ -27,6 +28,7 @@ The details of what goes into a policy vary for each service, depending on what 
 When you create or edit a JSON policy, IAM can perform **policy validation** to help you create an effective policy. IAM identifies JSON syntax errors, while **IAM Access Analyzer** provides additional policy checks with recommendations to help you further refine your policies.
 
 **Topics (các phần tử — mỗi phần tử có trang chi tiết riêng):**
+
 + **Version** — bản ngôn ngữ policy; khuyến nghị `"2012-10-17"`.
 + **Id** — mã định danh tùy chọn cho policy.
 + **Statement** — chứa một hoặc nhiều statement (mảng).
