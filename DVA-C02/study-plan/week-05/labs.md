@@ -58,15 +58,33 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
 3. **Cấp queue policy** cho phép `SNS` gọi `sqs:SendMessage` (điều kiện `aws:SourceArn` = ARN topic). Thiếu bước này → fan-out "im lặng" thất bại.
 
    ```bash
+   # Tạo queue policy template chuẩn JSON, rõ ràng và dễ đọc
    cat > sqs-policy.json <<EOF
    {
-     "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"sns.amazonaws.com\"},\"Action\":\"sqs:SendMessage\",\"Resource\":\"QUEUE_ARN\",\"Condition\":{\"ArnEquals\":{\"aws:SourceArn\":\"$TOPIC_ARN\"}}}]}"
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Principal": {
+           "Service": "sns.amazonaws.com"
+         },
+         "Action": "sqs:SendMessage",
+         "Resource": "QUEUE_ARN",
+         "Condition": {
+           "ArnEquals": {
+             "aws:SourceArn": "$TOPIC_ARN"
+           }
+         }
+       }
+     ]
    }
    EOF
 
-   # Gắn cho từng queue (thay QUEUE_ARN tương ứng)
-   sed "s#QUEUE_ARN#$ANALYTICS_ARN#" sqs-policy.json > policy-analytics.json
-   sed "s#QUEUE_ARN#$BILLING_ARN#"   sqs-policy.json > policy-billing.json
+   # SQS yêu cầu thuộc tính Policy là chuỗi JSON-stringified lồng bên trong.
+   # Dùng jq đóng gói thành attributes file (hoặc python3 nếu máy chưa có jq):
+   sed "s#QUEUE_ARN#$ANALYTICS_ARN#" sqs-policy.json | jq -Rs '{Policy: .}' > policy-analytics.json
+   sed "s#QUEUE_ARN#$BILLING_ARN#"   sqs-policy.json | jq -Rs '{Policy: .}' > policy-billing.json
+
    aws sqs set-queue-attributes --queue-url "$ANALYTICS_URL" --attributes file://policy-analytics.json
    aws sqs set-queue-attributes --queue-url "$BILLING_URL"   --attributes file://policy-billing.json
    ```
@@ -127,10 +145,18 @@ rm -f sqs-policy.json policy-analytics.json policy-billing.json
 
    ```bash
    cat > trust-lambda.json <<'EOF'
-   { "Version": "2012-10-17",
-     "Statement": [{ "Effect": "Allow",
-       "Principal": { "Service": "lambda.amazonaws.com" },
-       "Action": "sts:AssumeRole" }] }
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Principal": {
+           "Service": "lambda.amazonaws.com"
+         },
+         "Action": "sts:AssumeRole"
+       }
+     ]
+   }
    EOF
 
    aws iam create-role --role-name lab5-lambda-basic-role \
@@ -314,8 +340,18 @@ rm -f redrive.json
 
    ```bash
    cat > trust-lambda.json <<'EOF'
-   { "Version":"2012-10-17","Statement":[{"Effect":"Allow",
-     "Principal":{"Service":"lambda.amazonaws.com"},"Action":"sts:AssumeRole"}] }
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Principal": {
+           "Service": "lambda.amazonaws.com"
+         },
+         "Action": "sts:AssumeRole"
+       }
+     ]
+   }
    EOF
    aws iam create-role --role-name lab5-lambda-kinesis-role \
      --assume-role-policy-document file://trust-lambda.json
@@ -412,8 +448,18 @@ rm -f index.mjs function.zip trust-lambda.json
 
    ```bash
    cat > trust-lambda.json <<'EOF'
-   { "Version":"2012-10-17","Statement":[{"Effect":"Allow",
-     "Principal":{"Service":"lambda.amazonaws.com"},"Action":"sts:AssumeRole"}] }
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Principal": {
+           "Service": "lambda.amazonaws.com"
+         },
+         "Action": "sts:AssumeRole"
+       }
+     ]
+   }
    EOF
    aws iam create-role --role-name lab5-sfn-lambda-role \
      --assume-role-policy-document file://trust-lambda.json
@@ -454,13 +500,39 @@ rm -f index.mjs function.zip trust-lambda.json
 
    ```bash
    cat > trust-sfn.json <<'EOF'
-   { "Version":"2012-10-17","Statement":[{"Effect":"Allow",
-     "Principal":{"Service":"states.amazonaws.com"},"Action":"sts:AssumeRole"}] }
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Principal": {
+           "Service": "states.amazonaws.com"
+         },
+         "Action": "sts:AssumeRole"
+       }
+     ]
+   }
    EOF
    aws iam create-role --role-name lab5-sfn-role \
      --assume-role-policy-document file://trust-sfn.json
+
+   cat > invoke-lambda.json <<EOF
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Action": "lambda:InvokeFunction",
+         "Resource": [
+           "$CHARGE_ARN",
+           "$REVIEW_ARN"
+         ]
+       }
+     ]
+   }
+   EOF
    aws iam put-role-policy --role-name lab5-sfn-role --policy-name invoke-lambda \
-     --policy-document "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":\"lambda:InvokeFunction\",\"Resource\":[\"$CHARGE_ARN\",\"$REVIEW_ARN\"]}]}"
+     --policy-document file://invoke-lambda.json
    SFN_ROLE="arn:aws:iam::${ACCOUNT_ID}:role/lab5-sfn-role"
    ```
 3. Viết ASL (`Choice` → 2 nhánh `Task`; nhánh charge có `Retry` + `Catch`).
@@ -537,7 +609,7 @@ aws iam delete-role --role-name lab5-sfn-role
 aws iam detach-role-policy --role-name lab5-sfn-lambda-role \
   --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 aws iam delete-role --role-name lab5-sfn-lambda-role
-rm -f charge.mjs review.mjs charge.zip review.zip trust-lambda.json trust-sfn.json \
+rm -f charge.mjs review.mjs charge.zip review.zip trust-lambda.json trust-sfn.json invoke-lambda.json \
       order-flow.asl.json order-flow.final.json
 ```
 

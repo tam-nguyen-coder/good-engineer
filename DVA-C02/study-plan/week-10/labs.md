@@ -447,9 +447,27 @@ curl -s -X PUT --upload-file cat.png "$URL" -o /dev/null -w "%{http_code}\n"   #
      --attribute-names QueueArn --query Attributes.QueueArn --output text)
 
    # queue policy: cho phép SNS gửi vào (điều kiện SourceArn = topic)
-   cat > qpolicy.json <<EOF
-   { "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"sns.amazonaws.com\"},\"Action\":\"sqs:SendMessage\",\"Resource\":\"$QUEUE_ARN\",\"Condition\":{\"ArnEquals\":{\"aws:SourceArn\":\"$TOPIC_ARN\"}}}]}" }
+   cat > sqs-policy.json <<EOF
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Principal": {
+           "Service": "sns.amazonaws.com"
+         },
+         "Action": "sqs:SendMessage",
+         "Resource": "$QUEUE_ARN",
+         "Condition": {
+           "ArnEquals": {
+             "aws:SourceArn": "$TOPIC_ARN"
+           }
+         }
+       }
+     ]
+   }
    EOF
+   jq -Rs '{Policy: .}' sqs-policy.json > qpolicy.json
    aws sqs set-queue-attributes --queue-url "$QUEUE_URL" --attributes file://qpolicy.json
 
    aws sns subscribe --topic-arn "$TOPIC_ARN" --protocol sqs \

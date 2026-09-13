@@ -66,6 +66,7 @@
 **Lab 1 — Viết IAM policy least-privilege cho `Lambda` + test explicit `Deny`**
 
 1. Tạo policy identity-based chỉ cho phép ghi vào MỘT bảng `DynamoDB` cụ thể:
+
    ```json
    {
      "Version": "2012-10-17",
@@ -81,6 +82,7 @@
    ```
 2. Gắn policy vào `Lambda` execution role. Test function ghi được vào bảng `Orders`, nhưng **không** ghi được vào bảng khác (implicit Deny).
 3. **Chứng minh explicit Deny thắng:** thêm statement `Deny` cho chính `dynamodb:PutItem` (có thể kèm `Condition`):
+
    ```json
    {
      "Sid": "BlockDeletes",
@@ -168,7 +170,7 @@
 
 | Fact                               | Ghi nhớ                                                                                                                                                                                                                                    |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Thứ tự đánh giá quyền        | explicit**`Deny`** > explicit **`Allow`** > implicit **`Deny`**                                                                                                                                                     |
+| Thứ tự đánh giá quyền        | explicit**`Deny`** > explicit **`Allow`** > implicit **`Deny`**                                                                                                                                                           |
 | Cùng action có cả Allow + Deny  | **KẾT QUẢ = Deny** (một Deny là chặn, bất kể bao nhiêu Allow)                                                                                                                                                                 |
 | Không khai báo                   | **implicit Deny** (mặc định từ chối)                                                                                                                                                                                             |
 | `Principal`                      | chỉ có trong**resource-based policy** (chỉ rõ AI được phép)                                                                                                                                                                   |
