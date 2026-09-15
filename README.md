@@ -5,6 +5,9 @@ Welcome to **Good Engineer**, a repository dedicated to study materials and auto
 Currently, it supports:
 - **AWS Certified Solutions Architect – Associate (SAA-C03)**
 - **AWS Certified Cloud Practitioner (CLF-C02)**
+- **AWS Certified Developer – Associate (DVA-C02)** — 10-week study plan in [`DVA-C02/`](DVA-C02/DVA-C02-STUDY-PLAN.md)
+- **Apache Kafka / CCDAK (Confluent Certified Developer for Apache Kafka)** — 10-week study plan in [`KAFKA/`](KAFKA/KAFKA-STUDY-PLAN.md)
+- **Kubernetes / CKA & CKAD (Certified Kubernetes Administrator & Developer)** — 10-week study plan in [`KUBERNETES/`](KUBERNETES/K8S-STUDY-PLAN.md)
 - **Scrum Master (SCRUM-MASTER-1)**
 
 ---
