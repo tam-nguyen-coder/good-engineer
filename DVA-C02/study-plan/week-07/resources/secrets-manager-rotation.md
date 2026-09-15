@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - **Rotation = cập nhật secret định kỳ**: đổi credential ở **CẢ** secret **VÀ** database/service tương ứng — đây là điểm khác biệt lớn nhất so với `Parameter Store` (không có rotation).
 - **3 kiểu rotation:**
   1. **Managed rotation** — dịch vụ (managed secret) tự cấu hình & rotate, **KHÔNG dùng Lambda**.
@@ -35,10 +36,10 @@
 
 Khi Secrets Manager rotate một secret, nó tạo version mới và di chuyển các **staging label** giữa các version:
 
-| Staging label | Ý nghĩa |
-| --- | --- |
-| `AWSCURRENT` | Version hiện hành đang được ứng dụng sử dụng. |
-| `AWSPENDING` | Version mới được tạo trong bước rotation, chờ được kiểm thử/kích hoạt trước khi trở thành `AWSCURRENT`. |
-| `AWSPREVIOUS` | Version ngay trước `AWSCURRENT` — giữ lại để có thể rollback. |
+| Staging label   | Ý nghĩa                                                                                                                   |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `AWSCURRENT`  | Version hiện hành đang được ứng dụng sử dụng.                                                                     |
+| `AWSPENDING`  | Version mới được tạo trong bước rotation, chờ được kiểm thử/kích hoạt trước khi trở thành`AWSCURRENT`. |
+| `AWSPREVIOUS` | Version ngay trước`AWSCURRENT` — giữ lại để có thể rollback.                                                     |
 
 Quy trình rotation bằng Lambda gồm 4 bước chuẩn (rotation function steps): **createSecret** → **setSecret** → **testSecret** → **finishSecret** (bước cuối đổi nhãn `AWSPENDING` thành `AWSCURRENT`).
