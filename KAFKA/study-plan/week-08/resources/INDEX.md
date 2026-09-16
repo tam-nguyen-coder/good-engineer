@@ -1,0 +1,24 @@
+# 📂 Tài nguyên Tuần 8 — Observability & Operations
+
+> Crawl từ tài liệu chính thức (Apache Kafka 4.3 Operations/Monitoring, Confluent Platform, LinkedIn Cruise Control). Về [file học Tuần 8](../README.md) · [Kế hoạch tổng](../../../KAFKA-STUDY-PLAN.md)
+
+| # | Tài nguyên (file local) | Chủ đề | Nguồn |
+| - | --- | --- | --- |
+| 1 | [kafka-monitoring-broker-metrics.md](kafka-monitoring-broker-metrics.md) | JMX (`JMX_PORT`, `KAFKA_JMX_OPTS`); **`UnderReplicatedPartitions`**, `UnderMinIsrPartitionCount`/`AtMinIsrPartitionCount`, **`OfflinePartitionsCount`**, **`ActiveControllerCount`** (đúng 1), `IsrShrinks/ExpandsPerSec`, `RequestHandlerAvgIdlePercent` > 0.3, `TotalTimeMs` tách 5 thành phần | https://kafka.apache.org/43/operations/monitoring/ |
+| 2 | [kafka-monitoring-client-metrics.md](kafka-monitoring-client-metrics.md) | **Producer**: `record-error-rate` (phải 0), `batch-size-avg` vs `batch.size`, `buffer-available-bytes` → 0 + `bufferpool-wait-*`, `produce-throttle-time-avg`. **Consumer**: `records-lag-max` (theo position), `records-lead-min`, `commit-latency-avg`, `rebalance-latency/total/failed`, `time-between-poll-max`. Connect & Streams metrics | https://kafka.apache.org/43/operations/monitoring/ |
+| 3 | [confluent-consumer-lag.md](confluent-consumer-lag.md) | Lag = LEO − offset đã đọc; **client-side `records-lag-max` (position) vs tool-side LAG (committed)** → 2 con số khác nhau; **không đo được lag cho `assign()`**; nguyên nhân lag theo nhóm cấu hình/ứng dụng; thứ tự xử lý; ngưỡng cảnh báo hay dùng | https://docs.confluent.io/platform/current/monitor/monitor-consumer-lag.html |
+| 4 | [kafka-basic-ops-reassignment.md](kafka-basic-ops-reassignment.md) | **Tăng partition được, giảm không được** (phá key ordering); `controlled.shutdown.enable`; preferred leader + `kafka-leader-election.sh`; `--describe`/`--reset-offsets`; **broker mới không tự nhận partition** → `kafka-reassign-partitions.sh --generate/--execute/--verify` + throttle; tăng RF; cordon log dir (4.3) | https://kafka.apache.org/43/operations/basic-kafka-operations/ |
+| 5 | [kafka-georeplication-mirrormaker2.md](kafka-georeplication-mirrormaker2.md) | MM2 trên Connect (**MM1 đã xoá ở 4.0**); **3 connector** Source/Checkpoint/Heartbeat; flow `A->B.enabled=true`; **`DefaultReplicationPolicy` đổi tên `{source}.{topic}` vs `IdentityReplicationPolicy`**; `groups.exclude` mặc định loại console consumer; offset translation; exactly-once 3.5+ | https://kafka.apache.org/43/operations/geo-replication-cross-cluster-data-mirroring/ |
+| 6 | [kafka-tiered-storage.md](kafka-tiered-storage.md) | Local tier vs remote tier (chỉ **segment đã đóng**); `remote.log.storage.system.enable` + `RemoteStorageManager` (Kafka **không** ship sẵn plugin); topic `remote.storage.enable` + `local.retention.ms`; **không hỗ trợ compacted topic**; metric `RemoteCopy*`/`RemoteFetch*` | https://kafka.apache.org/43/operations/tiered-storage/ |
+| 7 | [kafka-upgrade-kraft.md](kafka-upgrade-kraft.md) | Rolling upgrade KRaft từng broker + chờ URP = 0 → finalize bằng **`kafka-features.sh upgrade --release-version`**; **`metadata.version`** thay `inter.broker.protocol.version`; điều kiện downgrade; notable changes 4.0 / 4.1 / 4.2 (KIP-848, ELR, KIP-890, Queues GA, KIP-1071 GA) | https://kafka.apache.org/43/getting-started/upgrade/ |
+| 8 | [cruise-control-readme.md](cruise-control-readme.md) | Vì sao `kafka-reassign-partitions.sh` không đủ; 4 khối Load Monitor / Analyzer / Executor / Anomaly Detector; **danh sách goal theo độ ưu tiên**; self-healing fix/check/ignore; REST API port 9090; yêu cầu Java 17 + metrics reporter | https://github.com/linkedin/cruise-control |
+
+## Gợi ý thứ tự đọc
+
+1. **Broker metrics (1):** học thuộc 6 metric "đèn đỏ" và ngưỡng của chúng trước tiên — đây là phần được hỏi nhiều nhất của domain Observability, và cũng là thứ bạn nhìn đầu tiên khi cluster có sự cố.
+2. **Client metrics (2):** đọc song song với bảng config Tuần 3–4. Mẹo ghép cặp: mỗi metric bất thường trỏ về **một config cụ thể** (`batch-size-avg` nhỏ → `linger.ms`; `time-between-poll-max` cao → `max.poll.interval.ms`).
+3. **Consumer lag (3):** đọc kỹ chỗ phân biệt **lag theo position** và **lag theo committed offset** — đây là bẫy hay gặp khi so số trên Grafana với số của `kafka-consumer-groups.sh`. Làm Lab 8.2 ngay sau.
+4. **Basic operations (4):** phần reassignment là trọng tâm vận hành; làm Lab 8.4 trong lúc đọc để nhớ 3 mode `--generate/--execute/--verify`.
+5. **MirrorMaker 2 (5):** nhớ 3 connector và quy tắc đổi tên topic — hai điểm bị hỏi nhiều nhất. Nối với MSK Replicator ở Tuần 9.
+6. **Tiered storage (6) → Upgrade (7):** hai chủ đề "nhận diện". Với (7), tập trung vào `metadata.version` và danh sách notable changes theo version — nó cũng giải thích vì sao nhiều mặc định trong đề cũ đã khác.
+7. **Cruise Control (8):** đọc cuối, mức nhận diện keyword "tự động cân bằng cluster / self-healing".
