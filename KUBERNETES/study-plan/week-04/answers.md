@@ -1,10 +1,10 @@
 # ✅ Answers & Explanations — Tuần 4: ConfigMaps, Secrets & Security
 
-> Mở file này sau khi đã hoàn thành 15 câu hỏi trong [questions.md](questions.md).
+> Mở file này sau khi đã hoàn thành 20 câu hỏi trong [questions.md](questions.md).
 > Về [plan tuần 4](README.md) · [Bài Lab](labs.md) · [Kế hoạch tổng](../../K8S-STUDY-PLAN.md)
 
 **Bảng đáp án nhanh:**
-`1-C` · `2-C` · `3-B` · `4-B` · `5-B` · `6-A` · `7-B` · `8-C` · `9-A` · `10-C` · `11-B` · `12-C` · `13-C` · `14-B` · `15-A`
+`1-C` · `2-C` · `3-B` · `4-B` · `5-B` · `6-A` · `7-B` · `8-C` · `9-A` · `10-C` · `11-B` · `12-C` · `13-C` · `14-B` · `15-A` · `16-B` · `17-C` · `18-C` · `19-B` · `20-C`
 
 ---
 
@@ -98,3 +98,52 @@
 ### Question 15 — Đáp án: **A**
 - **Vì sao đúng:** `allowPrivilegeEscalation: false` can thiệp vào tầng kernel Linux, bật cờ `no_new_privs`. Điều này ngăn chặn triệt để việc một tiến trình leo thang đặc quyền thông qua các binary có cờ `setuid` hoặc `setgid` (như `sudo`, `su`, `passwd`).
 - 🧠 **Mẹo ghi nhớ:** `allowPrivilegeEscalation: false` = Chặn leo thang đặc quyền qua setuid/setgid.
+
+---
+
+### Question 16 — Đáp án: **B**
+- **Vì sao đúng:** `kubectl kustomize <dir>` chạy **hoàn toàn offline**: nó đọc `kustomization.yaml`, build cây resource và in YAML kết quả ra stdout. Không gọi API server, không tạo gì cả. Đây là bước "xem trước" bắt buộc trước mọi `apply -k`.
+- **Vì sao các đáp án khác sai:**
+  - **A.** `--dry-run=server` **có** gửi request lên API server để validate → không phải "offline", và trong phòng thi nếu context đang sai thì vẫn bị tính là đụng nhầm cluster.
+  - **C.** `--validate=false` chỉ tắt schema validation, vẫn tạo object thật.
+  - **D.** Không tồn tại lệnh `kustomize apply --preview`.
+- 🧠 **Mẹo ghi nhớ:** `kubectl kustomize` = **xem**. `kubectl apply -k` = **làm**. Luôn xem trước khi làm.
+
+---
+
+### Question 17 — Đáp án: **C**
+- **Vì sao đúng:** Mặc định `configMapGenerator` và `secretGenerator` gắn một **hash-suffix** tính từ nội dung vào tên object. Đây là tính năng cố ý: nội dung config đổi → hash đổi → tên đổi → Deployment tham chiếu tới nó được coi là có thay đổi và **tự động rolling restart** (giải quyết bài toán kinh điển "sửa ConfigMap mà Pod không nhận config mới"). Khi đề bài đòi tên chính xác, tắt bằng:
+  ```yaml
+  generatorOptions:
+    disableNameSuffixHash: true
+  ```
+- **Vì sao các đáp án khác sai:** **A** chỉ làm tên xấu hơn (`app-settings--t92hk...`); **B** sai vì hash tắt được; **D** `namePrefix`/`nameSuffix` là cơ chế khác hoàn toàn, không liên quan tới hash của generator.
+- 🧠 **Mẹo ghi nhớ:** Generator **luôn** băm tên. Muốn tên "sạch" → `disableNameSuffixHash: true`.
+
+---
+
+### Question 18 — Đáp án: **C**
+- **Vì sao đúng:** `helm get values <release> -a` (`--all`) trả về **toàn bộ** values đang có hiệu lực: giá trị mặc định của chart **đã merge** với mọi thứ bạn override. Không có `-a` thì Helm chỉ in phần user-supplied.
+- **Vì sao các đáp án khác sai:**
+  - **A.** `helm show values <chart>` đọc values mặc định **từ chart trên repo**, không phản ánh release đang chạy.
+  - **B.** Chỉ ra những value đã override — thiếu phần mặc định mà câu hỏi yêu cầu.
+  - **D.** `helm get manifest` trả về YAML đã render, không phải bảng values.
+- 🧠 **Mẹo ghi nhớ:** `show values` = **chart trên kệ**. `get values` = **release trong cụm**. Thêm `-a` = **đầy đủ cả mặc định**.
+
+---
+
+### Question 19 — Đáp án: **B**
+- **Vì sao đúng:** Helm 3 lưu metadata release trong **Secret nằm ngay tại namespace của release** (không còn Tiller, không còn state tập trung). Vì vậy `helm list` mặc định chỉ quét namespace hiện tại. Muốn thấy toàn cụm phải dùng `helm list -A` (hoặc `--all-namespaces`).
+- **Vì sao các đáp án khác sai:** **A** `helm list` vẫn tồn tại (`ls` là alias); **C** Tiller đã bị **xoá bỏ hoàn toàn từ Helm 3**; **D** upgrade không hề ẩn release, chỉ tăng revision.
+- 🧠 **Mẹo ghi nhớ:** Helm 3 = state nằm trong Secret của **từng namespace** → quên `-A` là "mất" release.
+
+---
+
+### Question 20 — Đáp án: **C**
+- **Vì sao đúng:** Với component do Helm quản lý, đơn vị hoàn tác là **revision của release**. `helm history` liệt kê các revision kèm trạng thái và chart version; `helm rollback <release> <revision>` đưa **toàn bộ** manifest của release (Deployment, Service, ConfigMap, RBAC…) về đúng trạng thái đó và tạo một revision mới.
+- **Vì sao các đáp án khác sai:**
+  - **A.** `kubectl rollout undo` chỉ lùi **một** Deployment, bỏ sót mọi resource khác của chart, và làm cluster lệch khỏi state Helm đang ghi nhận.
+  - **B.** Component này cài bằng Helm, không phải Kustomize.
+  - **D.** Helm **có** rollback; uninstall/install lại sẽ mất hết state và gây downtime không cần thiết.
+- 🧠 **Mẹo ghi nhớ:** Cài bằng gì thì lùi bằng nấy — **Helm release → `helm rollback`**, Deployment thường → `kubectl rollout undo`.
+

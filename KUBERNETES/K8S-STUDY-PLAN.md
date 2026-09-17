@@ -7,7 +7,9 @@
 >
 > **📅 Kế hoạch đã chốt:** **10 tuần × ~10–12h/tuần (~110 giờ)**. Mục tiêu: **làm chủ Kubernetes trên production** và **đậu CKA với điểm an toàn ≥ 85%** — mỗi tuần có *cổng tự kiểm tra*, bài lab thực chiến, và cơ chế đảm bảo đậu (xem [§3](#3-lộ-trình-học-theo-tuần)).
 >
-> **Phiên bản neo:** Kubernetes **v1.31.x / v1.32.x** (CRI: `containerd`, Pod Security Admission thay thế PSP, Gateway API GA, Sidecar containers built-in). Ngày lập kế hoạch: 2026-09-15.
+> **Phiên bản neo:** Kubernetes **v1.35.x** — đúng phiên bản môi trường thi CKA hiện hành (CRI: `containerd`, Pod Security Admission thay thế PSP, Gateway API GA, Sidecar containers built-in, taint manager tách rời đã stable từ v1.34). Ngày lập kế hoạch: 2026-09-15 · **Ngày rà soát & cập nhật curriculum: 2026-09-17**.
+>
+> ⚠️ **Lưu ý curriculum:** Từ 18/02/2025 CNCF đã cập nhật syllabus CKA, bổ sung vào Domain *Cluster Architecture*: **Helm & Kustomize**, **CRDs & Operators**, **HA control plane**, **extension interfaces (CNI/CSI/CRI)**; và vào Domain *Workloads*: **workload autoscaling (HPA)**. Toàn bộ các mục này đã được bổ sung vào lộ trình (Tuần 1, 3, 4, 9).
 
 ---
 
@@ -34,12 +36,12 @@
 | **Tên chứng chỉ** | Certified Kubernetes Administrator (**CKA**) |
 | **Đơn vị cấp** | Cloud Native Computing Foundation (**CNCF**) & **The Linux Foundation** |
 | **Hình thức thi** | **100% Hands-on Performance-based** (thao tác trực tiếp trên terminal trình duyệt PSI) |
-| **Số câu hỏi / Task** | **15 – 17 tasks thực hành** trên nhiều Kubernetes clusters khác nhau |
+| **Số câu hỏi / Task** | **15 – 20 tasks thực hành** (thường ~17) trên nhiều Kubernetes clusters khác nhau |
 | **Thời gian** | **120 phút (2 giờ)** (~7–8 phút/task — tốc độ gõ phím & dùng lệnh imperative quyết định thành bại) |
 | **Điểm đậu** | **66% (66/100)**. Mục tiêu cá nhân: **≥ 85%** |
-| **Chi phí** | **395 USD** (thường có sale Cyber Monday / KubeCon còn ~250–300 USD, bao gồm **1 lần thi lại miễn phí - Free Retake** và **2 sessions Killer.sh simulator**) |
-| **Môi trường thi** | Remote Proctored qua PSI Secure Browser. Cung cấp terminal Ubuntu xterm với `kubectl`, `kubeadm`, `etcdctl`, `crictl`, `vim`, `tmux`. |
-| **Tài liệu được tra cứu** | Mở **1 tab duy nhất** truy cập: `kubernetes.io/docs`, `github.com/kubernetes`, `kubernetes.io/blog` |
+| **Chi phí** | **445 USD** (thường có sale Cyber Monday / KubeCon còn ~250–300 USD, bao gồm **1 lần thi lại miễn phí - Free Retake** và **2 sessions Killer.sh simulator**) |
+| **Môi trường thi** | Remote Proctored qua PSI Secure Browser. Cung cấp terminal Ubuntu xterm với `kubectl`, `kubeadm`, `etcdctl`, `crictl`, `vim`, `tmux`. Cluster chạy **Kubernetes v1.35** (CNCF cập nhật môi trường thi theo quý, bám sát release mới nhất). |
+| **Tài liệu được tra cứu** | Mở **1 tab duy nhất** truy cập: `kubernetes.io/docs` (kể cả ô search nội bộ), `kubernetes.io/blog`, **`helm.sh/docs`**, **`gateway-api.sigs.k8s.io`**. ⚠️ `github.com/kubernetes` **KHÔNG còn** trong danh sách cho phép — mở ra có thể bị proctor cảnh cáo. Luôn kiểm tra lại trang *Important Instructions* ngay trước ngày thi. |
 | **Hiệu lực** | **2 năm** (từ 01/2024, Linux Foundation chuẩn hoá hiệu lực các chứng chỉ K8s về 2 năm) |
 | **Chứng chỉ liên quan** | **CKAD** (Application Developer - tập trung workloads/deployment), **CKS** (Security Specialist - yêu cầu phải có CKA trước) |
 
@@ -199,10 +201,11 @@
 - **Bẫy thi:** Khi API server bị treo hoặc sửa sai file manifest tại `/etc/kubernetes/manifests/`, lệnh `kubectl` sẽ trả về lỗi `The connection to the server <host>:6443 was refused`. Để sửa, phải SSH trực tiếp vào node control plane, xem log container bằng `crictl ps -a` và `crictl logs`.
 
 ### ⭐ 2. etcd Backup & Disaster Recovery (Câu hỏi 100% xuất hiện trong CKA)
-- **Cấu hình biến môi trường etcdctl API v3:**
+- **Biến môi trường `ETCDCTL_API` (đọc kỹ):**
   ```bash
-  export ETCDCTL_API=3
+  export ETCDCTL_API=3   # Chỉ cần cho etcdctl < 3.4
   ```
+  > ⚠️ Từ **etcdctl v3.4 trở lên, API v3 đã là mặc định** — môi trường thi CKA v1.35 dùng etcd 3.5/3.6 nên **KHÔNG bắt buộc** export biến này. Gõ thêm cũng vô hại (nhiều tài liệu cũ vẫn ghi), nhưng đừng mất thời gian và đừng hoảng khi không thấy nó trong đáp án mẫu.
 - **Lệnh Backup Snapshot:**
   ```bash
   etcdctl --endpoints=https://127.0.0.1:2379 \
@@ -282,8 +285,8 @@
 | Tham số / Khái niệm | Giá trị mặc định / Quy chuẩn | Ý nghĩa trong vận hành & đề thi |
 |---|---|---|
 | **`terminationGracePeriodSeconds`** | **`30s`** | Thời gian chờ từ `SIGTERM` đến khi gửi `SIGKILL` |
-| **`Node NotReady timeout`** | **`40s`** | Thời gian Kubelet không gửi heartbeat trước khi Node thành NotReady |
-| **`podEvictionTimeout`** | **`300s (5 phút)`** | Thời gian chờ trước khi evict Pod trên Node NotReady sang Node khác |
+| **`--node-monitor-grace-period`** | **`50s`** (từ v1.32; trước đó là `40s`) | Thời gian node-lifecycle-controller không nhận heartbeat trước khi đánh Node thành `NotReady` |
+| **`tolerationSeconds`** của taint `node.kubernetes.io/not-ready:NoExecute` | **`300s (5 phút)`** | Thời gian Pod được phép bám trụ trên Node `NotReady` trước khi bị evict. ⚠️ Cờ cũ `--pod-eviction-timeout` của `kube-controller-manager` **đã bị gỡ bỏ** (từ v1.27) — cơ chế hiện tại là **taint-based eviction**, chỉnh bằng `tolerations` trong Pod spec |
 | **Liveness/Readiness probe defaults** | `periodSeconds: 10`, `timeoutSeconds: 1`, `failureThreshold: 3` | Tần suất và ngưỡng đếm trước khi restart Pod hoặc gỡ khỏi Service |
 | **OOMKilled Exit Code** | **`137`** (`128 + 9` SIGKILL) | Container bị nhân Linux kill vì vượt quá Memory Limits |
 | **Graceful Exit Code** | **`143`** (`128 + 15` SIGTERM) | Container kết thúc bình thường khi nhận lệnh dừng |
@@ -303,7 +306,7 @@
 | Tạo file YAML mẫu cho Pod / Deployment | Thêm `--dry-run=client -o yaml > file.yaml` |
 | Expose Pod thành Service ClusterIP trên cổng 80 | `kubectl expose pod my-pod --port=80 --target-port=80` |
 | Expose Deployment thành Service NodePort cổng 30080 | `kubectl expose deploy my-dep --type=NodePort --port=80` rồi sửa `nodePort: 30080` |
-| Lấy file YAML của tài nguyên đang chạy sạch sẽ | `kubectl get deploy my-dep -o yaml \| kubectl neat` (hoặc xoá `status`, `uid`, `creationTimestamp`) |
+| Lấy file YAML của tài nguyên đang chạy sạch sẽ | `kubectl get deploy my-dep -o yaml --show-managed-fields=false` rồi xoá tay `status`, `uid`, `resourceVersion`, `creationTimestamp`. ⚠️ **`kubectl neat` KHÔNG được cài trong phòng thi** — chỉ dùng được ở lab local |
 | Xem tài nguyên chiếm CPU/Memory | `kubectl top nodes` / `kubectl top pods --sort-by=memory` |
 | Tìm xem Pod nào đang chạy trên Node nào | `kubectl get pods -o wide -A` |
 | Xem toàn bộ log của Pod có nhiều container | `kubectl logs <pod-name> -c <container-name> --previous` |
@@ -318,7 +321,7 @@
 | Hoàn tác phiên bản Deployment bị lỗi | `kubectl rollout undo deployment/my-dep` |
 | Kiểm tra quyền của một User | `kubectl auth can-i list pods -n prod --as alice` |
 | Sửa trực tiếp resource mà không cần tải file | `kubectl edit <resource> <name>` |
-| Test kết nối HTTP ngay bên trong cluster | `kubectl run curl-test --image=curlimages/curl --rm -it -- restart=Never -- curl <url>` |
+| Test kết nối HTTP ngay bên trong cluster | `kubectl run curl-test --image=curlimages/curl --rm -it --restart=Never -- curl <url>` |
 
 ---
 
@@ -357,7 +360,7 @@
 
 ### 🧪 Nhóm 6: Cluster Administration & Troubleshooting (Cốt lõi CKA)
 - [ ] **Thực hành etcd Backup & Restore:** Lưu snapshot etcd của cụm đang chạy, xoá thử một Deployment quan trọng, thực hiện restore snapshot vào thư mục mới và trỏ lại etcd manifest để khôi phục lại Deployment đã mất.
-- [ ] **Thực hành Kubeadm Upgrade:** Nâng cấp cụm từ bản v1.30 lên v1.31 theo đúng quy trình: drain node -> upgrade kubeadm -> upgrade apply -> upgrade kubelet/kubectl -> uncordon node.
+- [ ] **Thực hành Kubeadm Upgrade:** Nâng cấp cụm từ bản v1.34 lên v1.35 theo đúng quy trình: drain node -> upgrade kubeadm -> upgrade apply -> upgrade kubelet/kubectl -> uncordon node.
 - [ ] **Break-and-Fix Lab:**
   - Làm hỏng file cấu hình `/var/lib/kubelet/config.yaml` và debug bằng `journalctl` để sửa lại.
   - Sửa sai port hoặc certificate path trong `/etc/kubernetes/manifests/kube-apiserver.yaml` và khắc phục khi `kubectl` mất kết nối.
@@ -369,7 +372,7 @@
 
 ### 🎯 Bộ Đề Thi Thử Thực Tế (100% Tiếng Anh Chuẩn Format Thi Thật)
 Để làm quen với áp lực thời gian và giao diện dòng lệnh trên Linux Foundation, repo cung cấp **3 bộ Mock Exam thực chiến toàn diện (mỗi đề 17 tasks, 120 phút)**:
-- 🛡️ **[Tài Liệu Validate Kiến Thức "Chắc Chắn Đậu" (VALIDATION.md)](study-plan/VALIDATION.md)** — Bảng tổng kiểm kê kiến thức hiện đại (K8s v1.31+), Top 12 bẫy thi CKA và lệnh cấp cứu.
+- 🛡️ **[Tài Liệu Validate Kiến Thức "Chắc Chắn Đậu" (VALIDATION.md)](study-plan/VALIDATION.md)** — Bảng tổng kiểm kê kiến thức hiện đại (K8s v1.35), Top 12 bẫy thi CKA và lệnh cấp cứu.
 - 📝 **[Real Mock Exam 01: Core Standard Exam (17 Tasks)](real-exam-mocks/REAL-MOCK-EXAM-01.md)** — Kubeadm Upgrade, ETCD Backup & Restore, Node NotReady, RBAC, NetworkPolicy, Ingress TLS, CSR.
 - 📝 **[Real Mock Exam 02: Killer.sh Advanced Scenarios (17 Tasks)](real-exam-mocks/REAL-MOCK-EXAM-02.md)** — Multi-AZ Storage `WaitForFirstConsumer`, Secondary Scheduler, StatefulSet, CronJob forbid, Kubelet cgroup mismatch.
 - 📝 **[Real Mock Exam 03: Speed, Accuracy & Modern Scenarios (17 Tasks)](real-exam-mocks/REAL-MOCK-EXAM-03.md)** — Secret Encryption at rest, Gateway API `HTTPRoute`, Kube-proxy fix, PDB drain, PV retain reclaim.
@@ -455,7 +458,7 @@ EOF
 ### 🏗️ B. Kiến trúc & Cấu hình Cluster (25%)
 - [ ] Giải thích luồng tương tác giữa các thành phần Control Plane và Worker Node.
 - [ ] Khởi tạo cụm mới bằng `kubeadm init` và join node bằng `kubeadm join`.
-- [ ] Thực hiện quy trình nâng cấp toàn diện Kubeadm Cluster từ bản v1.30 lên v1.31.
+- [ ] Thực hiện quy trình nâng cấp toàn diện Kubeadm Cluster từ bản v1.34 lên v1.35.
 - [ ] Thực hiện backup etcd snapshot ra file `.db` sử dụng chứng chỉ PKI chính xác.
 - [ ] Thực hiện restore etcd snapshot và khởi động lại control plane thành công.
 - [ ] Tạo và quản lý Role, ClusterRole, RoleBinding, ClusterRoleBinding.

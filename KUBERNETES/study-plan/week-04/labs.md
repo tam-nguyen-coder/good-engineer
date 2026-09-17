@@ -1,6 +1,6 @@
 # 🧪 Hands-on Labs — Tuần 4: ConfigMaps, Secrets, Probes & SecurityContext
 
-> Thực hành nhúng ConfigMap/Secret vào Pod, cấu hình Health Probes (Liveness/Readiness/Startup), và siết chặt bảo mật bằng SecurityContext.
+> Thực hành nhúng ConfigMap/Secret vào Pod, cấu hình Health Probes (Liveness/Readiness/Startup), siết chặt bảo mật bằng SecurityContext, và đóng gói/cài đặt component bằng **Kustomize + Helm**.
 > Về [plan tuần 4](README.md) · [Kế hoạch tổng](../../K8S-STUDY-PLAN.md)
 
 ---
@@ -214,6 +214,231 @@
 
 ---
 
+---
+
+## Lab 4.4 — Kustomize: Base + Overlays cho 2 môi trường
+
+**🎯 Mục tiêu:** Dựng một `base` dùng chung rồi đắp 2 overlay `staging` / `production` khác nhau về namespace, số replicas, image tag và ConfigMap — không nhân bản một dòng YAML nào.
+**⏱️ ~25 phút**
+
+### Các bước thực hiện:
+
+1. Dựng cây thư mục và file base:
+   ```bash
+   mkdir -p ~/kustomize-lab/base ~/kustomize-lab/overlays/staging ~/kustomize-lab/overlays/production
+   cd ~/kustomize-lab
+
+   cat << 'EOF' > base/deployment.yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: web-app
+   spec:
+     replicas: 1
+     selector:
+       matchLabels:
+         app: web-app
+     template:
+       metadata:
+         labels:
+           app: web-app
+       spec:
+         containers:
+         - name: nginx
+           image: nginx:1.25
+           ports:
+           - containerPort: 80
+   EOF
+
+   cat << 'EOF' > base/service.yaml
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: web-app
+   spec:
+     selector:
+       app: web-app
+     ports:
+     - port: 80
+       targetPort: 80
+   EOF
+
+   cat << 'EOF' > base/kustomization.yaml
+   apiVersion: kustomize.config.k8s.io/v1beta1
+   kind: Kustomization
+   resources:
+     - deployment.yaml
+     - service.yaml
+   EOF
+   ```
+
+2. Overlay `staging` — chỉ đổi namespace và thêm nhãn:
+   ```bash
+   cat << 'EOF' > overlays/staging/kustomization.yaml
+   apiVersion: kustomize.config.k8s.io/v1beta1
+   kind: Kustomization
+   namespace: staging
+   namePrefix: stg-
+   labels:
+     - pairs:
+         env: staging
+       includeSelectors: true
+   resources:
+     - ../../base
+   EOF
+   ```
+
+3. Overlay `production` — đổi replicas, image tag, và sinh ConfigMap tên cố định:
+   ```bash
+   cat << 'EOF' > overlays/production/kustomization.yaml
+   apiVersion: kustomize.config.k8s.io/v1beta1
+   kind: Kustomization
+   namespace: production
+   namePrefix: prod-
+   labels:
+     - pairs:
+         env: production
+       includeSelectors: true
+   resources:
+     - ../../base
+   images:
+     - name: nginx
+       newTag: 1.27-alpine
+   replicas:
+     - name: web-app
+       count: 4
+   configMapGenerator:
+     - name: app-settings
+       literals:
+         - LOG_LEVEL=warn
+   generatorOptions:
+     disableNameSuffixHash: true
+   EOF
+   ```
+
+4. **Xem trước** (bước không bao giờ được bỏ) rồi mới apply:
+   ```bash
+   kubectl kustomize overlays/production/
+
+   kubectl create namespace staging
+   kubectl create namespace production
+   kubectl apply -k overlays/staging/
+   kubectl apply -k overlays/production/
+   ```
+
+5. Kiểm chứng kết quả:
+   ```bash
+   kubectl get deploy,svc,cm -n staging
+   kubectl get deploy,svc,cm -n production
+
+   # Production phải là 4 replicas, image 1.27-alpine, ConfigMap tên SẠCH (không hash)
+   kubectl get deploy prod-web-app -n production \
+     -o jsonpath='{.spec.replicas}{"\t"}{.spec.template.spec.containers[0].image}{"\n"}'
+   kubectl get cm -n production
+   ```
+
+### ✅ Kết quả mong đợi:
+- `staging`: Deployment `stg-web-app`, **1** replica, image `nginx:1.25`.
+- `production`: Deployment `prod-web-app`, **4** replicas, image `nginx:1.27-alpine`, ConfigMap tên đúng `prod-app-settings` (namePrefix có áp dụng, nhưng **không có hash-suffix**).
+- Service selector ở cả hai overlay đã tự động được bổ sung nhãn `env` — đó là tác dụng của `includeSelectors: true`.
+
+### 🔬 Thử nghiệm thêm (hiểu bản chất hash-suffix):
+Xoá `generatorOptions` khỏi overlay production rồi chạy lại `kubectl apply -k overlays/production/`. Quan sát ConfigMap mới mọc thêm hậu tố băm. Đổi `LOG_LEVEL=warn` thành `LOG_LEVEL=debug`, apply lần nữa → tên ConfigMap đổi lần nữa. Đây chính là cơ chế khiến workload tham chiếu tới nó tự rolling restart khi config thay đổi.
+
+---
+
+## Lab 4.5 — Helm: Cài, nâng cấp, soi và rollback một cluster component
+
+**🎯 Mục tiêu:** Thực hiện trọn vòng đời một Helm release đúng như dạng task hay gặp trong CKA: `repo add` → `show values` → `install` → `upgrade` → `history` → `rollback`.
+**⏱️ ~25 phút**
+
+> 📦 Nếu máy chưa có Helm:
+> ```bash
+> curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+> helm version
+> ```
+
+### Các bước thực hiện:
+
+1. Thêm repo và khảo sát chart **trước khi** cài:
+   ```bash
+   helm repo add bitnami https://charts.bitnami.com/bitnami
+   helm repo update
+
+   helm search repo bitnami/nginx --versions | head
+   helm show chart bitnami/nginx | head -20
+   helm show values bitnami/nginx > /tmp/nginx-defaults.yaml
+   wc -l /tmp/nginx-defaults.yaml
+   ```
+
+2. Render offline để biết chính xác chart sẽ tạo ra cái gì (**không** chạm cluster):
+   ```bash
+   helm template demo bitnami/nginx --set replicaCount=2 | grep -E '^kind:|^  name:'
+   ```
+
+3. Cài đặt vào namespace riêng, override 2 giá trị:
+   ```bash
+   helm install web bitnami/nginx \
+     --namespace web-demo --create-namespace \
+     --set replicaCount=2 \
+     --set service.type=ClusterIP
+
+   helm list -n web-demo
+   kubectl get all -n web-demo
+   ```
+
+4. Nâng cấp release và xem lịch sử revision:
+   ```bash
+   helm upgrade web bitnami/nginx -n web-demo \
+     --set replicaCount=4 \
+     --set service.type=ClusterIP
+
+   helm history web -n web-demo
+   kubectl get deploy -n web-demo
+   ```
+
+5. Soi cấu hình thực tế của release:
+   ```bash
+   # Chỉ những gì mình đã override
+   helm get values web -n web-demo
+
+   # TẤT CẢ values, kể cả mặc định của chart
+   helm get values web -n web-demo -a | head -30
+
+   # YAML thực sự đang nằm trong cluster
+   helm get manifest web -n web-demo | grep -E '^kind:|replicas:'
+   ```
+
+6. Hoàn tác về revision 1 và kiểm chứng:
+   ```bash
+   helm rollback web 1 -n web-demo
+   helm history web -n web-demo
+   kubectl get deploy -n web-demo   # Phải quay về 2 replicas
+   ```
+
+7. Bài tập phản xạ — chứng minh `helm list` bị giới hạn namespace:
+   ```bash
+   helm list                 # Rỗng (đang ở namespace default)
+   helm list -A              # Thấy release 'web' ở web-demo
+   ```
+
+### ✅ Kết quả mong đợi:
+- `helm history web -n web-demo` hiển thị **3 revision**: `1 deployed→superseded`, `2 superseded`, `3 deployed (rollback to 1)`.
+- Sau rollback, Deployment quay lại **2 replicas**.
+- `helm list` không có gì còn `helm list -A` thì có → khắc sâu thói quen luôn gõ `-A`.
+
+### 🧠 Ghi vào sổ tay phòng thi:
+| Đề bài yêu cầu | Lệnh |
+|---|---|
+| "install chart X into namespace Y" | `helm install <rel> <chart> -n Y --create-namespace` |
+| "what values is release Z using?" | `helm get values Z -n <ns> -a` |
+| "how many releases in the cluster?" | `helm list -A` |
+| "revert the component" | `helm history` → `helm rollback <rel> <rev> -n <ns>` |
+| "write the manifests to a file, do not apply" | `helm template <rel> <chart> > out.yaml` |
+
+
+---
+
 ## 🧹 Dọn dẹp:
 ```bash
 kubectl delete pod config-app probe-pod
@@ -221,4 +446,7 @@ kubectl delete svc probe-pod
 kubectl delete secret app-credentials
 kubectl delete configmap web-theme
 kubectl delete ns restricted-ns
+kubectl delete ns staging production web-demo --ignore-not-found
+helm uninstall web -n web-demo 2>/dev/null
+rm -rf ~/kustomize-lab
 ```

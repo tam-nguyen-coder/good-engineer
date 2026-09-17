@@ -1,6 +1,6 @@
 # ✅ Nhật ký Validate kiến thức & Cơ chế "CHẮC CHẮN ĐẬU" — Kubernetes CKA/CKAD
 
-> **Ngày rà soát:** 2026-09-15 · **Phiên bản neo:** Kubernetes **v1.31.x / v1.32.x** (Bản hiện hành chính thức của CNCF / The Linux Foundation).
+> **Ngày rà soát:** 2026-09-15 · **Cập nhật curriculum:** 2026-09-17 · **Phiên bản neo:** Kubernetes **v1.35.x** (phiên bản môi trường thi CKA hiện hành của CNCF / The Linux Foundation).
 > **Tiêu chuẩn:** Đối chiếu 100% Task Statements từ **CNCF CKA Curriculum**, các kịch bản thực tế trong **Killer.sh Exam Simulator**, và kinh nghiệm xử lý lỗi phòng thi của các kỹ sư đạt điểm số ≥ 90%.
 > **Mục tiêu tối thượng:** Đảm bảo **KHÔNG BỊ LỦNG BẤT KỲ LỖ HỔNG KIẾN THỨC NÀO**, triệt tiêu toàn bộ rủi ro mất điểm ngớ ngẩn, và đảm bảo kết quả **CHẮC CHẮN ĐẬU (≥ 85%)**.
 
@@ -63,17 +63,17 @@
   - **AND:** Chung một dấu gạch đầu dòng `-` cho cả `namespaceSelector` và `podSelector`.
 
 ### ❌ Bẫy 6: Nâng cấp Kubeadm nhảy cóc phiên bản
-- **Hậu quả:** Đang ở v1.29 mà cố tình nâng thẳng lên v1.31 → Kubeadm báo lỗi incompatible version và cụm bị hỏng cluster state.
-- **Thuốc giải:** Chỉ được phép nâng cấp tối đa 1 minor version tại một thời điểm (ví dụ: `1.30.x` lên `1.31.x`).
+- **Hậu quả:** Đang ở v1.33 mà cố tình nâng thẳng lên v1.35 → Kubeadm báo lỗi incompatible version và cụm bị hỏng cluster state.
+- **Thuốc giải:** Chỉ được phép nâng cấp tối đa 1 minor version tại một thời điểm (ví dụ: `1.34.x` lên `1.35.x`).
 
 ### ❌ Bẫy 7: Quên unhold gói phần mềm khi cài đặt APT trên Ubuntu
-- **Hậu quả:** Chạy `apt-get install kubeadm=1.31.0` nhưng terminal báo `kubeadm set on hold`, không cài được bản mới.
+- **Hậu quả:** Chạy `apt-get install kubeadm=1.35.0` nhưng terminal báo `kubeadm set on hold`, không cài được bản mới.
 - **Thuốc giải:** Phải chạy `apt-mark unhold kubeadm kubelet kubectl` trước khi cài, hoặc thêm cờ `--allow-change-held-packages`. Cài xong thì khoá lại: `apt-mark hold kubeadm kubelet kubectl`.
 
 ### ❌ Bẫy 8: Nhầm lẫn giữa `kubeadm upgrade apply` và `kubeadm upgrade node`
 - **Hậu quả:** Chạy lệnh `kubeadm upgrade apply` trên Worker Node khiến lệnh bị lỗi và dừng nâng cấp.
 - **Thuốc giải:**
-  - **Control Plane Node đầu tiên:** Dùng `kubeadm upgrade apply v1.31.0`.
+  - **Control Plane Node đầu tiên:** Dùng `kubeadm upgrade apply v1.35.0`.
   - **Tất cả các Worker Node (và các CP node phụ):** Dùng `kubeadm upgrade node`.
 
 ### ❌ Bẫy 9: Sai chính tả đường dẫn trong Static Pod Manifest

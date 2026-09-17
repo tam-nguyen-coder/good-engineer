@@ -16,7 +16,7 @@ KUBERNETES/real-exam-mocks/
 ├── README.md                 # Exam rules, scoring guide & strategy
 ├── REAL-MOCK-EXAM-01.md      # Set 1: Core Standard Exam (Etcd, Upgrade, Node NotReady, RBAC, NetPol)
 ├── REAL-MOCK-EXAM-02.md      # Set 2: Advanced & Killer.sh Level (Multi-AZ Storage, Static Pods, Custom Scheduler)
-└── REAL-MOCK-EXAM-03.md      # Set 3: Speed & Accuracy Sprint (Ingress TLS, CSR Approval, PSA, JSONPath)
+└── REAL-MOCK-EXAM-03.md      # Set 3: Speed & Accuracy Sprint (Secret encryption at rest, Gateway API HTTPRoute, kube-proxy fix, PDB drain, PV reclaim, JSONPath)
 ```
 
 ---
@@ -33,10 +33,13 @@ To ensure this practice directly leads to passing on your first attempt:
      ```
    - You **MUST** run this command before attempting anything in that task. In the real exam, working in the wrong context yields **0 points** for that question.
 3. **Allowed Resources:**
-   - Only **1 single browser tab** open to:
-     - `https://kubernetes.io/docs/`
+   - Only **1 single browser tab** open to the officially allowed domains:
+     - `https://kubernetes.io/docs/` (the built-in site search is allowed; do NOT open external search hits)
      - `https://kubernetes.io/blog/`
-     - `https://github.com/kubernetes/`
+     - `https://helm.sh/docs/`
+     - `https://gateway-api.sigs.k8s.io/`
+   - ⚠️ `https://github.com/kubernetes/` is **NO LONGER** on the allowed list — opening it may be flagged by the proctor.
+   - The allowed-domain list is revised periodically: re-check the *Important Instructions* page shortly before your exam date.
    - **NO Google search, NO ChatGPT, NO external notes!**
 4. **Passing Score:**
    - Linux Foundation Passing Score: **66%**.

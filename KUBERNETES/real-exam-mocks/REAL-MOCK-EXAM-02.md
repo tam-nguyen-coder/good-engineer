@@ -73,7 +73,7 @@ kubectl config use-context k8s-cluster1
 ```
 
 **Task:**
-Deploy a secondary scheduler in namespace `kube-system` using the standard `kube-scheduler:v1.31.0` image.
+Deploy a secondary scheduler in namespace `kube-system` using the standard `kube-scheduler:v1.35.0` image.
 The scheduler must be configured with the name `my-custom-scheduler`.
 Then, create a Pod named `custom-scheduled-pod` in namespace `default` using image `nginx` that explicitly uses `my-custom-scheduler` for scheduling.
 
@@ -101,7 +101,7 @@ spec:
       serviceAccountName: my-scheduler-sa
       containers:
       - name: kube-scheduler
-        image: registry.k8s.io/kube-scheduler:v1.31.0
+        image: registry.k8s.io/kube-scheduler:v1.35.0
         command:
         - kube-scheduler
         - --leader-elect=false
@@ -130,7 +130,7 @@ kubectl describe pod custom-scheduled-pod | grep "Scheduled"
 
 ---
 
-### Task 3: StatefulSet Scaling with Headless Service (Weight: 7%)
+### Task 3: StatefulSet Scaling with Headless Service (Weight: 6%)
 
 **Context:**
 ```bash
@@ -640,7 +640,7 @@ kubectl get secret build-robot-secret -n ci-cd -o jsonpath='{.data.token}' | bas
 
 ---
 
-### Task 14: Pod AntiAffinity Across Availability Zones (Weight: 7%)
+### Task 14: Pod AntiAffinity Across Availability Zones (Weight: 6%)
 
 **Context:**
 ```bash
@@ -807,7 +807,7 @@ cat /opt/oom-status.txt
 |---|---|---|---|---|
 | **1** | Multi-AZ StorageClass WaitForFirstConsumer | 7% | [ ] | [ ] |
 | **2** | Custom Secondary Scheduler | 8% | [ ] | [ ] |
-| **3** | StatefulSet Scaling with Headless Service | 7% | [ ] | [ ] |
+| **3** | StatefulSet Scaling with Headless Service | 6% | [ ] | [ ] |
 | **4** | CronJob ConcurrencyPolicy Forbid | 4% | [ ] | [ ] |
 | **5** | NetworkPolicy AND Logic (Namespace + Pod) | 8% | [ ] | [ ] |
 | **6** | Ingress URL Rewrite with Annotations | 7% | [ ] | [ ] |
@@ -818,7 +818,7 @@ cat /opt/oom-status.txt
 | **11** | Pod with SecurityContext Capabilities | 5% | [ ] | [ ] |
 | **12** | Horizontal Pod Autoscaler (HPA) | 6% | [ ] | [ ] |
 | **13** | ServiceAccount API Secret Binding | 4% | [ ] | [ ] |
-| **14** | Pod AntiAffinity Across AZs | 7% | [ ] | [ ] |
+| **14** | Pod AntiAffinity Across AZs | 6% | [ ] | [ ] |
 | **15** | Secret Decryption & Modification | 4% | [ ] | [ ] |
 | **16** | Troubleshoot CoreDNS CrashLoop | 7% | [ ] | [ ] |
 | **17** | Exit Code Analysis | 4% | [ ] | [ ] |

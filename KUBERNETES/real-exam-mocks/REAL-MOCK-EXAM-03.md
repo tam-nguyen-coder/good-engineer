@@ -1,7 +1,7 @@
 # 📝 CKA Real Exam Mock — Set 3: Speed, Accuracy & Advanced Scenarios
 
 > **Exam Duration:** 120 Minutes · **Total Tasks:** 17 Tasks · **Passing Score:** 66% (Target: ≥ 85%)
-> **Rules:** Authentic performance-based English tasks crawled from recent CKA exam experiences (v1.30–v1.32), Killer.sh high-difficulty scenarios, and community forums.
+> **Rules:** Authentic performance-based English tasks crawled from recent CKA exam experiences (v1.34–v1.35), Killer.sh high-difficulty scenarios, and community forums.
 > **Critical Rule:** Always execute `kubectl config use-context <context-name>` before starting each task!
 
 ---
@@ -120,7 +120,7 @@ kubectl edit daemonset kube-proxy -n kube-system
 kubectl rollout status daemonset kube-proxy -n kube-system
 
 # 4. Test service resolution
-kubectl run test-curl --rm -it --image=curlimages/curl -- restart=Never -- curl -m 3 http://kubernetes.default.svc.cluster.local
+kubectl run test-curl --rm -it --restart=Never --image=curlimages/curl -- curl -m 3 http://kubernetes.default.svc.cluster.local
 ```
 </details>
 
@@ -669,7 +669,7 @@ kubectl describe ingress portal-ingress -n app-routing
 
 ---
 
-### Task 13: Topology Spread Constraints for Pod HA (Weight: 6%)
+### Task 13: Topology Spread Constraints for Pod HA (Weight: 5%)
 
 **Context:**
 ```bash
@@ -911,3 +911,28 @@ cat /opt/etcd-members.txt
 cat /opt/etcd-status.json
 ```
 </details>
+
+---
+
+## 🏆 Scoring Checklist for Set 3
+
+| Task # | Topic | Weight | Completed? | Verified? |
+|---|---|---|---|---|
+| **1** | Encrypting Secret Data at Rest | 8% | [ ] | [ ] |
+| **2** | Troubleshoot Broken Kube-Proxy DaemonSet | 7% | [ ] | [ ] |
+| **3** | Node Maintenance with PodDisruptionBudget | 6% | [ ] | [ ] |
+| **4** | Multi-Container Pod with Shared Volume | 5% | [ ] | [ ] |
+| **5** | Gateway API HTTPRoute Traffic Routing | 6% | [ ] | [ ] |
+| **6** | Troubleshoot Kubelet Certificate Expiration | 8% | [ ] | [ ] |
+| **7** | NetworkPolicy with CoreDNS Exception | 8% | [ ] | [ ] |
+| **8** | Reclaiming a Released PersistentVolume | 6% | [ ] | [ ] |
+| **9** | Projected Volume with ServiceAccountToken | 5% | [ ] | [ ] |
+| **10** | Non-Resource URL RBAC Authorization | 5% | [ ] | [ ] |
+| **11** | Complex JSONPath Data Extraction | 4% | [ ] | [ ] |
+| **12** | Ingress Path-Based Routing & Default Backend | 6% | [ ] | [ ] |
+| **13** | Topology Spread Constraints for Pod HA | 5% | [ ] | [ ] |
+| **14** | Batch Processing Job with Deadlines | 4% | [ ] | [ ] |
+| **15** | Troubleshoot CrashLoopBackOff Application | 6% | [ ] | [ ] |
+| **16** | Audit Cluster for Unhealthy Pods | 4% | [ ] | [ ] |
+| **17** | ETCD Cluster Health Check & Member List | 7% | [ ] | [ ] |
+| **TOTAL** | | **100%** | **Target: ≥ 85%** | |

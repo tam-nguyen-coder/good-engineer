@@ -1,6 +1,6 @@
 # 📝 Practice Questions — Week 1: K8s Architecture, Control Plane & `kubectl` Imperative
 
-> **20 Scenario Questions** · Authentic CKA / CKAD exam style · Comprehensive Week 1 assessment.
+> **23 Scenario Questions** · Authentic CKA / CKAD exam style · Comprehensive Week 1 assessment, including **extension interfaces (CRI / CNI / CSI)**.
 > 🔒 **Detailed answers & explanations are in a separate file:** [answers.md](answers.md). Attempt all questions before checking!
 > Taxonomy Tag: `[Domain · Topic · Question Type]`. Multi = multiple-response (number to choose is stated).
 > Back to [Week 1 Plan](README.md) · [Labs](labs.md) · [Master Plan](../../K8S-STUDY-PLAN.md)
@@ -26,7 +26,7 @@ A Kubernetes High Availability (HA) cluster runs with a 5-node `etcd` cluster. W
 ---
 
 ### Question 3 — `[ARCH · Kubelet & CRI · Single]`
-On a worker node running Kubernetes v1.31, which component is directly responsible for communicating with the Container Runtime via the CRI Unix socket (`/run/containerd/containerd.sock`) to pull container images and manage the container lifecycle inside a Pod?
+On a worker node running Kubernetes v1.35, which component is directly responsible for communicating with the Container Runtime via the CRI Unix socket (`/run/containerd/containerd.sock`) to pull container images and manage the container lifecycle inside a Pod?
 - A. `kube-proxy`
 - B. `kube-apiserver`
 - C. `kubelet`
@@ -185,3 +185,32 @@ In multi-container Pod design patterns, what is the primary purpose of an "Ambas
 - B. Collecting and reformatting raw logs from the primary container before shipping them to a centralized logging system.
 - C. Executing cleanup scripts before the Pod is terminated.
 - D. Ensuring the primary container starts only after an external database has opened its network port.
+
+---
+
+### Question 21 — `[ARCH · Extension interfaces · Single]`
+A newly joined worker node reports `NotReady`. `journalctl -u kubelet` repeatedly logs:
+`Network plugin returns error: cni plugin not initialized`. Which extension interface is at fault, and where do you look first?
+- A. CRI — inspect `/etc/containerd/config.toml` and restart `containerd`.
+- B. CNI — check that a network plugin config exists in `/etc/cni/net.d/`, its binaries exist in `/opt/cni/bin/`, and the CNI DaemonSet pods in `kube-system` are Running.
+- C. CSI — verify `kubectl get csidrivers` lists a registered driver.
+- D. The Device Plugin interface — the node is missing its device plugin registration socket.
+
+---
+
+### Question 22 — `[ARCH · CNI capability · Single]`
+A team applies a `default-deny-all` NetworkPolicy to their namespace on a cluster running plain **Flannel**. The object is accepted by the API server, but pods keep communicating freely in every direction. What explains this?
+- A. The NetworkPolicy is missing a `policyTypes` field, so it is silently ignored.
+- B. NetworkPolicy objects only take effect after `kube-proxy` is restarted on every node.
+- C. NetworkPolicy enforcement is delegated to the CNI plugin. Plain Flannel does not implement it, so the policy is stored but never enforced — a CNI such as Calico or Cilium is required.
+- D. `default-deny-all` policies only apply to egress traffic; ingress stays open by design.
+
+---
+
+### Question 23 — `[ARCH · CSI · Single]`
+A PersistentVolumeClaim has been stuck in `Pending` for ten minutes. `kubectl describe pvc` shows no provisioning events at all — not even a failure. Which check most directly identifies the root cause?
+- A. `kubectl get volumeattachments` — an existing attachment is blocking the new claim.
+- B. Compare the PVC's `storageClassName` against `kubectl get storageclass`, and confirm the CSI driver behind that class's `provisioner` is installed and running (`kubectl get csidrivers`, plus its pods in `kube-system`).
+- C. Increase the PVC's `resources.requests.storage`; claims under 1Gi are rejected silently.
+- D. Delete and recreate the PVC with `accessModes: ReadWriteMany`.
+

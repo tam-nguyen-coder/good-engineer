@@ -1,6 +1,6 @@
 # 📝 Practice Questions — Week 9: Cluster Maintenance & etcd Disaster Recovery
 
-> **15 Scenario Questions** · Authentic CKA & CKAD exam style · Focus on Kubeadm Upgrade, Node Cordon/Drain, etcd Backup/Restore & Certificate Renewal.
+> **21 Scenario Questions** · Authentic CKA & CKAD exam style · Focus on Kubeadm Upgrade, Node Cordon/Drain, etcd Backup/Restore, Certificate Renewal, **HA Control Plane & CRD/Operators**.
 > 🔒 **Detailed answers & explanations are in a separate file:** [answers.md](answers.md). Attempt all questions before checking!
 > Taxonomy Tag: `[Domain · Topic · Question Type]`.
 > Back to [Week 9 Plan](README.md) · [Labs](labs.md) · [Master Plan](../../K8S-STUDY-PLAN.md)
@@ -44,9 +44,9 @@ When executing `kubectl drain <node-name>`, which flag is MANDATORY if there are
 ---
 
 ### Question 5 — `[ARCH · Kubeadm Upgrade Sequence · Single]`
-When performing an upgrade of a Kubernetes cluster from v1.30 to v1.31 using `kubeadm`, what is the CORRECT execution sequence on the primary Control Plane node?
+When performing an upgrade of a Kubernetes cluster from v1.34 to v1.35 using `kubeadm`, what is the CORRECT execution sequence on the primary Control Plane node?
 - A. Upgrade Kubelet -> Upgrade Kubectl -> Upgrade Kubeadm -> Run `kubeadm upgrade apply`
-- B. Drain node -> Upgrade `kubeadm` package -> Execute `kubeadm upgrade apply v1.31.0` -> Upgrade `kubelet` and `kubectl` -> Restart kubelet -> Uncordon node
+- B. Drain node -> Upgrade `kubeadm` package -> Execute `kubeadm upgrade apply v1.35.0` -> Upgrade `kubelet` and `kubectl` -> Restart kubelet -> Uncordon node
 - C. Upgrade all Worker nodes first, followed by the Control Plane
 - D. Delete the cluster and initialize anew with `kubeadm init`
 
@@ -54,7 +54,7 @@ When performing an upgrade of a Kubernetes cluster from v1.30 to v1.31 using `ku
 
 ### Question 6 — `[ARCH · Kubeadm Worker Upgrade · Single]`
 When upgrading a Worker Node using `kubeadm`, which command is used to apply the new cluster configuration to the worker (after upgrading the `kubeadm` binary)?
-- A. `kubeadm upgrade apply v1.31.0`
+- A. `kubeadm upgrade apply v1.35.0`
 - B. `kubeadm upgrade node`
 - C. `kubeadm node update`
 - D. `kubeadm upgrade worker`
@@ -139,3 +139,58 @@ After completing node kernel updates and rebooting Worker Node `node-01`, which 
 - B. `kubectl start node node-01`
 - C. `kubectl uncordon node-01`
 - D. `kubectl resume node node-01`
+
+---
+
+### Question 16 — `[ARCH · etcd quorum · Single]`
+An architect proposes growing an etcd cluster from **3** members to **4** to improve fault tolerance. Evaluate the proposal.
+- A. Correct — 4 members tolerate 2 failures, double that of 3 members.
+- B. Incorrect — quorum for 4 members is 3, so it still tolerates only **1** failure, exactly like a 3-member cluster, while adding another machine that can fail. etcd clusters should always have an odd member count.
+- C. Correct — an even member count lets Raft split the vote evenly and recover faster.
+- D. Incorrect — etcd supports a maximum of 3 members.
+
+---
+
+### Question 17 — `[ARCH · HA topology · Single]`
+A cluster was originally bootstrapped with `kubeadm init --apiserver-advertise-address=10.0.1.10` and no `--control-plane-endpoint`. Management now wants to add two more control plane nodes behind a load balancer. What is the situation?
+- A. Simply run `kubeadm join --control-plane` on the two new nodes; kubeadm reconfigures the endpoint automatically.
+- B. Edit `/etc/kubernetes/admin.conf` on every node to point at the load balancer VIP, then join.
+- C. The control plane endpoint is baked into the cluster's certificates and kubeconfigs at init time and cannot be changed afterwards — converting this cluster to HA requires rebuilding it with `--control-plane-endpoint` set to the LB address.
+- D. Run `kubeadm upgrade apply --control-plane-endpoint k8s-api.example.com:6443` to migrate in place.
+
+---
+
+### Question 18 — `[ARCH · HA components · Single]`
+In a 3-node HA control plane, which statement correctly describes how the components run?
+- A. All three `kube-apiserver`, `kube-scheduler` and `kube-controller-manager` instances are active simultaneously.
+- B. `kube-apiserver` runs active-active behind the load balancer, while `kube-scheduler` and `kube-controller-manager` run active-passive — only the leader elected via a Lease object in `kube-system` actually does work.
+- C. Only one `kube-apiserver` is active; the load balancer performs health-check failover to a standby.
+- D. All three components elect a single leader node that runs every control plane component.
+
+---
+
+### Question 19 — `[ARCH · CRD naming · Single]`
+You apply a CustomResourceDefinition with `spec.group: ops.example.com`, `spec.names.plural: backups`, `spec.names.kind: Backup`, and `metadata.name: backup.ops.example.com`. The API server rejects it. Why?
+- A. `spec.names.kind` must be lowercase.
+- B. `metadata.name` must be exactly `<plural>.<group>` — here it must read `backups.ops.example.com` (plural), not `backup.ops.example.com`.
+- C. Custom groups may not contain the substring `example.com`.
+- D. A CRD must declare at least two entries under `spec.versions`.
+
+---
+
+### Question 20 — `[ARCH · CRD vs controller · Single]`
+A CRD is registered successfully, `kubectl get crd` lists it, and you can create custom objects of the new kind — `kubectl get backups` shows them. However, nothing at all happens in the cluster: no pods, no jobs, no side effects. What is the explanation?
+- A. The CRD is missing `additionalPrinterColumns`, so its reconciliation loop never starts.
+- B. Custom resources need `spec.scope: Cluster` before controllers can act on them.
+- C. A CRD only extends the API's storage and validation. Actually acting on the objects requires a **controller/operator** watching that kind — it is either not installed or its pod is not running.
+- D. The objects must be annotated with `kubernetes.io/reconcile: "true"`.
+
+---
+
+### Question 21 — `[ARCH · Operator troubleshooting · Single]`
+An operator was installed via Helm. Its custom resources are accepted but stay in an empty `status`. Which sequence best isolates the fault?
+- A. Delete and recreate the CRD to force re-registration.
+- B. Increase the custom resource's `spec.retention` value and wait for the next sync interval.
+- C. Check that the operator's controller pod is Running in its namespace, read its logs (`kubectl logs -n <ns> deploy/<controller>`), then inspect the custom resource's `.status` and `kubectl describe` events.
+- D. Restart `kube-controller-manager` on every control plane node — it owns reconciliation for all custom resources.
+

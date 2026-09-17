@@ -1,6 +1,6 @@
 # 📝 Practice Questions — Week 3: Pod Scheduling, Affinity, Taints & QoS
 
-> **15 Scenario Questions** · Authentic CKA & CKAD exam style · Focus on NodeSelector, NodeAffinity, PodAntiAffinity, Taints/Tolerations, Requests/Limits & QoS Classes.
+> **19 Scenario Questions** · Authentic CKA & CKAD exam style · Focus on NodeSelector, NodeAffinity, PodAntiAffinity, Taints/Tolerations, Requests/Limits, QoS Classes & **Workload Autoscaling (HPA)**.
 > 🔒 **Detailed answers & explanations are in a separate file:** [answers.md](answers.md). Attempt all questions before checking!
 > Taxonomy Tag: `[Domain · Topic · Question Type]`.
 > Back to [Week 3 Plan](README.md) · [Labs](labs.md) · [Master Plan](../../K8S-STUDY-PLAN.md)
@@ -144,3 +144,40 @@ In Kubernetes, what is the primary role of a `PriorityClass` resource during sch
 - B. Indicating Pod scheduling importance; when cluster resources are insufficient, the scheduler can trigger **preemption** by evicting lower-priority Pods to schedule pending high-priority Pods.
 - C. Ensuring the Pod is mounted to high-throughput NVMe storage volumes.
 - D. Triggering automated node scale-up on cloud provider clusters.
+
+---
+
+### Question 16 — `[WORKLOAD · HPA troubleshooting · Single]`
+`kubectl get hpa web -n prod` reports `TARGETS: <unknown>/70%` and the replica count never changes. `kubectl top pods -n prod` returns healthy numbers for every pod. What is the most likely cause?
+- A. Metrics Server is not installed in the cluster.
+- B. The Deployment's container spec omits `resources.requests.cpu`, so the HPA has no baseline against which to compute a utilisation percentage.
+- C. The HPA must use `apiVersion: autoscaling/v1`; `v2` does not support CPU metrics.
+- D. `minReplicas` is set higher than `maxReplicas`.
+
+---
+
+### Question 17 — `[WORKLOAD · HPA semantics · Single]`
+A Deployment's container declares `resources.requests.cpu: 200m` and `resources.limits.cpu: 1000m`. Its HPA targets `averageUtilization: 50`. At what average per-pod CPU consumption does the HPA consider the workload to be exactly on target?
+- A. 500m — 50% of the limit.
+- B. 100m — 50% of the request.
+- C. 600m — 50% of the midpoint between request and limit.
+- D. 50% of the node's total allocatable CPU.
+
+---
+
+### Question 18 — `[TROUBLE · Resource monitoring · Single]`
+You must record the name of the single highest memory-consuming pod in namespace `monitoring` into `/opt/top-pod.txt`, with no other text in the file. Which command does this correctly?
+- A. `kubectl describe nodes | grep memory > /opt/top-pod.txt`
+- B. `kubectl get pods -n monitoring --sort-by=.spec.containers[0].resources.requests.memory -o name > /opt/top-pod.txt`
+- C. `kubectl top pods -n monitoring --sort-by=memory --no-headers | head -n 1 | awk '{print $1}' > /opt/top-pod.txt`
+- D. `kubectl top pods -n monitoring | head -n 1 > /opt/top-pod.txt`
+
+---
+
+### Question 19 — `[WORKLOAD · Autoscaler types · Single]`
+A cluster runs a batch workload whose pods are consistently OOMKilled because their memory `limits` were set far too low at design time. Which autoscaling mechanism is designed to correct **this specific** problem?
+- A. Horizontal Pod Autoscaler — it adds replicas until memory pressure drops.
+- B. Cluster Autoscaler — it adds nodes with more memory.
+- C. Vertical Pod Autoscaler — it adjusts the pods' own `requests`/`limits` (restarting the pods to apply them).
+- D. `kubectl top` — it automatically right-sizes the workload after collecting samples.
+

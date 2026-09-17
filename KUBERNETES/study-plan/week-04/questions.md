@@ -1,6 +1,6 @@
 # 📝 Practice Questions — Week 4: ConfigMaps, Secrets, Probes & SecurityContext
 
-> **15 Scenario Questions** · Authentic CKA & CKAD exam style · Focus on Configuration, Liveness/Readiness/Startup Probes, SecurityContext & Pod Security Standards.
+> **20 Scenario Questions** · Authentic CKA & CKAD exam style · Focus on Configuration, Liveness/Readiness/Startup Probes, SecurityContext, Pod Security Standards, **Kustomize & Helm**.
 > 🔒 **Detailed answers & explanations are in a separate file:** [answers.md](answers.md). Attempt all questions before checking!
 > Taxonomy Tag: `[Domain · Topic · Question Type]`.
 > Back to [Week 4 Plan](README.md) · [Labs](labs.md) · [Master Plan](../../K8S-STUDY-PLAN.md)
@@ -161,3 +161,49 @@ What Linux kernel mechanism does the setting `allowPrivilegeEscalation: false` e
 - B. It prevents the container from exceeding its configured CPU quota.
 - C. It blocks outbound network egress to public IP addresses.
 - D. It blocks cluster users from running `kubectl exec`.
+
+---
+
+### Question 16 — `[ARCH · Kustomize · Single]`
+You are given a Kustomize overlay at `overlays/production/`. Before applying anything to the live cluster, you must inspect the exact YAML that Kustomize will generate. Which command produces the fully rendered output **without** contacting the API server or creating any object?
+- A. `kubectl apply -k overlays/production/ --dry-run=server`
+- B. `kubectl kustomize overlays/production/`
+- C. `kubectl create -k overlays/production/ --validate=false`
+- D. `kustomize apply overlays/production/ --preview`
+
+---
+
+### Question 17 — `[ARCH · Kustomize configMapGenerator · Single]`
+Your `kustomization.yaml` declares a `configMapGenerator` for a ConfigMap named `app-settings`. After `kubectl apply -k`, the object created in the cluster is named `app-settings-t92hk5bf4d`. The grading script requires the ConfigMap to be named **exactly** `app-settings`. What is the correct fix?
+- A. Rename the generator entry to `app-settings-` so the suffix completes the name.
+- B. Move the ConfigMap out of Kustomize; generators always append a hash.
+- C. Add `generatorOptions: { disableNameSuffixHash: true }` to `kustomization.yaml`.
+- D. Add `namePrefix: ""` and `nameSuffix: ""` to `kustomization.yaml`.
+
+---
+
+### Question 18 — `[ARCH · Helm release inspection · Single]`
+A cluster component was installed with Helm some months ago. You need to see **every** value the release is currently running with — including the chart defaults that were never explicitly overridden. Which command returns that?
+- A. `helm show values <chart>`
+- B. `helm get values <release> -n <ns>`
+- C. `helm get values <release> -n <ns> -a`
+- D. `helm get manifest <release> -n <ns>`
+
+---
+
+### Question 19 — `[ARCH · Helm scope · Single]`
+You run `helm list` on a cluster you believe hosts several Helm releases, but the output is empty. The releases definitely exist. What is the most likely cause?
+- A. Helm 3 removed the `list` subcommand; you must use `helm ls --all`.
+- B. `helm list` is namespace-scoped and only shows releases in your current namespace — the releases live elsewhere, so you need `helm list -A`.
+- C. The Tiller server pod is not running in `kube-system`.
+- D. Releases become invisible to `helm list` once they have been upgraded at least once.
+
+---
+
+### Question 20 — `[ARCH · Helm vs Kustomize · Single]`
+A task states: *"Roll the `ingress-nginx` component back to the configuration it had before the last change."* The component was installed as a Helm release. Which approach matches the tooling?
+- A. `kubectl rollout undo deployment/ingress-nginx-controller -n ingress-nginx`
+- B. `kubectl apply -k` against the previous overlay directory
+- C. `helm history ingress-nginx -n ingress-nginx` to find the prior revision, then `helm rollback ingress-nginx <revision> -n ingress-nginx`
+- D. `helm uninstall` then `helm install` with the old chart version — Helm has no rollback
+

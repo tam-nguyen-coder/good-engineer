@@ -4,7 +4,7 @@
 > Về [plan tuần 1](README.md) · [Bài Lab](labs.md) · [Kế hoạch tổng](../../K8S-STUDY-PLAN.md)
 
 **Bảng đáp án nhanh:**
-`1-B` · `2-B` · `3-C` · `4-B` · `5-C` · `6-B` · `7-B` · `8-B` · `9-C` · `10-A` · `11-C` · `12-AC` · `13-B` · `14-B` · `15-B` · `16-B` · `17-B` · `18-B` · `19-C` · `20-A`
+`1-B` · `2-B` · `3-C` · `4-B` · `5-C` · `6-B` · `7-B` · `8-B` · `9-C` · `10-A` · `11-C` · `12-AC` · `13-B` · `14-B` · `15-B` · `16-B` · `17-B` · `18-B` · `19-C` · `20-A` · `21-B` · `22-C` · `23-B`
 
 ---
 
@@ -185,3 +185,31 @@
   - **Sidecar:** Mở rộng/hỗ trợ (ghi log, sync dữ liệu).
   - **Adapter:** Chuẩn hoá output (format log/metrics).
   - **Ambassador:** Đại sứ kết nối mạng ra bên ngoài (proxy).
+
+---
+
+### Question 21 — Đáp án: **B**
+- **Vì sao đúng:** Thông điệp `cni plugin not initialized` đến **thẳng từ kubelet** khi nó không tìm thấy một cấu hình CNI hợp lệ. Kubelet coi node là `NotReady` cho tới khi mạng Pod sẵn sàng. Trình tự kiểm tra:
+  1. `ls /etc/cni/net.d/` — có file `*.conflist` không? (rỗng = chưa cài CNI)
+  2. `ls /opt/cni/bin/` — có binary plugin không?
+  3. `kubectl get pods -n kube-system -o wide | grep -Ei 'calico|cilium|flannel'` — DaemonSet CNI trên node đó có Running không?
+- **Vì sao các đáp án khác sai:** **A** lỗi CRI sẽ báo về runtime/socket chứ không nhắc "network plugin"; **C** CSI chỉ liên quan tới volume; **D** device plugin không làm node `NotReady`.
+- 🧠 **Mẹo ghi nhớ:** Node `NotReady` + chữ **`cni`** trong log = mạng, không phải kubelet. Nhìn `/etc/cni/net.d/` trước tiên.
+
+---
+
+### Question 22 — Đáp án: **C**
+- **Vì sao đúng:** `NetworkPolicy` chỉ là **bản khai báo ý định** lưu trong etcd. Người *thực thi* nó là CNI plugin. Flannel thuần chỉ làm nhiệm vụ cấp IP và overlay, **không** implement NetworkPolicy — nên policy được API server chấp nhận nhưng không có ai áp dụng. Muốn có hiệu lực phải dùng CNI hỗ trợ: **Calico**, **Cilium**, Antrea, Weave Net (hoặc chạy Calico policy-only chồng lên Flannel, tức "Canal").
+- **Vì sao các đáp án khác sai:** **A** thiếu `policyTypes` thì K8s tự suy ra từ các khối `ingress`/`egress` có mặt, không bị bỏ qua; **B** `kube-proxy` xử lý Service/iptables, không liên quan NetworkPolicy; **D** sai hoàn toàn — `default-deny-all` chặn cả hai chiều nếu khai báo đủ `policyTypes`.
+- 🧠 **Mẹo ghi nhớ:** NetworkPolicy = **luật trên giấy**; CNI = **cảnh sát thi hành**. Không có cảnh sát thì luật vô nghĩa.
+
+---
+
+### Question 23 — Đáp án: **B**
+- **Vì sao đúng:** PVC `Pending` mà `describe` **không có một event nào** là dấu hiệu đặc trưng: *không có provisioner nào nhận claim này*. Nếu driver tồn tại nhưng thất bại, bạn sẽ thấy event `ProvisioningFailed` kèm lý do. Hoàn toàn im lặng nghĩa là:
+  - `storageClassName` trỏ tới một class không tồn tại (hoặc gõ sai), **hoặc**
+  - PVC không ghi `storageClassName` và cluster **không có default StorageClass** (`kubectl get sc` — không class nào gắn nhãn `(default)`), **hoặc**
+  - Class có tồn tại nhưng CSI driver đứng sau `provisioner` chưa được cài / pod của nó đang chết.
+- **Vì sao các đáp án khác sai:** **A** `volumeattachments` liên quan tới giai đoạn attach, xảy ra **sau** khi đã bind xong; **C** không hề có ngưỡng tối thiểu 1Gi; **D** đổi `accessModes` sang RWX thường làm tình hình tệ hơn vì ít driver hỗ trợ.
+- 🧠 **Mẹo ghi nhớ:** PVC `Pending` **im lặng tuyệt đối** = không ai nhận việc → soi `StorageClass` và CSI driver. PVC `Pending` **có event lỗi** = có người nhận nhưng làm hỏng → đọc thẳng event đó.
+

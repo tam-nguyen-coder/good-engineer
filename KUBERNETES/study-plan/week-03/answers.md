@@ -1,10 +1,10 @@
 # ✅ Answers & Explanations — Tuần 3: Pod Scheduling & QoS
 
-> Mở file này sau khi đã tự làm 15 câu hỏi trong [questions.md](questions.md).
+> Mở file này sau khi đã tự làm 19 câu hỏi trong [questions.md](questions.md).
 > Về [plan tuần 3](README.md) · [Bài Lab](labs.md) · [Kế hoạch tổng](../../K8S-STUDY-PLAN.md)
 
 **Bảng đáp án nhanh:**
-`1-B` · `2-C` · `3-B` · `4-B` · `5-B` · `6-C` · `7-C` · `8-B` · `9-B` · `10-B` · `11-A` · `12-B` · `13-B` · `14-C` · `15-B`
+`1-B` · `2-C` · `3-B` · `4-B` · `5-B` · `6-C` · `7-C` · `8-B` · `9-B` · `10-B` · `11-A` · `12-B` · `13-B` · `14-C` · `15-B` · `16-B` · `17-B` · `18-C` · `19-C`
 
 ---
 
@@ -105,3 +105,35 @@
 ### Question 15 — Đáp án: **B**
 - **Vì sao đúng:** `PriorityClass` gán trọng số ưu tiên cho Pod. Khi cluster không đủ tài nguyên để xếp Pod quan trọng (Priority cao), Scheduler sẽ tự động đuổi (Preempt / Evict) các Pod có độ ưu tiên thấp hơn ra khỏi Node để lấy chỗ cho Pod quan trọng.
 - 🧠 **Mẹo ghi nhớ:** PriorityClass = Quyền ưu tiên chen hàng & cướp chỗ (Preemption).
+
+---
+
+### Question 16 — Đáp án: **B**
+- **Vì sao đúng:** Chi tiết quyết định nằm ở chỗ **`kubectl top` vẫn chạy tốt** → Metrics Server hoàn toàn khoẻ mạnh. HPA tính `utilization = usage / requests`. Không có `requests.cpu` thì **mẫu số bằng 0**, phép chia vô nghĩa, HPA đành báo `<unknown>`. Sửa bằng cách thêm requests vào Pod template:
+  ```bash
+  kubectl set resources deployment web -n prod --requests=cpu=200m
+  ```
+- **Vì sao các đáp án khác sai:** **A** nếu Metrics Server chết thì `kubectl top` cũng phải lỗi; **C** ngược lại, `autoscaling/v2` là bản khuyến nghị và hỗ trợ đầy đủ CPU; **D** cấu hình `min > max` sẽ bị API server từ chối ngay khi tạo.
+- 🧠 **Mẹo ghi nhớ:** `<unknown>` + `top` **chạy được** = thiếu **requests**. `<unknown>` + `top` **cũng hỏng** = chết **Metrics Server**.
+
+---
+
+### Question 17 — Đáp án: **B**
+- **Vì sao đúng:** `averageUtilization` **luôn** được tính theo phần trăm của **`resources.requests`**. Ở đây: `200m × 50% = 100m`. Giá trị `limits` hoàn toàn không tham gia vào công thức của HPA (nó chỉ là trần cưỡng chế của kernel/cgroup).
+- **Vì sao các đáp án khác sai:** **A** nhầm requests với limits — đây chính là bẫy được cài; **C** không tồn tại khái niệm "điểm giữa"; **D** HPA đo theo Pod, không theo dung lượng node.
+- 🧠 **Mẹo ghi nhớ:** HPA nhìn **REQUESTS**, kernel nhìn **LIMITS**.
+
+---
+
+### Question 18 — Đáp án: **C**
+- **Vì sao đúng:** Chuỗi lệnh giải quyết đủ 4 yêu cầu: `kubectl top pods` lấy mức dùng **thực tế**; `--sort-by=memory` xếp giảm dần; `--no-headers` bỏ dòng tiêu đề (nếu không, `head -n 1` sẽ lấy nhầm chữ "NAME"); `awk '{print $1}'` cắt lấy đúng tên pod, loại bỏ các cột CPU/MEMORY.
+- **Vì sao các đáp án khác sai:** **A** trả về rác về node chứ không phải tên pod; **B** sắp xếp theo **requests đã khai báo**, không phải mức tiêu thụ thật; **D** thiếu `--no-headers` nên lấy nhầm dòng tiêu đề, và còn kèm luôn các cột số.
+- 🧠 **Mẹo ghi nhớ:** Đề bắt ghi ra file → công thức 4 nhịp: `top` → `--sort-by` → `--no-headers | head -1` → `awk '{print $1}'`. Xong luôn `cat` lại file để kiểm chứng.
+
+---
+
+### Question 19 — Đáp án: **C**
+- **Vì sao đúng:** Vấn đề ở đây là **mỗi Pod được cấp phát quá ít RAM**, không phải thiếu số lượng Pod. Đó đúng là địa hạt của **VPA (Vertical Pod Autoscaler)**: nó quan sát mức dùng lịch sử rồi đề xuất/áp `requests` và `limits` mới. Vì việc đổi resource yêu cầu tạo lại container, VPA phải **restart Pod** để áp dụng.
+- **Vì sao các đáp án khác sai:** **A** thêm replica **không** làm mỗi Pod có thêm RAM — chúng vẫn sẽ OOMKilled y như cũ; **B** node to hơn cũng vô ích khi chính `limits` của Pod mới là trần bóp nghẹt; **D** `kubectl top` chỉ **đo**, không hề tự điều chỉnh gì.
+- 🧠 **Mẹo ghi nhớ:** Pod bị **OOMKilled** = bài toán **VERTICAL**. Pod **quá tải vì đông request** = bài toán **HORIZONTAL**.
+

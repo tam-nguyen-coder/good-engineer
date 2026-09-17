@@ -1,16 +1,17 @@
 # ✅ Answers & Explanations — Tuần 9: Cluster Maintenance & etcd
 
-> Mở file này sau khi đã hoàn thành 15 câu hỏi trong [questions.md](questions.md).
+> Mở file này sau khi đã hoàn thành 21 câu hỏi trong [questions.md](questions.md).
 > Về [plan tuần 9](README.md) · [Bài Lab](labs.md) · [Kế hoạch tổng](../../K8S-STUDY-PLAN.md)
 
 **Bảng đáp án nhanh:**
-`1-B` · `2-A` · `3-B` · `4-A` · `5-B` · `6-B` · `7-B` · `8-A` · `9-A` · `10-B` · `11-A` · `12-B` · `13-A` · `14-A` · `15-C`
+`1-B` · `2-A` · `3-B` · `4-A` · `5-B` · `6-B` · `7-B` · `8-A` · `9-A` · `10-B` · `11-A` · `12-B` · `13-A` · `14-A` · `15-C` · `16-B` · `17-C` · `18-B` · `19-B` · `20-C` · `21-C`
 
 ---
 
 ### Question 1 — Đáp án: **B**
-- **Vì sao đúng:** `etcdctl` mặc định ở một số bản cũ có thể trỏ về API v2. Để thao tác với cơ sở dữ liệu Kubernetes hiện đại (etcd v3), bắt buộc phải export biến môi trường: **`export ETCDCTL_API=3`**.
-- 🧠 **Mẹo ghi nhớ:** Luôn gõ **`ETCDCTL_API=3`** trước mọi câu lệnh etcdctl.
+- **Vì sao đúng:** Trên các bản **etcdctl cũ (< v3.4)**, client mặc định trỏ về API v2 nên phải export **`export ETCDCTL_API=3`** thì mới thao tác được với database v3 của Kubernetes. Đây vẫn là đáp án đúng của câu hỏi này vì nó là biến duy nhất điều khiển phiên bản API của `etcdctl`.
+- ⚠️ **Cập nhật cho môi trường thi v1.35:** Từ **etcdctl v3.4 trở đi API v3 đã là mặc định**, và cụm thi CKA hiện chạy etcd 3.5/3.6 → **bạn KHÔNG bắt buộc phải export biến này**. Gõ thêm thì vô hại, nhưng nếu đáp án mẫu hay tài liệu chính thức không có nó thì cũng đừng hoang mang.
+- 🧠 **Mẹo ghi nhớ:** `ETCDCTL_API=3` = *phao cứu sinh cho etcdctl đời cũ*. Thứ **thật sự bắt buộc** trong phòng thi là bộ 4 cờ: `--endpoints`, `--cacert`, `--cert`, `--key`.
 
 ---
 
@@ -36,7 +37,7 @@
 - **Vì sao đúng:** Quy trình nâng cấp Control Plane chuẩn bằng kubeadm:
   1. Drain node controlplane.
   2. Nâng cấp binary `kubeadm`.
-  3. Chạy `kubeadm upgrade apply v1.31.0` để nâng cấp cấu hình cluster.
+  3. Chạy `kubeadm upgrade apply v1.35.0` để nâng cấp cấu hình cluster.
   4. Nâng cấp binary `kubelet` và `kubectl`.
   5. Restart service `kubelet`.
   6. Uncordon node.
@@ -106,3 +107,57 @@
 ### Question 15 — Đáp án: **C**
 - **Vì sao đúng:** Lệnh `kubectl uncordon <node-name>` gỡ bỏ trạng thái `SchedulingDisabled`, đưa Node trở lại trạng thái `Ready` để tiếp tục nhận các Pod mới từ Kube-scheduler.
 - 🧠 **Mẹo ghi nhớ:** Bảo trì xong mở cửa lại cho Node: **`kubectl uncordon`**.
+
+---
+
+### Question 16 — Đáp án: **B**
+- **Vì sao đúng:** Quorum của Raft là `(N/2) + 1`. Với N=3 → quorum 2 → chịu được mất **1**. Với N=4 → quorum 3 → vẫn chỉ chịu được mất **1**. Bạn tốn thêm một máy, thêm một thứ có thể hỏng, mà khả năng chịu lỗi **không đổi**. Muốn chịu được 2 lỗi thì phải lên **5** member (quorum 3).
+- **Vì sao các đáp án khác sai:** **A** tính sai quorum; **C** Raft không "chia phiếu đều" — nó cần **quá bán tuyệt đối**, hoà phiếu chỉ gây bầu lại; **D** etcd không giới hạn ở 3, chỉ là 5 gần như luôn là trần thực dụng (càng nhiều member, ghi càng chậm vì phải replicate rộng hơn).
+- 🧠 **Mẹo ghi nhớ:** Bảng thuộc lòng: **1→0 · 3→1 · 5→2**. Số chẵn luôn vô nghĩa.
+
+---
+
+### Question 17 — Đáp án: **C**
+- **Vì sao đúng:** `--control-plane-endpoint` được nhúng vào **SAN của chứng chỉ API server**, vào `clusterConfiguration` trong ConfigMap `kubeadm-config`, và vào `server:` của mọi kubeconfig (`admin.conf`, `kubelet.conf`, `controller-manager.conf`, `scheduler.conf`). Không có nó, mọi thứ trỏ cứng vào IP `10.0.1.10` của node đầu tiên — node đó chết là cả cụm mất control plane, và không thể chen load balancer vào giữa. Chính vì vậy tài liệu kubeadm khuyến nghị **luôn** đặt `--control-plane-endpoint` ngay từ `init` đầu tiên, kể cả khi mới có một node.
+- **Vì sao các đáp án khác sai:** **A** `kubeadm join --control-plane` sẽ thất bại vì cụm không được cấu hình cho HA; **B** sửa kubeconfig không cứu được phần SAN trong certificate; **D** `kubeadm upgrade apply` không nhận cờ đó.
+- 🧠 **Mẹo ghi nhớ:** `--control-plane-endpoint` là **quyết định một lần, không quay đầu**. Luôn trỏ vào DNS/VIP, không bao giờ trỏ vào IP của một node.
+
+---
+
+### Question 18 — Đáp án: **B**
+- **Vì sao đúng:** `kube-apiserver` **stateless** hoàn toàn — mọi state nằm ở etcd — nên cả 3 bản chạy song song và load balancer rải request tuỳ ý. Ngược lại, `kube-scheduler` và `kube-controller-manager` **bắt buộc** chỉ được có một bản hoạt động, nếu không hai scheduler sẽ cùng gán một Pod vào hai node khác nhau. Chúng dùng **leader election** qua Lease:
+  ```bash
+  kubectl get lease -n kube-system kube-scheduler kube-controller-manager
+  kubectl get lease -n kube-system kube-scheduler -o jsonpath='{.spec.holderIdentity}{"\n"}'
+  ```
+- **Vì sao các đáp án khác sai:** **A** sẽ gây tranh chấp lập lịch; **C** apiserver là active-active, không phải standby; **D** leader election diễn ra **độc lập cho từng component**, không phải bầu ra một node "chủ" chạy tất cả.
+- 🧠 **Mẹo ghi nhớ:** **Stateless → active-active** (apiserver). **Có quyền ra quyết định → active-passive** (scheduler, controller-manager).
+
+---
+
+### Question 19 — Đáp án: **B**
+- **Vì sao đúng:** API server kiểm tra rất nghiêm: `metadata.name` của CRD **phải** bằng chính xác `<spec.names.plural>.<spec.group>`. Ở đây plural là `backups` nên tên đúng là `backups.ops.example.com`. Viết `backup.` (số ít) là bị từ chối với thông báo kiểu *"must be spec.names.plural+\".\"+spec.group"*.
+- **Vì sao các đáp án khác sai:** **A** `kind` theo quy ước là **PascalCase** (`Backup`) — đúng như đề đã viết; **C** không có hạn chế nào về tên miền; **D** một version là đủ (miễn có đúng một version `storage: true`).
+- 🧠 **Mẹo ghi nhớ:** Tên CRD = **số nhiều** + dấu chấm + group. Copy thẳng từ `spec.names.plural`, đừng gõ lại bằng tay.
+
+---
+
+### Question 20 — Đáp án: **C**
+- **Vì sao đúng:** CRD chỉ làm đúng ba việc: **đăng ký** một kind mới với API server, **validate** object theo OpenAPI schema, và **lưu** chúng vào etcd. Nó hoàn toàn không mang theo logic nào. Muốn có hành động thật phải có **controller** watch kind đó và chạy vòng lặp reconcile. Đây là lý do một operator luôn gồm **hai phần**: bundle CRD + Deployment của controller. Cài thiếu phần thứ hai (hoặc pod của nó `CrashLoopBackOff`) sẽ cho ra đúng triệu chứng trong đề.
+- **Vì sao các đáp án khác sai:** **A** `additionalPrinterColumns` chỉ làm đẹp output `kubectl get`; **B** `scope` quyết định object nằm trong namespace hay toàn cụm, không liên quan tới việc có ai xử lý nó; **D** không tồn tại annotation này.
+- 🧠 **Mẹo ghi nhớ:** **CRD = cái hộp. Controller = người mở hộp.** Không người mở thì hộp cứ nằm đó.
+
+---
+
+### Question 21 — Đáp án: **C**
+- **Vì sao đúng:** `.status` rỗng là bằng chứng rằng **chưa có controller nào chạm vào object**. Controller nào hoạt động cũng sẽ ghi ít nhất một condition vào `.status`. Trình tự truy vết đúng đi từ "ai lẽ ra phải làm việc này" ra ngoài:
+  ```bash
+  kubectl get pods -n <operator-ns>                     # Controller có Running không?
+  kubectl logs -n <operator-ns> deploy/<controller>     # Nó báo lỗi gì? (RBAC? webhook?)
+  kubectl describe <cr-kind> <name>                     # Có event nào không?
+  kubectl get <cr-kind> <name> -o yaml                  # .status nói gì?
+  ```
+  Nguyên nhân thường gặp nhất: controller thiếu **RBAC** để watch CRD, hoặc nó đang watch một **version khác** với version bạn dùng để tạo object.
+- **Vì sao các đáp án khác sai:** **A** xoá CRD sẽ **xoá sạch mọi custom object** — phá hoại chứ không phải chẩn đoán; **B** đổi giá trị trong `spec` chẳng có tác dụng gì khi không có ai đọc nó; **D** `kube-controller-manager` **không** quản lý custom resource — mỗi operator tự mang controller riêng.
+- 🧠 **Mẹo ghi nhớ:** `.status` rỗng = **không ai đang lắng nghe**. Đi thẳng tới log của controller, đừng đụng vào CRD.
+

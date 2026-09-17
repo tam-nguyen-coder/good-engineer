@@ -31,11 +31,11 @@
    name: cka-cluster
    nodes:
    - role: control-plane
-     image: kindest/node:v1.31.0
+     image: kindest/node:v1.35.0
    - role: worker
-     image: kindest/node:v1.31.0
+     image: kindest/node:v1.35.0
    - role: worker
-     image: kindest/node:v1.31.0
+     image: kindest/node:v1.35.0
    EOF
    ```
 
@@ -53,9 +53,9 @@
    **Output mong muốn:**
    ```text
    NAME                        STATUS   ROLES           AGE   VERSION
-   cka-cluster-control-plane   Ready    control-plane   2m    v1.31.0
-   cka-cluster-worker          Ready    <none>          90s   v1.31.0
-   cka-cluster-worker2         Ready    <none>          90s   v1.31.0
+   cka-cluster-control-plane   Ready    control-plane   2m    v1.35.0
+   cka-cluster-worker          Ready    <none>          90s   v1.35.0
+   cka-cluster-worker2         Ready    <none>          90s   v1.35.0
    ```
 
 ---

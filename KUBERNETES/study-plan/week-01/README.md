@@ -1,6 +1,6 @@
 # 🟦 Tuần 1 — Kiến trúc Kubernetes & Control Plane + Lab Multi-node + `kubectl` Imperative Pro
 
-> **Domain:** Cluster Architecture, Installation & Configuration (25%) · **Thời lượng:** ~11h (4 buổi) · **Vị trí:** Tuần 1/10
+> **Domain:** Cluster Architecture, Installation & Configuration (25%) · **Thời lượng:** ~12.5h (5 buổi) · **Vị trí:** Tuần 1/10
 >
 > **Điều hướng:** [🏠 Kế hoạch tổng](../../K8S-STUDY-PLAN.md) · [Tuần 2 ➡️](../week-02/README.md) · [🧪 Bài Lab](labs.md) · [❓ Câu hỏi luyện tập](questions.md) · [💡 Đáp án chi tiết](answers.md)
 
@@ -175,6 +175,85 @@ spec:
 
 ---
 
+### 🔌 Buổi C+ — Extension Interfaces: CRI, CNI, CSI & Device Plugins (~1.5h)
+
+> 🆕 **Bổ sung theo curriculum CKA cập nhật 18/02/2025** — competency *"Understand extension interfaces (CNI, CSI, CRI, etc.)"* nằm trong Domain *Cluster Architecture (25%)*.
+
+Kubernetes cố tình **không** tự cài cắm runtime, mạng hay storage. Nó định nghĩa **hợp đồng (interface)** rồi để nhà cung cấp bên ngoài cắm vào. Hiểu được "ai cắm vào đâu" chính là chìa khoá troubleshooting: khi Pod không lên được, câu hỏi đầu tiên luôn là *hỏng ở interface nào?*
+
+| Interface | Ai gọi nó? | Cắm vào để làm gì | Triệu chứng khi hỏng |
+|---|---|---|---|
+| **CRI** (Container Runtime Interface) | `kubelet` | Tạo/xoá/chạy container (`containerd`, `CRI-O`) | Node `NotReady`, Pod kẹt `ContainerCreating`, `kubelet` log báo lỗi gọi runtime |
+| **CNI** (Container Network Interface) | `kubelet` (qua runtime) | Cấp IP cho Pod, đấu veth vào bridge/overlay (`Calico`, `Cilium`, `Flannel`) | Pod kẹt `ContainerCreating` với event `failed to setup network`, node `NotReady` kèm `cni plugin not initialized` |
+| **CSI** (Container Storage Interface) | `kube-controller-manager` + `kubelet` | Provision / attach / mount volume (`ebs.csi.aws.com`, `nfs.csi.k8s.io`) | PVC kẹt `Pending`, Pod kẹt `ContainerCreating` với lỗi `FailedAttachVolume` / `FailedMount` |
+| **Device Plugin** | `kubelet` | Expose tài nguyên phần cứng đặc biệt (GPU, FPGA, hugepages) | Pod `Pending` vì `Insufficient nvidia.com/gpu` |
+| **CCM** (Cloud Controller Manager) | Control plane | Tích hợp LoadBalancer / Node / Route của cloud | Service `LoadBalancer` kẹt `<pending>` mãi |
+
+#### 1. CRI — nơi kubelet nói chuyện với runtime
+
+```bash
+# Runtime nào đang chạy, version bao nhiêu?
+kubectl get nodes -o wide          # Cột CONTAINER-RUNTIME
+crictl version
+crictl info | head -20
+
+# Socket mặc định
+#   containerd : unix:///run/containerd/containerd.sock
+#   CRI-O      : unix:///var/run/crio/crio.sock
+
+# Cấu hình endpoint cho crictl (tránh cảnh báo deprecated mỗi lần gõ)
+cat << 'EOF' > /etc/crictl.yaml
+runtime-endpoint: unix:///run/containerd/containerd.sock
+image-endpoint: unix:///run/containerd/containerd.sock
+timeout: 10
+EOF
+```
+
+> ⚠️ **Bẫy kinh điển:** Kubelet và containerd phải **cùng** cgroup driver (`systemd`). Lệch nhau → kubelet không khởi động được.
+> Kubelet: `/var/lib/kubelet/config.yaml` → `cgroupDriver: systemd`
+> containerd: `/etc/containerd/config.toml` → `SystemdCgroup = true`
+
+#### 2. CNI — nơi Pod nhận IP
+
+```bash
+# Danh sách cấu hình CNI mà kubelet sẽ đọc (file có thứ tự alphabet nhỏ nhất thắng)
+ls -l /etc/cni/net.d/
+
+# Các binary plugin thực thi
+ls -l /opt/cni/bin/
+
+# Pod của CNI (thường chạy dạng DaemonSet trên mọi node)
+kubectl get pods -n kube-system -o wide | grep -Ei 'calico|cilium|flannel|weave'
+```
+
+Luồng cấp IP cho một Pod: `kubelet` → runtime (CRI) → gọi **CNI plugin** với `ADD` → plugin tạo veth pair, gắn vào bridge/overlay, xin IP từ **IPAM** → trả IP về → `kubelet` ghi `podIP` vào status.
+
+> 🧠 **Ghi nhớ để troubleshoot:** Node `NotReady` mà log kubelet báo `Network plugin returns error: cni plugin not initialized` → **CNI chưa cài hoặc DaemonSet CNI đang chết**, không phải lỗi kubelet.
+>
+> ⚠️ **NetworkPolicy chỉ có tác dụng khi CNI hỗ trợ.** Calico/Cilium có; **Flannel thuần thì KHÔNG** — bạn apply NetworkPolicy, API server nhận, nhưng không có gì thực thi cả. Đây là bẫy đề rất hay gặp.
+
+#### 3. CSI — nơi volume được cấp phát và gắn vào
+
+Mỗi CSI driver triển khai 2 thành phần:
+- **Controller plugin** (Deployment/StatefulSet trên control plane): `CreateVolume`, `DeleteVolume`, `ControllerPublishVolume` (attach).
+- **Node plugin** (DaemonSet trên mọi node): `NodeStageVolume`, `NodePublishVolume` (mount vào Pod).
+
+```bash
+# Driver nào đã đăng ký với cluster?
+kubectl get csidrivers
+kubectl get csinodes
+kubectl get storageclass           # Cột PROVISIONER chính là tên CSI driver
+
+# Chuỗi truy vết khi PVC treo
+kubectl describe pvc <pvc>         # Xem Events: có provisioner nhận không?
+kubectl get volumeattachments
+kubectl get pods -n kube-system | grep csi
+```
+
+> 🧠 **Ghi nhớ:** `StorageClass.provisioner` = **tên CSI driver**. PVC `Pending` mãi mà `describe` không thấy event nào từ provisioner → driver chưa cài, hoặc `storageClassName` gõ sai.
+
+---
+
 ### 🅳 Buổi D — Practice Questions & Cổng tự kiểm tra (~2h)
 
 - Hoàn thành bộ 20 câu hỏi luyện tập trong file [questions.md](questions.md).
@@ -193,6 +272,9 @@ spec:
    *(Đáp án: `kubectl run redis --image=redis:alpine --namespace=cache --labels="tier=db" --dry-run=client -o yaml > redis.yaml`)*.
 4. [ ] Khác biệt giữa Static Pod và Pod thông thường là gì? Static Pod do thành phần nào quản lý? *(Đáp án: Static Pod do Kubelet trên node đọc trực tiếp từ thư mục manifest địa phương `/etc/kubernetes/manifests/`, không qua API Server. Scheduler không thể lập lịch cho Static Pod).*
 5. [ ] Native Sidecar container trong K8s 1.29+ được cấu hình như thế nào để phân biệt với Init Container thông thường? *(Đáp án: Khai báo trong `initContainers[]` kèm trường `restartPolicy: Always`).*
+6. [ ] Kể tên 3 extension interface chính của Kubernetes và thành phần nào gọi chúng? *(Đáp án: **CRI** — kubelet gọi runtime (containerd/CRI-O); **CNI** — kubelet/runtime gọi plugin mạng để cấp IP cho Pod; **CSI** — controller-manager + kubelet gọi driver storage để provision/attach/mount volume).*
+7. [ ] Pod kẹt ở `ContainerCreating` kèm event `failed to setup network for sandbox` — hỏng ở interface nào? *(Đáp án: **CNI**. Kiểm tra `/etc/cni/net.d/`, `/opt/cni/bin/`, và DaemonSet CNI trong `kube-system`).*
+8. [ ] Vì sao apply NetworkPolicy trên cụm dùng Flannel thuần lại không có tác dụng gì? *(Đáp án: NetworkPolicy chỉ là **object khai báo**; việc thực thi do CNI plugin đảm nhiệm. Flannel thuần không implement NetworkPolicy — cần Calico hoặc Cilium).*
 
 ---
 

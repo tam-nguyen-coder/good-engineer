@@ -105,7 +105,7 @@ kubectl config use-context k8s-cluster1
 ```
 
 **Task:**
-Upgrade the Kubernetes cluster from version `1.30.0` to `1.31.0`.
+Upgrade the Kubernetes cluster from version `1.34.0` to `1.35.0`.
 First, upgrade the control plane node `controlplane`.
 Then, upgrade the worker node `node01`.
 Make sure to drain both nodes safely before upgrading and uncordon them after upgrading.
@@ -121,16 +121,16 @@ kubectl drain controlplane --ignore-daemonsets
 
 # Upgrade kubeadm tool
 sudo apt-mark unhold kubeadm
-sudo apt-get update && sudo apt-get install -y kubeadm=1.31.0-1.1
+sudo apt-get update && sudo apt-get install -y kubeadm=1.35.0-1.1
 sudo apt-mark hold kubeadm
 
 # Verify and plan upgrade
 sudo kubeadm upgrade plan
-sudo kubeadm upgrade apply v1.31.0 -y
+sudo kubeadm upgrade apply v1.35.0 -y
 
 # Upgrade kubelet and kubectl
 sudo apt-mark unhold kubelet kubectl
-sudo apt-get update && sudo apt-get install -y kubelet=1.31.0-1.1 kubectl=1.31.0-1.1
+sudo apt-get update && sudo apt-get install -y kubelet=1.35.0-1.1 kubectl=1.35.0-1.1
 sudo apt-mark hold kubelet kubectl
 
 # Restart kubelet and uncordon
@@ -147,7 +147,7 @@ ssh node01
 
 # Upgrade kubeadm
 sudo apt-mark unhold kubeadm
-sudo apt-get update && sudo apt-get install -y kubeadm=1.31.0-1.1
+sudo apt-get update && sudo apt-get install -y kubeadm=1.35.0-1.1
 sudo apt-mark hold kubeadm
 
 # Upgrade node configuration (DO NOT USE apply HERE)
@@ -155,7 +155,7 @@ sudo kubeadm upgrade node
 
 # Upgrade kubelet and kubectl on worker
 sudo apt-mark unhold kubelet kubectl
-sudo apt-get update && sudo apt-get install -y kubelet=1.31.0-1.1 kubectl=1.31.0-1.1
+sudo apt-get update && sudo apt-get install -y kubelet=1.35.0-1.1 kubectl=1.35.0-1.1
 sudo apt-mark hold kubelet kubectl
 
 # Restart kubelet
@@ -168,7 +168,7 @@ kubectl uncordon node01
 
 # Verification
 kubectl get nodes
-# Both controlplane and node01 should show v1.31.0 and Ready
+# Both controlplane and node01 should show v1.35.0 and Ready
 ```
 </details>
 
