@@ -10,8 +10,7 @@
 ### Question 1 — `[D3.1 · CodeBuild · Single]`
 In a CI/CD pipeline, a `buildspec.yml` file is used to define build commands. Which service consumes this file, and where must it be located in the source by default?
 - A. AWS CodeDeploy; it must be placed in a `scripts/` directory
-- B. AWS CodeBuild; by default it must be at the **root** of the source directory (the name/location can be overridden, and it can even be stored in `S3` in the same Region)
-- C. AWS CodePipeline; it must be placed in the `S3` artifact store
+- B. AWS CodeBuild; by default it must be at the root of the source directory (the name/location can be overridden, and it can even be stored in `S3` in the same Region)- C. AWS CodePipeline; it must be placed in the `S3` artifact store
 - D. AWS CodeDeploy; it must be at the root next to `appspec.yml`
 
 ### Question 2 — `[D3.1 · CodeBuild · Single]`
@@ -67,8 +66,7 @@ A team deploys to an `EC2` fleet with AWS CodeDeploy but does **not** specify a 
 ### Question 9 — `[D3.4 · CodeDeploy · Single]`
 A developer wants to use an **In-place** deployment type for an AWS Lambda function through AWS CodeDeploy. Which statement is correct?
 - A. It is allowed — Lambda supports both In-place and Blue/Green
-- B. It is not allowed — In-place applies only to **EC2/on-premises**; Lambda always uses **Blue/Green** with traffic shifting (Canary/Linear/AllAtOnce)
-- C. It is allowed, as long as the `InPlaceLambda` flag is enabled
+- B. It is not allowed — In-place applies only to EC2/on-premises; Lambda always uses Blue/Green with traffic shifting (Canary/Linear/AllAtOnce)- C. It is allowed, as long as the `InPlaceLambda` flag is enabled
 - D. It is not allowed — Lambda supports only In-place, not Blue/Green
 
 ### Question 10 — `[D3.4 · CodeDeploy · Single]`
@@ -80,9 +78,7 @@ A Lambda deployment requirement: shift **10%** of traffic to the new version fir
 
 ### Question 11 — `[D3.4 · CodeDeploy · Multi — Choose 2]`
 Which statements about **Blue/Green deployments** in AWS CodeDeploy are correct? (Choose two.)
-- A. Supported on **EC2/on-premises, ECS, and Lambda**
-- B. Enables **fast rollback** by routing traffic back to the old ("blue") environment
-- C. Supported only on Lambda
+- A. Supported on EC2/on-premises, ECS, and Lambda- B. Enables fast rollback by routing traffic back to the old ("blue") environment- C. Supported only on Lambda
 - D. Updates the current instances directly, so it is cheap and uses no extra resources
 - E. Requires `HalfAtATime` on every platform
 
@@ -95,8 +91,7 @@ A pipeline's source is a **GitHub** repository. The team wants a secure connecti
 
 ### Question 13 — `[D3.3 · CodePipeline · Single]`
 Which statement correctly describes how AWS CodePipeline automates a Source → Build → Test → Deploy sequence?
-- A. Artifacts passed between stages are stored in an **`S3` artifact store**; each **stage** processes only **one execution** at a time (the stage is locked while it runs)
-- B. Artifacts are stored in a `DynamoDB` table, and all stages run in parallel by default
+- A. Artifacts passed between stages are stored in an `S3` artifact store; each stage processes only one execution at a time (the stage is locked while it runs)- B. Artifacts are stored in a `DynamoDB` table, and all stages run in parallel by default
 - C. CodePipeline builds the source itself without needing AWS CodeBuild
 - D. Artifacts are stored on the local disk of the CodeDeploy agent
 
@@ -109,9 +104,7 @@ A template needs the **DNS name** of an `ELB` (or the **ARN** of a resource) to 
 
 ### Question 15 — `[D3.4 · CloudFormation · Multi — Choose 2]`
 Stack A creates a VPC. Stack B is a **separate stack** that needs to reuse the **VPC ID** from stack A. What should be done? (Choose two.)
-- A. In stack A: declare an `Outputs` entry with an **`Export`** (name the export for the VPC ID)
-- B. In stack B: use **`Fn::ImportValue`** to read the exported value
-- C. In stack B: use `Fn::GetAtt` directly against stack A's resource
+- A. In stack A: declare an `Outputs` entry with an `Export` (name the export for the VPC ID)- B. In stack B: use `Fn::ImportValue` to read the exported value- C. In stack B: use `Fn::GetAtt` directly against stack A's resource
 - D. Nest the entire stack A inside stack B using `AWS::CloudFormation::Stack`
 - E. Copy and paste the VPC ID as a hardcoded value into stack B
 
@@ -140,8 +133,7 @@ A team suspects someone **manually modified** a security group, causing the actu
 Which statements about `CloudFormation` intrinsic functions are correct? (Choose two.)
 - A. `Fn::Sub` substitutes variables into a string using the `${VarName}` syntax
 - B. `Fn::FindInMap` looks up a value in a two-level map in the `Mappings` section (for example, selecting an AMI by Region)
-- C. `Ref` always returns the **ARN** of a resource
-- D. `Fn::If` may be used only in the `Parameters` section
+- C. `Ref` always returns the ARN of a resource- D. `Fn::If` may be used only in the `Parameters` section
 - E. `Fn::GetAZs` joins multiple values into a single string with a delimiter
 
 ### Question 20 — `[D3.4 · SAM · Single]`
@@ -160,8 +152,7 @@ A developer wants to **test Lambda + API Gateway locally (offline)** on their ma
 
 ### Question 22 — `[D3.4 · SAM · Single]`
 A developer wants to update a Lambda function **safely** by **gradually** shifting traffic (canary) when deploying through AWS SAM. What must be declared on the `AWS::Serverless::Function`?
-- A. `DeploymentPreference` (Type: `Canary`/`Linear`) — SAM uses **AWS CodeDeploy** to shift traffic
-- B. `DeletionPolicy: Snapshot`
+- A. `DeploymentPreference` (Type: `Canary`/`Linear`) — SAM uses AWS CodeDeploy to shift traffic- B. `DeletionPolicy: Snapshot`
 - C. `ReservedConcurrentExecutions: 0`
 - D. `Fn::ImportValue`
 
@@ -181,17 +172,11 @@ A developer wants to deploy in **batches** but keep **full capacity** throughout
 
 ### Question 25 — `[D3.4 · Elastic Beanstalk · Multi — Choose 3]`
 Which statements about `Elastic Beanstalk` are correct? (Choose three.)
-- A. Blue/Green is an official **deployment policy** in Beanstalk's list of policies
-- B. Blue/Green in Beanstalk is performed by **swapping the CNAME/URL** between two environments (it is **not** a deployment policy)
-- C. `Traffic splitting` (canary) requires an **`Application Load Balancer`**
-- D. A **worker environment tier** reads jobs from `SQS`; the environment is customized with **`.ebextensions/*.config`** files
-- E. `All at once` deploys in batches and always keeps full capacity with no downtime
+- A. Blue/Green is an official deployment policy in Beanstalk's list of policies- B. Blue/Green in Beanstalk is performed by swapping the CNAME/URL between two environments (it is not a deployment policy)- C. `Traffic splitting` (canary) requires an `Application Load Balancer`- D. A worker environment tier reads jobs from `SQS`; the environment is customized with `.ebextensions/*.config` files- E. `All at once` deploys in batches and always keeps full capacity with no downtime
 
 ### Question 26 — `[D3.4 · ECS · Multi — Choose 2]`
 Regarding IAM roles in `ECS`, which statements are correct? (Choose two.)
-- A. **Task execution role**: grants permission to **pull images from `ECR`** and **write `CloudWatch` logs** (used by the ECS agent when starting a task)
-- B. **Task role**: grants permission for the **application code inside the container** to call AWS APIs (for example, reading `S3` / `DynamoDB`)
-- C. The task role is the role used to pull images from `ECR`
+- A. Task execution role: grants permission to pull images from `ECR` and write `CloudWatch` logs (used by the ECS agent when starting a task)- B. Task role: grants permission for the application code inside the container to call AWS APIs (for example, reading `S3` / `DynamoDB`)- C. The task role is the role used to pull images from `ECR`
 - D. The execution role is the role that grants the application code permission to call `DynamoDB`
 - E. `Fargate` does not need any role
 
@@ -219,8 +204,4 @@ A team wants to (1) **automatically delete** old/unused images in an `ECR` repos
 
 ### Question 30 — `[D3.4 · AppConfig · Multi — Choose 3]`
 Which statements about `AWS AppConfig` are correct? (Choose three.)
-- A. It lets you turn **feature flags** on/off and change runtime configuration **without redeploying** code
-- B. It supports **gradual rollout** (deploying configuration progressively by percentage / over time)
-- C. It can **automatically roll back** a configuration when a **`CloudWatch alarm`** is triggered
-- D. It requires a **full redeployment** of the application every time a single configuration value changes
-- E. It works only with `EC2` instances and cannot be used with `Lambda`
+- A. It lets you turn feature flags on/off and change runtime configuration without redeploying code- B. It supports gradual rollout (deploying configuration progressively by percentage / over time)- C. It can automatically roll back a configuration when a `CloudWatch alarm` is triggered- D. It requires a full redeployment of the application every time a single configuration value changes- E. It works only with `EC2` instances and cannot be used with `Lambda`

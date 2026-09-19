@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - **`ACM` cấp, lưu, và TỰ ĐỘNG GIA HẠN (auto-renew)** chứng chỉ SSL/TLS X.509 (public & private) — bẫy đề "cert TLS hết hạn / phải tự renew" → dùng ACM, không tự mua/tự gia hạn.
 - **MIỄN PHÍ cho public SSL/TLS cert** do ACM cấp và quản lý — chỉ trả tiền cho AWS resource chạy app. (Private CA qua AWS Private CA thì tính phí riêng.)
 - **Cert là resource theo REGION** (regional): dùng cùng 1 FQDN ở nhiều region → phải **request/import cert riêng cho từng region**, không copy cert giữa region được.
@@ -25,6 +26,7 @@ AWS Certificate Manager (ACM) handles the complexity of creating, storing, and r
 **Note:** You can use ACM certificates with stand-alone web servers and other customer-managed infrastructure, including Amazon EC2 instances. For publicly trusted web certificates on these servers, use the ACME protocol to automate issuance and renewal directly on your hosts. For private PKI scenarios, see the tutorial for setting up a secure server on an Amazon EC2 instance (Configure SSL/TLS on Amazon Linux 2023).
 
 **Topics**
+
 - Supported Regions
 - Pricing for AWS Certificate Manager
 - AWS Certificate Manager concepts

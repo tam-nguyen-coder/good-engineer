@@ -39,8 +39,7 @@ A consumer reads messages from an Amazon SQS standard queue. Processing **someti
 
 Which statement is **correct** about the Amazon SQS visibility timeout, and what should a developer do if a task needs to be processed for **longer than the maximum limit**?
 
-- A. Default is **30 seconds**, maximum is **12 hours**; if more than 12 hours is needed, use AWS Step Functions or break the task into smaller pieces
-- B. Default is 30 seconds, maximum is 24 hours; calling `ChangeMessageVisibility` resets it back to 24 hours
+- A. Default is 30 seconds, maximum is 12 hours; if more than 12 hours is needed, use AWS Step Functions or break the task into smaller pieces- B. Default is 30 seconds, maximum is 24 hours; calling `ChangeMessageVisibility` resets it back to 24 hours
 - C. Default is 60 seconds, maximum is 12 hours; increasing retention to 14 days is sufficient
 - D. Default is 0 seconds, with no maximum limit
 
@@ -57,11 +56,9 @@ Messages in an Amazon SQS queue must be retained for up to **10 days** so that a
 
 An application polls an Amazon SQS queue that is frequently empty, generating many **empty responses** and increasing API costs. What is the best way to reduce empty responses and cost?
 
-- A. Enable **long polling** by setting `WaitTimeSeconds` greater than 0 (up to a maximum of **20 seconds**)
-- B. Add more consumers so the queue is polled faster
+- A. Enable long polling by setting `WaitTimeSeconds` greater than 0 (up to a maximum of 20 seconds)- B. Add more consumers so the queue is polled faster
 - C. Set the visibility timeout to 0
-- D. Switch to **short polling** so responses return immediately
-
+- D. Switch to short polling so responses return immediately
 ### Question 7 — `[D1.1 · SQS · Single]`
 
 Some messages repeatedly fail during processing (poison messages) and keep returning to the main queue, clogging the consumer. Which Amazon SQS mechanism helps **isolate** these messages for investigation?
@@ -77,16 +74,14 @@ An application needs to send payloads of up to **1.5 MB** through Amazon SQS (fo
 
 - A. Compress the payload to under 256 KB and send it directly
 - B. Split the payload into multiple 256 KB messages and reassemble them at the consumer
-- C. Use the **Amazon SQS Extended Client Library**: store the payload in Amazon S3 and send a pointer through SQS (supports up to 2 GB)
-- D. Switch to Amazon SNS, because SNS has no message size limit
+- C. Use the Amazon SQS Extended Client Library: store the payload in Amazon S3 and send a pointer through SQS (supports up to 2 GB)- D. Switch to Amazon SNS, because SNS has no message size limit
 
 ### Question 9 — `[D1.1 · SQS · Single]`
 
 A trading system needs an Amazon SQS FIFO queue to preserve ordering but must sustain a throughput of about **30,000 messages per second**. What is the correct way to achieve this throughput?
 
 - A. Not feasible — SQS FIFO is hard-capped at 300 messages per second
-- B. Enable **high throughput mode** for the FIFO queue and distribute messages across **many `MessageGroupId` values**
-- C. Move the entire workload to an SQS standard queue
+- B. Enable high throughput mode for the FIFO queue and distribute messages across many `MessageGroupId` values- C. Move the entire workload to an SQS standard queue
 - D. Increase the visibility timeout to batch more messages together
 
 ### Question 10 — `[D1.1 · SNS · Single]`
@@ -94,8 +89,7 @@ A trading system needs an Amazon SQS FIFO queue to preserve ordering but must su
 When a new order is created, the system must push the **same event** to three **independent** processing systems: analytics, invoicing, and email — each processing at its own pace without affecting the others. Which architecture is the MOST appropriate?
 
 - A. A single SQS standard queue that all three systems poll
-- B. An SNS topic that fans out to **three SQS queues** (one dedicated queue per system)
-- C. An SQS FIFO queue with three `MessageGroupId` values
+- B. An SNS topic that fans out to three SQS queues (one dedicated queue per system)- C. An SQS FIFO queue with three `MessageGroupId` values
 - D. Writing three times to three queues from the application code
 
 ### Question 11 — `[D1.1 · SNS · Single]`
@@ -103,18 +97,15 @@ When a new order is created, the system must push the **same event** to three **
 Multiple subscribers subscribe to the same Amazon SNS topic, but each subscriber wants to receive only a **subset** of messages (for example, only orders where `region = "EU"`). What should be used to avoid filtering in the consumer code?
 
 - A. Create a separate topic for each region
-- B. Attach a **filter policy** (JSON) to each subscription; SNS then delivers only matching messages
-- C. Use an SQS message group to filter
+- B. Attach a filter policy (JSON) to each subscription; SNS then delivers only matching messages- C. Use an SQS message group to filter
 - D. Enable raw message delivery on the subscription
 
 ### Question 12 — `[D1.1 · SNS/SQS · Multi — Choose 2]`
 
 A system must **fan out** events to multiple consumers BUT must preserve **strict ordering** and **no duplicates** during distribution. Which two components must be combined? (Choose two.)
 
-- A. An SNS **FIFO topic**
-- B. An SNS standard topic with a filter policy
-- C. **SQS FIFO** queues as subscribers
-- D. SQS standard queues as subscribers
+- A. An SNS FIFO topic- B. An SNS standard topic with a filter policy
+- C. SQS FIFO queues as subscribers- D. SQS standard queues as subscribers
 - E. Amazon Kinesis Data Firehose for distribution
 
 ### Question 13 — `[D1.1 · SQS/SNS/Kinesis · Multi — Choose 2]`
@@ -141,8 +132,7 @@ A platform needs to: ingest events in **real time**, preserve **ordering by part
 An application writing to a provisioned Amazon Kinesis Data Streams starts receiving `ProvisionedThroughputExceededException` because it exceeds the per-shard write limit (**1 MB/s or 1,000 records/s**). Which two approaches are valid ways to resolve this? (Choose two.)
 
 - A. Increase the number of shards (resharding) to raise total throughput
-- B. Switch the stream to **on-demand capacity mode** so AWS manages throughput automatically
-- C. Increase the stream's visibility timeout
+- B. Switch the stream to on-demand capacity mode so AWS manages throughput automatically- C. Increase the stream's visibility timeout
 - D. Enable long polling on the consumer
 - E. Reduce the retention period to 24 hours
 
@@ -150,8 +140,7 @@ An application writing to a provisioned Amazon Kinesis Data Streams starts recei
 
 Multiple consumers read from the same Amazon Kinesis Data Streams, but they are **competing** for the **shared 2 MB/s** read limit per shard, causing latency. How can each consumer get its own dedicated **2 MB/s** read pipe per shard?
 
-- A. Enable **enhanced fan-out** for the consumers
-- B. Increase the retention period to 365 days
+- A. Enable enhanced fan-out for the consumers- B. Increase the retention period to 365 days
 - C. Switch to Amazon Kinesis Data Firehose
 - D. Use shared fan-out with more KCL workers
 
@@ -159,8 +148,7 @@ Multiple consumers read from the same Amazon Kinesis Data Streams, but they are 
 
 A startup has **spiky, unpredictable** streaming traffic, needs multiple consumers to read in real time with replay capability, but does **not want to manually calculate or adjust the number of shards**. Which option is the MOST appropriate?
 
-- A. Amazon Kinesis Data Streams in **on-demand** capacity mode
-- B. Amazon Kinesis Data Streams provisioned with a fixed single shard
+- A. Amazon Kinesis Data Streams in on-demand capacity mode- B. Amazon Kinesis Data Streams provisioned with a fixed single shard
 - C. Amazon SQS standard
 - D. Amazon Kinesis Data Firehose with size-based buffering
 
@@ -178,8 +166,7 @@ Requirement: **automatically load** streaming data into Amazon S3 and Amazon Red
 An analytics team needs to **replay** up to **1 year** of data from an Amazon Kinesis Data Streams. What must be done?
 
 - A. Kinesis does not support replay; you must back up the data to Amazon S3 yourself
-- B. Increase the retention period up to the maximum of **8,760 hours (365 days)** using `IncreaseStreamRetentionPeriod`
-- C. Switch to Amazon Kinesis Data Firehose to store data longer
+- B. Increase the retention period up to the maximum of 8,760 hours (365 days) using `IncreaseStreamRetentionPeriod`- C. Switch to Amazon Kinesis Data Firehose to store data longer
 - D. Kinesis retention is capped at 7 days, so 1 year is not possible
 
 ### Question 20 — `[D1.1 · StepFunctions · Single]`
