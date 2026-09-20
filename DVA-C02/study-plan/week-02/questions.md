@@ -118,16 +118,14 @@ Which statement correctly describes the difference between synchronous (`Request
 
 ### Question 16 — `[D1.2 · Lambda · Single]`
 A service sends a JSON payload of about **5 MB**. Invoking the function with `RequestResponse` (sync) works, but switching to `--invocation-type Event` (async) fails with a payload size error. What is the cause?
-- A. Async limits the payload to **1 MB**, while sync allows up to **6 MB** → 5 MB exceeds the async limit.
-- B. Async limits the payload to 256 KB, so 5 MB always fails with both invocation types.
+- A. Async limits the payload to 1 MB, while sync allows up to 6 MB → 5 MB exceeds the async limit.- B. Async limits the payload to 256 KB, so 5 MB always fails with both invocation types.
 - C. Sync limits to 1 MB and async to 6 MB → the limits are configured backward.
 - D. Both limit to 10 MB; the error is only due to a missing `--cli-binary-format`.
 
 ### Question 17 — `[D1.2 · Lambda · Single]`
 A function is invoked asynchronously by Amazon S3. Occasionally the function throws an error. By default, how does Lambda handle asynchronous errors?
 - A. It immediately re-invokes 5 times and then discards the event.
-- B. It retries **2 times** (**3 attempts** total); if it still fails, it sends the event to a **DLQ** or to **`OnFailure` destinations** if configured.
-- C. It does not retry; the error is returned directly to S3 so S3 retries on its own.
+- B. It retries 2 times (3 attempts total); if it still fails, it sends the event to a DLQ or to `OnFailure` destinations if configured.- C. It does not retry; the error is returned directly to S3 so S3 retries on its own.
 - D. It retries indefinitely until it succeeds.
 
 ### Question 18 — `[D1.2 · Lambda · Multi — Choose 2]`
@@ -148,8 +146,7 @@ A team needs to **separately route** both **successful** and **failed** async in
 ### Question 20 — `[D1.2 · Lambda · Single]`
 An application pushes messages to an Amazon SQS queue; Lambda needs to process the messages in batches. Which configuration is correct?
 - A. Configure SQS as a push trigger that pushes messages directly into Lambda, like Amazon SNS.
-- B. Create an **event source mapping** so Lambda **polls** SQS and invokes the function in batches.
-- C. Enable provisioned concurrency so Lambda reads SQS on its own.
+- B. Create an event source mapping so Lambda polls SQS and invokes the function in batches.- C. Enable provisioned concurrency so Lambda reads SQS on its own.
 - D. Use async invocation from SQS with a payload of up to 1 MB.
 
 ### Question 21 — `[D1.2 · Lambda · Multi — Choose 2]`
@@ -163,35 +160,27 @@ Which of the following event sources integrate with Lambda through an **event so
 ### Question 22 — `[D1.2 · Lambda · Single]`
 A function processes records from Amazon SQS via an event source mapping. Occasionally the same record is processed more than once, causing duplicate writes to Amazon DynamoDB. What is the correct approach per AWS recommendations?
 - A. Switch to synchronous invocation to avoid duplicates.
-- B. Because an event source mapping processes records **at least once** (records may be duplicated), write **idempotent** code (for example, using a unique key / conditional write) to handle duplicates safely.
-- C. Increase batch size to 6 MB to combine all records into a single invocation.
+- B. Because an event source mapping processes records at least once (records may be duplicated), write idempotent code (for example, using a unique key / conditional write) to handle duplicates safely.- C. Increase batch size to 6 MB to combine all records into a single invocation.
 - D. Enable provisioned concurrency to eliminate duplicate records.
 
 ### Question 23 — `[D1.2 · Lambda · Single]`
 A function writes intermediate data to `/tmp` on one invocation and expects to read it back on a later invocation. Occasionally the data "disappears." What is the correct explanation and fix?
 - A. `/tmp` is only 512 MB so it fills up; increasing it to 1 GB will make the data durable.
-- B. `/tmp` is **not durable** across invocations (it exists only within the lifetime of the execution environment); to store data durably you must use Amazon S3 / DynamoDB / Amazon EFS.
-- C. `/tmp` is read-only; you must write to `/opt` for durability.
+- B. `/tmp` is not durable across invocations (it exists only within the lifetime of the execution environment); to store data durably you must use Amazon S3 / DynamoDB / Amazon EFS.- C. `/tmp` is read-only; you must write to `/opt` for durability.
 - D. The lack of provisioned concurrency causes `/tmp` to be cleared between invocations.
 
 ### Question 24 — `[D1.2 · Lambda · Single]`
 A function is placed in a VPC (private subnet) to access an internal RDS database. It also needs to call a public REST API on the internet, but the request times out. What is the cause and the fix?
 - A. A missing Internet Gateway attached directly to the Lambda ENI; you must assign a public IP to the function.
-- B. A Lambda function in a private subnet cannot reach the internet on its own; it needs routing through a **NAT Gateway** (placed in a public subnet) so the function can call the internet.
-- C. You must fully disable the VPC configuration to reach the internet.
+- B. A Lambda function in a private subnet cannot reach the internet on its own; it needs routing through a NAT Gateway (placed in a public subnet) so the function can call the internet.- C. You must fully disable the VPC configuration to reach the internet.
 - D. Simply increasing the timeout to 900s resolves the error.
 
 ### Question 25 — `[D3.1 · Lambda · Single]`
 A function requires a custom runtime and a large set of dependencies that make the unzipped package exceed **250 MB**. Which packaging approach is appropriate?
 - A. Compress more aggressively to get the zip under 50 MB and upload it through the console.
 - B. Split the dependencies into 6 layers to get around the 250 MB limit.
-- C. Package the function as a **container image** (up to **10 GB**), suitable when the package is large or a custom runtime is needed.
-- D. Use a 10 GB `/tmp` to hold the dependencies at runtime.
+- C. Package the function as a container image (up to 10 GB), suitable when the package is large or a custom runtime is needed.- D. Use a 10 GB `/tmp` to hold the dependencies at runtime.
 
 ### Question 26 — `[D1.2 · Lambda · Multi — Choose 2]`
 Which statements about Lambda quotas are TRUE? (Choose two.)
-- A. The maximum timeout of an invocation is **900 seconds (15 minutes)**.
-- B. Memory is configurable from 128 MB to **10,240 MB**.
-- C. A deployment package zip uploaded directly through the API can be up to **500 MB**.
-- D. Environment variables total up to a maximum of **40 KB**.
-- E. A function can use a maximum of **10 layers**.
+- A. The maximum timeout of an invocation is 900 seconds (15 minutes).- B. Memory is configurable from 128 MB to 10,240 MB.- C. A deployment package zip uploaded directly through the API can be up to 500 MB.- D. Environment variables total up to a maximum of 40 KB.- E. A function can use a maximum of 10 layers.
