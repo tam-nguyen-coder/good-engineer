@@ -1,7 +1,7 @@
 # ✅ Nhật ký Validate kiến thức & Cơ chế "CHẮC CHẮN ĐẬU" — Kubernetes CKA/CKAD
 
 > **Ngày rà soát:** 2026-09-15 · **Cập nhật curriculum:** 2026-09-17 · **Phiên bản neo:** Kubernetes **v1.35.x** (phiên bản môi trường thi CKA hiện hành của CNCF / The Linux Foundation).
-> **Tiêu chuẩn:** Đối chiếu 100% Task Statements từ **CNCF CKA Curriculum**, các kịch bản thực tế trong **Killer.sh Exam Simulator**, và kinh nghiệm xử lý lỗi phòng thi của các kỹ sư đạt điểm số ≥ 90%.
+> **Tiêu chuẩn:** Đối chiếu từng dòng Task Statement của **CNCF CKA Curriculum bản 18/02/2025**, các kịch bản thực tế trong **Killer.sh Exam Simulator**, và kinh nghiệm xử lý lỗi phòng thi của các kỹ sư đạt điểm số ≥ 90%.
 > **Mục tiêu tối thượng:** Đảm bảo **KHÔNG BỊ LỦNG BẤT KỲ LỖ HỔNG KIẾN THỨC NÀO**, triệt tiêu toàn bộ rủi ro mất điểm ngớ ngẩn, và đảm bảo kết quả **CHẮC CHẮN ĐẬU (≥ 85%)**.
 
 ---
@@ -18,13 +18,73 @@
 
 ## 1. Bảng đối chiếu 100% Domain CKA Curriculum
 
-| STT | Domain CNCF | Tỉ trọng | Yêu cầu cốt lõi (Syllabus) | Trạng thái phủ trong Plan |
-|---|---|---|---|---|
-| **1** | **Troubleshooting** | **30%** | - Gỡ lỗi cụm và các node (Kubelet, containerd, disk, memory)<br>- Gỡ lỗi các thành phần Control Plane (apiserver, etcd, scheduler, controller-manager)<br>- Gỡ lỗi ứng dụng (CrashLoop, OOMKilled 137, Init fail)<br>- Gỡ lỗi network, CoreDNS và service routing<br>- Xem log cấp thấp bằng `journalctl` và `crictl` | ✅ Phủ 100% tại **Tuần 1, 5, 9, 10** |
-| **2** | **Cluster Architecture, Installation & Configuration** | **25%** | - Phân quyền RBAC (Role, ClusterRole, RoleBinding, ClusterRoleBinding)<br>- Cài đặt và nâng cấp cụm bằng `kubeadm`<br>- Quản lý cấu hình Kubeconfig và context switching<br>- Backup và Restore database `etcd`<br>- Tạo chứng chỉ người dùng qua K8s CSR API | ✅ Phủ 100% tại **Tuần 1, 8, 9** |
-| **3** | **Services & Networking** | **20%** | - Cấu hình ClusterIP, NodePort (30000-32767), LoadBalancer, Headless<br>- Định tuyến Ingress L7 và cấu hình TLS Secret<br>- Kubernetes Gateway API (GatewayClass, Gateway, HTTPRoute)<br>- Phân giải tên miền CoreDNS FQDN<br>- Viết tường lửa NetworkPolicy (Ingress, Egress, AND/OR logic) | ✅ Phủ 100% tại **Tuần 5, 6** |
-| **4** | **Workloads & Scheduling** | **15%** | - Quản lý Deployments, Rolling Updates, Rollouts, Rollbacks<br>- Cấu hình DaemonSet, StatefulSet, Job, CronJob (`concurrencyPolicy`)<br>- Lập lịch nâng cao: NodeAffinity, PodAntiAffinity (`topologyKey`)<br>- Cô lập hạ tầng bằng Taints và Tolerations<br>- Cấu hình Resource Requests, Limits, LimitRange, Quotas, QoS Classes | ✅ Phủ 100% tại **Tuần 2, 3, 4** |
-| **5** | **Storage** | **10%** | - Khai báo PersistentVolume (PV) và PersistentVolumeClaim (PVC)<br>- Quản lý StorageClass, CSI drivers, Dynamic Provisioning<br>- Cơ chế `volumeBindingMode: WaitForFirstConsumer`<br>- Các chế độ `accessModes` (RWO, ROX, RWX, RWOP v1.29+)<br>- Mở rộng dung lượng volume trực tiếp (Volume Expansion) | ✅ Phủ 100% tại **Tuần 7** |
+> 📌 **Nguồn đối chiếu:** *CKA Curriculum* của The Linux Foundation, bản có hiệu lực từ **18/02/2025** (áp dụng cho môi trường thi **v1.35**).
+> Bản curriculum này bổ sung 5 competency so với syllabus cũ: **Helm & Kustomize**, **HA control plane**, **extension interfaces (CNI/CSI/CRI)**, **CRDs & Operators**, và **workload autoscaling**. Bảng dưới đây đối chiếu **từng dòng** của syllabus chính thức, không gộp.
+
+### 1️⃣ Cluster Architecture, Installation & Configuration — 25%
+
+| Competency chính thức (CNCF) | Phủ tại | Trạng thái |
+|---|---|---|
+| Manage role based access control (RBAC) | Tuần 8 | ✅ |
+| Prepare underlying infrastructure for installing a Kubernetes cluster | Tuần 1 (Kind multi-node), Tuần 9 (kubeadm init/join, cgroup driver, containerd) | ✅ |
+| Create and manage Kubernetes clusters using kubeadm | Tuần 9 | ✅ |
+| Manage the lifecycle of Kubernetes clusters | Tuần 9 (upgrade N→N+1, drain/uncordon, cert renewal, etcd DR) | ✅ |
+| **Implement and configure a highly-available control plane** | **Tuần 9 — Buổi C+** (stacked vs external etcd, quorum `(N/2)+1`, `--control-plane-endpoint`, `--upload-certs`, LB, leader election) · [Lab 9.3](week-09/labs.md) | 🆕 ✅ |
+| **Use Helm and Kustomize to install cluster components** | **Tuần 4 — Buổi C+** · [Lab 4.4 Kustomize](week-04/labs.md) · [Lab 4.5 Helm](week-04/labs.md) · Q16–Q20 | 🆕 ✅ |
+| **Understand extension interfaces (CNI, CSI, CRI, etc.)** | **Tuần 1 — Buổi C+** (ai gọi interface nào + triệu chứng khi hỏng) · Q21–Q23 | 🆕 ✅ |
+| **Understand CRDs, install and configure operators** | **Tuần 9 — Buổi C++** · [Lab 9.4](week-09/labs.md) · Q19–Q21 | 🆕 ✅ |
+
+### 2️⃣ Workloads & Scheduling — 15%
+
+| Competency chính thức (CNCF) | Phủ tại | Trạng thái |
+|---|---|---|
+| Understand application deployments and how to perform rolling update and rollbacks | Tuần 2 | ✅ |
+| Use ConfigMaps and Secrets to configure applications | Tuần 4 | ✅ |
+| **Configure workload autoscaling** | **Tuần 3 — Buổi C+** (HPA `autoscaling/v2`, Utilization vs AverageValue, `behavior`, HPA/VPA/CA) · [Lab 3.4](week-03/labs.md) · Q16, Q17, Q19 | 🆕 ✅ |
+| Understand the primitives used to create robust, self-healing, application deployments | Tuần 2 (ReplicaSet, DaemonSet, StatefulSet), Tuần 4 (probes) | ✅ |
+| Configure Pod admission and scheduling (limits, node affinity, etc.) | Tuần 3 (affinity, taints, QoS, quotas), Tuần 4 (PSA) | ✅ |
+
+### 3️⃣ Services & Networking — 20%
+
+| Competency chính thức (CNCF) | Phủ tại | Trạng thái |
+|---|---|---|
+| Understand connectivity between Pods | Tuần 5, Tuần 1 (CNI cấp IP, IP-per-Pod) | ✅ |
+| Define and enforce Network Policies | Tuần 6 (kèm cảnh báo NetworkPolicy chỉ hiệu lực khi CNI hỗ trợ) | ✅ |
+| Use ClusterIP, NodePort, LoadBalancer service types and endpoints | Tuần 5 | ✅ |
+| Use the Gateway API to manage Ingress traffic | Tuần 6 · Mock 03 Task 5 | ✅ |
+| Know how to use Ingress controllers and Ingress resources | Tuần 6 | ✅ |
+| Understand and use CoreDNS | Tuần 5 | ✅ |
+
+### 4️⃣ Storage — 10%
+
+| Competency chính thức (CNCF) | Phủ tại | Trạng thái |
+|---|---|---|
+| Implement storage classes and dynamic volume provisioning | Tuần 7 | ✅ |
+| Configure volume types, access modes and reclaim policies | Tuần 7 (RWO/ROX/RWX/RWOP, Retain vs Delete) | ✅ |
+| Manage persistent volumes and persistent volume claims | Tuần 7 · Tuần 1 (chẩn đoán PVC Pending qua CSI driver) | ✅ |
+
+### 5️⃣ Troubleshooting — 30%
+
+| Competency chính thức (CNCF) | Phủ tại | Trạng thái |
+|---|---|---|
+| Troubleshoot clusters and nodes | Tuần 9, Tuần 10 · Tuần 1 (phân biệt hỏng CRI/CNI/CSI) | ✅ |
+| Troubleshoot cluster components | Tuần 9, Tuần 10 (static pod manifests, `crictl`) | ✅ |
+| **Monitor cluster and application resource usage** | **Tuần 3 — Buổi C+** (Metrics Server, `kubectl top`, phân biệt usage vs allocated) · Q18 | 🆕 ✅ |
+| Manage and evaluate container output streams | Tuần 10 (`kubectl logs -c --previous`, `crictl logs`, `journalctl -u kubelet`) | ✅ |
+| Troubleshoot services and networking | Tuần 5, Tuần 6, Tuần 10 | ✅ |
+
+> ⚠️ **Cảnh báo về tính thời sự:** bảng trên đúng tại thời điểm **2026-09-17**. CNCF cập nhật môi trường thi **theo quý** và có thể chỉnh curriculum bất cứ lúc nào.
+> **Trước khi đặt lịch thi, hãy tự đối chiếu lại** với [trang CKA chính thức](https://training.linuxfoundation.org/certification/certified-kubernetes-administrator-cka/) và trang *Important Instructions*. Lần rà soát này phát hiện plan đang bám theo syllabus cũ hơn curriculum thật **khoảng 18 tháng** — đừng để lặp lại.
+
+### 📄 Tài liệu được phép mở trong phòng thi (đã cập nhật)
+
+| Được phép | Ghi chú |
+|---|---|
+| `https://kubernetes.io/docs/` | Bao gồm cả ô **search nội bộ** của trang; **không** được mở kết quả trỏ ra ngoài |
+| `https://kubernetes.io/blog/` | |
+| `https://helm.sh/docs/` | 🆕 Thêm cùng đợt curriculum bổ sung Helm |
+| `https://gateway-api.sigs.k8s.io/` | 🆕 Dành cho các task Gateway API |
+| ❌ `https://github.com/kubernetes/` | **KHÔNG còn** trong danh sách cho phép — mở ra có thể bị proctor cảnh cáo |
 
 ---
 
@@ -150,4 +210,6 @@ kubectl top pods -A --sort-by=memory
    - Điểm đỗ chính thức của CKA là **66/100**.
    - Bằng việc luyện tập đạt **≥ 85/100 trên Killer.sh**, bạn đã tạo ra một **biên an toàn cực lớn (+19%)**. Biên độ này thừa sức hấp thụ áp lực tâm lý phòng thi, giao diện trình duyệt PSI giật lag, hoặc 1–2 câu hỏi mới lạ trong đề thật.
 
-> 🏁 **KẾT LUẬN: BỘ TÀI LIỆU NÀY ĐÃ ĐƯỢC CHUẨN HOÁ 100%. NẾU BẠN HOÀN THÀNH TẤT CẢ CÁC BÀI LAB VÀ ĐẠT ĐIỂM KILLER.SH THEO ĐÚNG HƯỚNG DẪN, BẠN CHẮC CHẮN ĐẬU CKA!**
+> 🏁 **KẾT LUẬN:** Bộ tài liệu này đã được đối chiếu **từng dòng** với CKA Curriculum bản 18/02/2025 (môi trường thi v1.35). Hoàn thành toàn bộ lab + đạt ≥ 85 điểm Killer.sh ở session 2 sẽ cho bạn biên an toàn rất lớn so với ngưỡng đậu 66.
+>
+> 📌 **Một việc bạn vẫn phải tự làm:** kiểm tra lại curriculum và danh sách domain được phép tra cứu trên trang chính thức **ngay trước ngày thi**. CNCF cập nhật môi trường thi theo quý — không tài liệu tĩnh nào thay thế được bước kiểm tra 2 phút này.

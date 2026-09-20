@@ -5,7 +5,7 @@
 > Đích đo lường chuẩn quốc tế: **CKA (Certified Kubernetes Administrator)** từ CNCF / The Linux Foundation — bao trọn ~85% kiến thức của **CKAD (Application Developer)**.
 > CKA **KHÔNG PHẢI** bài thi trắc nghiệm (Multiple Choice) như AWS mà là **100% THỰC HÀNH HANDS-ON TRÊN TERMINAL THẬT** (Performance-based exam): giải quyết sự cố, viết YAML, cấu hình networking, backup etcd, upgrade cluster ngay trên command line dưới áp lực thời gian.
 >
-> **📅 Kế hoạch đã chốt:** **10 tuần × ~10–12h/tuần (~110 giờ)**. Mục tiêu: **làm chủ Kubernetes trên production** và **đậu CKA với điểm an toàn ≥ 85%** — mỗi tuần có *cổng tự kiểm tra*, bài lab thực chiến, và cơ chế đảm bảo đậu (xem [§3](#3-lộ-trình-học-theo-tuần)).
+> **📅 Kế hoạch đã chốt:** **10 tuần × ~11–14.5h/tuần (~120 giờ)**. Mục tiêu: **làm chủ Kubernetes trên production** và **đậu CKA với điểm an toàn ≥ 85%** — mỗi tuần có *cổng tự kiểm tra*, bài lab thực chiến, và cơ chế đảm bảo đậu (xem [§3](#3-lộ-trình-học-theo-tuần)).
 >
 > **Phiên bản neo:** Kubernetes **v1.35.x** — đúng phiên bản môi trường thi CKA hiện hành (CRI: `containerd`, Pod Security Admission thay thế PSP, Gateway API GA, Sidecar containers built-in, taint manager tách rời đã stable từ v1.34). Ngày lập kế hoạch: 2026-09-15 · **Ngày rà soát & cập nhật curriculum: 2026-09-17**.
 >
@@ -91,7 +91,8 @@
 
 ## 3. Lộ trình học theo tuần
 
-> **Kế hoạch: 10 tuần × ~10–12h/tuần (~110 giờ).**
+> **Kế hoạch: 10 tuần × ~11–14.5h/tuần (~120 giờ).**
+> *(Tuần 1, 3, 4 và 9 dài hơn mặt bằng vì mang thêm các competency được CNCF bổ sung vào curriculum từ 02/2025: extension interfaces, HPA, Helm/Kustomize, HA control plane, CRD/Operators.)*
 > - **Tuần 1–4:** Core Fundamentals, Workloads, Advanced Scheduling & Lifecycle (Bao trọn CKAD).
 > - **Tuần 5–7:** Services, Ingress, Advanced Networking, Security & Storage Architecture.
 > - **Tuần 8–9:** Cluster Maintenance, Upgrade, etcd HA Backup/Restore & Production Hardening.
@@ -112,15 +113,15 @@
 
 | Tuần | Trọng tâm | Domain CKA | Mốc kiểm tra quan trọng | Chi tiết & Lab |
 |---|---|---|---|---|
-| **1** | **Kiến trúc K8s & Control Plane** + Setup Lab Multi-node + `kubectl` Imperative Pro | ARCH (25%) | ⚡ Thành thạo `kubectl` generator trong 5s; hiểu rõ luồng API Request | [week-01/](study-plan/week-01/README.md) · [Labs](study-plan/week-01/labs.md) |
+| **1** | **Kiến trúc K8s & Control Plane** + Setup Lab Multi-node + `kubectl` Imperative Pro + 🆕 **Extension Interfaces (CRI/CNI/CSI)** | ARCH (25%) | ⚡ Thành thạo `kubectl` generator trong 5s; hiểu rõ luồng API Request; chẩn đoán được hỏng ở interface nào | [week-01/](study-plan/week-01/README.md) · [Labs](study-plan/week-01/labs.md) |
 | **2** | **Workloads & Controllers** (Deployments, Rollouts, DaemonSet, StatefulSet, Jobs) | WORKLOAD (15%) | ⚡ Triển khai Zero-downtime rolling update & Canary, xử lý Rollback | [week-02/](study-plan/week-02/README.md) · [Labs](study-plan/week-02/labs.md) |
-| **3** | **Pod Scheduling & Resource Management** (Affinity, Taints/Tolerations, QoS, Quotas) | SCHED (15%) | ⚡ Điều phối Pod chính xác theo node label, cô lập node bằng Taints | [week-03/](study-plan/week-03/README.md) · [Labs](study-plan/week-03/labs.md) |
-| **4** | **Config, Probes & Lifecycle** (ConfigMap, Secret, Health Probes, Sidecar Native) | WORKLOAD (15%) | ⚡ Cấu hình Liveness/Readiness/Startup probes; K8s 1.28+ native sidecar | [week-04/](study-plan/week-04/README.md) · [Labs](study-plan/week-04/labs.md) |
+| **3** | **Pod Scheduling & Resource Management** (Affinity, Taints/Tolerations, QoS, Quotas) + 🆕 **Metrics Server, `kubectl top` & HPA** | SCHED (15%) + TROUBLE | ⚡ Điều phối Pod theo node label, cô lập node bằng Taints; debug HPA `<unknown>` | [week-03/](study-plan/week-03/README.md) · [Labs](study-plan/week-03/labs.md) |
+| **4** | **Config, Probes & Lifecycle** (ConfigMap, Secret, Health Probes, Sidecar Native) + 🆕 **Kustomize & Helm** | WORKLOAD (15%) + ARCH (25%) | ⚡ Cấu hình Liveness/Readiness/Startup probes; cài cluster component bằng `helm install` & `kubectl apply -k` | [week-04/](study-plan/week-04/README.md) · [Labs](study-plan/week-04/labs.md) |
 | **5** | **Services & Networking Core** (ClusterIP, NodePort, LoadBalancer, Headless, CoreDNS) | NET (20%) | ⚡ Debug luồng gói tin iptables/IPVS, test phân giải DNS pod-to-service | [week-05/](study-plan/week-05/README.md) · [Labs](study-plan/week-05/labs.md) |
 | **6** | **Ingress, Gateway API & NetworkPolicy** (L7 Routing, TLS, Pod Microsegmentation) | NET (20%) | 🎯 **Checkpoint Mini-mock 1: Workloads & Networking (≥ 75%)** | [week-06/](study-plan/week-06/README.md) · [Labs](study-plan/week-06/labs.md) |
 | **7** | **Storage Architecture** (Volumes, PV, PVC, StorageClass, Dynamic Provisioning) | STORAGE (10%) | ⚡ Cấu hình PVC gắn vào Pod, xử lý reclaim policy và volume expansion | [week-07/](study-plan/week-07/README.md) · [Labs](study-plan/week-07/labs.md) |
 | **8** | **Security & RBAC** (Certificates PKI, Kubeconfig, ServiceAccount, Roles, PSS/PSA) | ARCH (25%) | ⚡ Tạo User mới bằng CSR, giới hạn quyền namespace qua RoleBinding | [week-08/](study-plan/week-08/README.md) · [Labs](study-plan/week-08/labs.md) |
-| **9** | **Cluster Maintenance, Upgrade & etcd Disaster Recovery** (Kubeadm, Drain, etcdctl) | ARCH (25%) | ⚡ Backup etcd, wipe database, restore thành công; nâng cấp cluster N -> N+1 | [week-09/](study-plan/week-09/README.md) · [Labs](study-plan/week-09/labs.md) |
+| **9** | **Cluster Maintenance, Upgrade & etcd DR** (Kubeadm, Drain, etcdctl) + 🆕 **HA Control Plane & CRD/Operators** | ARCH (25%) | ⚡ Backup/restore etcd; nâng cấp cluster N → N+1; đọc quorum & leader election; đăng ký CRD, cài operator | [week-09/](study-plan/week-09/README.md) · [Labs](study-plan/week-09/labs.md) |
 | **10** | **Troubleshooting toàn tập (30%) + Killer.sh Simulator + Thi CKA** | TROUBLE (30%) | 🏁 **Killer.sh Session 1 & 2 (≥ 85%) → Đặt lịch thi thật** | [week-10/](study-plan/week-10/README.md) · [Labs](study-plan/week-10/labs.md) |
 
 ---
@@ -151,6 +152,7 @@
 - **Task 1.1: Troublehoot Cluster Nodes**: Node chuyển trạng thái `NotReady`. Kiểm tra dịch vụ `systemctl status kubelet`, xem log `journalctl -u kubelet -e`. Kiểm tra dung lượng ổ đĩa (`df -h`), bộ nhớ (`free -m`), runtime containerd (`systemctl status containerd`, `crictl info`). Sửa file cấu hình kubelet `/var/lib/kubelet/config.yaml`.
 - **Task 1.2: Troubleshoot Control Plane Components**: Khắc phục sự cố static pod manifests tại `/etc/kubernetes/manifests/` (`kube-apiserver.yaml`, `kube-controller-manager.yaml`, `kube-scheduler.yaml`, `etcd.yaml`). Xem log container cấp thấp bằng `crictl ps -a` và `crictl logs <container-id>` khi apiserver không chạy.
 - **Task 1.3: Troubleshoot Workloads & Applications**: Debug lỗi `CrashLoopBackOff` (lỗi code, thiếu biến môi trường), `ImagePullBackOff` / `ErrImagePull` (sai tag, sai registry secret), `OOMKilled` (vượt memory limit, exit code 137), `CreateContainerConfigError` (thiếu ConfigMap/Secret), `Pending` (không đủ tài nguyên, dính Taint hoặc nodeSelector không khớp). Dùng `kubectl logs`, `kubectl describe`, `kubectl get events`.
+- **🆕 Task 1.5: Monitor cluster and application resource usage**: Cài & kiểm tra **Metrics Server** (`kubectl get apiservice v1beta1.metrics.k8s.io`), `kubectl top nodes/pods --sort-by --containers`. Phân biệt **mức dùng thực tế** (`kubectl top`) với **tài nguyên đã đặt chỗ** (`kubectl describe node` → *Allocated resources*). → **Tuần 3**
 - **Task 1.4: Troubleshoot Services & Networking**: Kiểm tra kết nối DNS qua CoreDNS (`kubectl get pods -n kube-system -l k8s-app=kube-dns`). Test phân giải tên miền bằng `nslookup` hoặc `dig` trong temporary pod (`kubectl run test-dns --image=busybox:1.28 --rm -it -- nslookup ...`). Kiểm tra iptables/kube-proxy, kiểm tra selectors trên Service có khớp chính xác Labels của Pod không.
 
 ### 🟩 2. Cluster Architecture, Installation & Configuration (25%)
@@ -164,6 +166,10 @@
   6. Lặp lại cho từng worker node với `kubeadm upgrade node`.
 - **Task 2.3: Backup & Restore etcd Database**: Lưu snapshot etcd bằng lệnh `etcdctl snapshot save` sử dụng chứng chỉ client certs (`/etc/kubernetes/pki/etcd/`). Kiểm tra tính toàn vẹn với `etcdctl snapshot status`. Phục hồi cụm từ file snapshot với `etcdctl snapshot restore --data-dir=<new-path>` và trỏ lại volume path trong manifest static pod etcd.
 - **Task 2.4: Managing Kubeconfig**: Cấu hình và quản lý file `~/.kube/config`, làm việc với clusters, users, contexts. Chuyển đổi context nhanh bằng `kubectl config use-context <name>`.
+- **🆕 Task 2.5: Use Helm and Kustomize to install cluster components**: `helm repo add/update`, `helm search repo`, `helm show values`, `helm install --namespace --create-namespace --set/-f`, `helm upgrade`, `helm history` → `helm rollback`, `helm get values -a`, `helm list -A`, `helm template` (render offline). Kustomize: `kustomization.yaml`, base + overlays, `namespace`/`namePrefix`/`labels`/`images`/`replicas`/`patches`, `configMapGenerator` + `generatorOptions.disableNameSuffixHash`, `kubectl kustomize` (xem) vs `kubectl apply -k` (làm). → **Tuần 4**
+- **🆕 Task 2.6: Implement and configure a highly-available control plane**: Tô-pô **stacked etcd** vs **external etcd**; công thức quorum `(N/2)+1` và lý do luôn dùng số lẻ; `kubeadm init --control-plane-endpoint --upload-certs`; `kubeadm join --control-plane --certificate-key`; L4 load balancer trước `:6443`; `kube-apiserver` active-active vs `kube-scheduler`/`kube-controller-manager` active-passive qua **leader election** (`kubectl get lease -n kube-system`). → **Tuần 9**
+- **🆕 Task 2.7: Understand extension interfaces (CNI, CSI, CRI, etc.)**: Ai gọi interface nào, hỏng thì triệu chứng ra sao. CRI (`crictl`, `/etc/crictl.yaml`, cgroup driver), CNI (`/etc/cni/net.d/`, `/opt/cni/bin/`, IPAM, NetworkPolicy chỉ hiệu lực khi CNI hỗ trợ), CSI (`kubectl get csidrivers/csinodes`, controller plugin vs node plugin), Device Plugins, Cloud Controller Manager. → **Tuần 1**
+- **🆕 Task 2.8: Understand CRDs, install and configure operators**: `apiextensions.k8s.io/v1`, quy tắc đặt tên `<plural>.<group>`, `scope`, `versions` (đúng một `storage: true`), OpenAPI v3 schema, `shortNames`, `additionalPrinterColumns`; `kubectl get crd` / `api-resources` / `explain`. Operator = **CRD + Controller**; cài bằng Helm hoặc manifest bundle; truy vết khi custom resource không có `.status`. → **Tuần 9**
 
 ### 🟨 3. Services & Networking (20%)
 - **Task 3.1: Service Networking**: Cấu hình và hiểu rõ các loại Service: `ClusterIP` (nội bộ), `NodePort` (cổng 30000-32767 trên tất cả các node), `LoadBalancer` (tích hợp cloud provider), `Headless Service` (`clusterIP: None` dùng cho StatefulSet). Quản lý `Endpoints` và `EndpointSlices`.
@@ -181,6 +187,7 @@
   - Phân tán Pod bằng `podAntiAffinity` (đảm bảo tính sẵn sàng cao không bị dồn Pod vào 1 node/zone).
   - Tách biệt hạ tầng với `Taints` (`key=value:NoSchedule`) trên Node và `Tolerations` tương ứng trên Pod.
 - **Task 4.4: Static Pods**: Tạo và quản lý Pod độc lập không thông qua API server, do kubelet tự quản lý từ thư mục manifest địa phương (mặc định `/etc/kubernetes/manifests/`).
+- **🆕 Task 4.5: Configure workload autoscaling**: `kubectl autoscale deployment --cpu-percent --min --max` và manifest `autoscaling/v2` (`metrics[].resource.target.type: Utilization` vs `AverageValue`, `behavior.scaleDown.stabilizationWindowSeconds`). Công thức `desiredReplicas = ceil(currentReplicas × currentMetric / desiredMetric)`. **`averageUtilization` là % của `requests`, KHÔNG phải của `limits`** — Pod thiếu `requests.cpu` thì HPA vĩnh viễn báo `<unknown>`. Phân biệt HPA (số lượng Pod) / VPA (kích thước Pod) / Cluster Autoscaler (số lượng Node). → **Tuần 3**
 
 ### 🟫 5. Storage (10%)
 - **Task 5.1: Persistent Volumes (PV) & Claims (PVC)**: Khai báo PV (Static provisioning) với các loại storage (`hostPath`, `nfs`, cloud disk). Tạo PVC để yêu cầu dung lượng lưu trữ. Gắn PVC vào Pod thông qua `volumes` và `volumeMounts`.
@@ -358,9 +365,24 @@
 - [ ] Tạo `RoleBinding` gán Role trên cho user `developer`. Kiểm tra quyền bằng `kubectl auth can-i`.
 - [ ] Cấu hình Pod Security Admission (PSA) ở mức `restricted` trên một namespace và quan sát Pod bị chặn khi vi phạm SecurityContext.
 
+### 🧪 Nhóm 5b: 🆕 Packaging & Extensibility (Helm, Kustomize, CRD, Operators)
+- [ ] Dựng bộ **Kustomize** `base/` + `overlays/staging` + `overlays/production` khác nhau về namespace, `namePrefix`, `replicas`, image tag. Luôn `kubectl kustomize` xem trước rồi mới `kubectl apply -k`.
+- [ ] Dùng `configMapGenerator`, quan sát hash-suffix, rồi tắt bằng `generatorOptions.disableNameSuffixHash: true`.
+- [ ] Chạy trọn vòng đời một **Helm release**: `repo add` → `show values` → `template` (render offline) → `install --create-namespace --set` → `upgrade` → `history` → `rollback` → `get values -a`.
+- [ ] Tự chứng minh `helm list` rỗng còn `helm list -A` thì không.
+- [ ] Viết một **CRD** từ đầu (đúng quy tắc `<plural>.<group>`, OpenAPI schema có `required` và `minimum`), tạo custom object, và **kiểm chứng rằng không có gì xảy ra** vì chưa có controller.
+- [ ] Cài một **Operator** thật (ví dụ `cert-manager` qua Helm), quan sát đủ **hai nửa**: bộ CRD + pod controller. Tạo custom resource và xem controller điền `.status`.
+
+### 🧪 Nhóm 5c: 🆕 Metrics & Autoscaling
+- [ ] Cài **Metrics Server**, xác minh `kubectl get apiservice v1beta1.metrics.k8s.io` là `True`.
+- [ ] `kubectl top nodes/pods --sort-by=memory`; ghi tên Pod ngốn RAM nhất ra file bằng `--no-headers | head -1 | awk '{print $1}'`.
+- [ ] **Cố tình** tạo HPA trên Deployment thiếu `requests.cpu` để thấy `TARGETS: <unknown>`, đọc event `missing request for cpu`, rồi sửa bằng `kubectl set resources`.
+- [ ] Đổ tải bằng busybox loop, quan sát HPA scale up nhanh và scale down chậm (cửa sổ ổn định 300s).
+
 ### 🧪 Nhóm 6: Cluster Administration & Troubleshooting (Cốt lõi CKA)
 - [ ] **Thực hành etcd Backup & Restore:** Lưu snapshot etcd của cụm đang chạy, xoá thử một Deployment quan trọng, thực hiện restore snapshot vào thư mục mới và trỏ lại etcd manifest để khôi phục lại Deployment đã mất.
 - [ ] **Thực hành Kubeadm Upgrade:** Nâng cấp cụm từ bản v1.34 lên v1.35 theo đúng quy trình: drain node -> upgrade kubeadm -> upgrade apply -> upgrade kubelet/kubectl -> uncordon node.
+- [ ] **🆕 Khám nghiệm HA Control Plane:** Đọc `etcdctl member list` và `endpoint status --cluster` (tìm `IS LEADER`); xem ai giữ Lease `kube-scheduler` / `kube-controller-manager`; tự tính quorum `(N/2)+1`; sinh lại lệnh join bằng `kubeadm token create --print-join-command` và `kubeadm init phase upload-certs --upload-certs`.
 - [ ] **Break-and-Fix Lab:**
   - Làm hỏng file cấu hình `/var/lib/kubelet/config.yaml` và debug bằng `journalctl` để sửa lại.
   - Sửa sai port hoặc certificate path trong `/etc/kubernetes/manifests/kube-apiserver.yaml` và khắc phục khi `kubectl` mất kết nối.
@@ -464,6 +486,14 @@ EOF
 - [ ] Tạo và quản lý Role, ClusterRole, RoleBinding, ClusterRoleBinding.
 - [ ] Kiểm tra quyền người dùng thành thạo với lệnh `kubectl auth can-i`.
 - [ ] Cấu hình file `kubeconfig`, quản lý contexts, users và clusters.
+- [ ] 🆕 Cài một cluster component bằng **Helm**: `repo add` → `show values` → `install -n --create-namespace --set` → `upgrade` → `history` → `rollback`.
+- [ ] 🆕 Soi một Helm release đang chạy: `helm list -A`, `helm get values <rel> -a`, `helm get manifest <rel>`.
+- [ ] 🆕 Dựng **Kustomize** base + overlays; dùng `images`, `replicas`, `namePrefix`, `patches`, `configMapGenerator`; phân biệt `kubectl kustomize` (xem) và `kubectl apply -k` (làm).
+- [ ] 🆕 Giải thích được tô-pô **stacked vs external etcd**, tính quorum `(N/2)+1`, và vì sao etcd luôn dùng số member lẻ.
+- [ ] 🆕 Dựng/đọc **HA control plane**: `--control-plane-endpoint`, `--upload-certs`, `kubeadm join --control-plane`, leader election qua `kubectl get lease -n kube-system`.
+- [ ] 🆕 Viết một **CRD** hợp lệ (`<plural>.<group>`, đúng một `storage: true`, OpenAPI schema) và kiểm chứng bằng `kubectl explain`.
+- [ ] 🆕 Cài một **Operator**, phân biệt rõ hai nửa CRD + Controller, và truy vết khi custom resource không có `.status`.
+- [ ] 🆕 Giải thích được **extension interfaces**: CRI / CNI / CSI / Device Plugin / CCM — ai gọi, hỏng thì triệu chứng gì.
 
 ### 📦 C. Workloads & Scheduling (15%)
 - [ ] Tạo Pod, Deployment, DaemonSet, StatefulSet, Job, CronJob bằng imperative CLI.
@@ -474,6 +504,9 @@ EOF
 - [ ] Thiết lập `Taints` trên Node và `Tolerations` trên Pod.
 - [ ] Tạo và quản lý Static Pod thông qua thư mục `/etc/kubernetes/manifests/`.
 - [ ] Cấu hình Resource Requests, Limits, LimitRange và ResourceQuota.
+- [ ] 🆕 Tạo **HPA** bằng `kubectl autoscale` và bằng manifest `autoscaling/v2` (Utilization vs AverageValue, `behavior`).
+- [ ] 🆕 Debug được HPA báo `TARGETS: <unknown>` (thiếu `requests.cpu` vs chết Metrics Server).
+- [ ] 🆕 Phân biệt **HPA / VPA / Cluster Autoscaler** và biết chọn đúng cái cho từng triệu chứng.
 
 ### ⚙️ D. Configuration & Application Lifecycle
 - [ ] Tạo ConfigMap từ file, literal, env-file và inject vào Pod (env, envFrom, volume).
@@ -501,6 +534,8 @@ EOF
 - [ ] Khắc phục Control Plane crash (sai tham số trong static pod manifest, hết hạn cert).
 - [ ] Khắc phục Pod lỗi: `CrashLoopBackOff`, `ImagePullBackOff`, `Pending`, `OOMKilled`.
 - [ ] Khắc phục lỗi Network/DNS: CoreDNS pod pending, Service selector không khớp label Pod.
+- [ ] 🆕 Cài & xác minh **Metrics Server**; dùng `kubectl top nodes/pods --sort-by` để khoanh vùng Pod/Node ngốn tài nguyên.
+- [ ] 🆕 Phân biệt **mức dùng thực tế** (`kubectl top`) với **tài nguyên đã đặt chỗ** (`describe node` → Allocated resources).
 
 ### 🏁 H. Luyện thi thực chiến & Đăng ký thi
 - [ ] Hoàn thành toàn bộ bài tập lab trong khóa học KodeKloud CKA.
