@@ -73,6 +73,17 @@ Các lab local (Docker) đã được kiểm cú pháp và chạy được về 
 
 ---
 
+## 🔧 ĐÃ SỬA sau khi rà chéo với bộ CCAAK (2026-09-20)
+
+| Chỗ | Trước | Sau | Vì sao |
+|---|---|---|---|
+| `week-08/README.md` bảng metric | `kafka.controller:type=**KafkaController**,name=UncleanLeaderElectionsPerSec` | `type=**ControllerStats**` | Đối chiếu https://kafka.apache.org/43/operations/monitoring/: `ActiveControllerCount` và `OfflinePartitionsCount` ở `KafkaController`, nhưng `UncleanLeaderElectionsPerSec` và `LeaderElectionRateAndTimeMs` ở `ControllerStats`. Rule JMX chỉ khớp `KafkaController` sẽ âm thầm bỏ sót |
+| `week-07/README.md` mục Kafka Connect | `connector.client.config.override.policy=All` **(mặc định `None`)** | **mặc định `All`** từ Kafka 3.0 (KIP-722) | Mặc định đổi `None` → `All` ở 3.0. Mọi chỗ khác trong bộ CCDAK đã ghi đúng; riêng dòng này sót lại. ⚠️ Trang *Connect Security* của Confluent **vẫn in "None (default)"** — đây là chỗ hai nguồn lệch nhau |
+
+> 📌 Hệ quả thực tế: nếu bạn đã dựng Prometheus theo Lab 8.1, rule hiện tại **không thu** `UncleanLeaderElectionsPerSec`. Thêm một pattern cho `type=ControllerStats` nếu muốn cảnh báo về unclean leader election.
+
+---
+
 ## 🎯 MOCK EXAM — kết quả rà soát 180 câu (2026-09-20)
 
 Ba bộ mock trong [`../mock-exams/`](../mock-exams/README.md) đã qua kiểm tra tự động: bảng đáp án khớp tiêu đề từng câu và khớp danh sách phương án, mọi phương án sai đều được giải thích, mọi đường dẫn `📎 Source` trỏ tới file có thật. Không câu nào lệch.

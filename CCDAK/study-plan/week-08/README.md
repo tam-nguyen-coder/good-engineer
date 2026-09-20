@@ -52,7 +52,7 @@
 | `kafka.network:type=RequestMetrics,name=TotalTimeMs,request=Produce\|FetchConsumer\|FetchFollower` | Tổng latency 1 request theo loại (xem mục 3) | p99 ổn định | Tách theo 5 pha để tìm nghẽn |
 | `kafka.network:type=RequestChannel,name=RequestQueueSize` | Request chờ I/O thread | Nhỏ | Đầy = thiếu io thread |
 | `...KafkaController,name=LeaderElectionRateAndTimeMs` | Tần suất + thời gian bầu leader | 0 ngoài lúc failover | Cao = broker chết liên tục |
-| `...KafkaController,name=UncleanLeaderElectionsPerSec` | Bầu leader **ngoài ISR** (có thể mất data) | **0 tuyệt đối** | >0 → đã bật `unclean.leader.election.enable=true`, xem lại |
+| `...ControllerStats,name=UncleanLeaderElectionsPerSec` *(chú ý: `ControllerStats`, không phải `KafkaController`)* | Bầu leader **ngoài ISR** (có thể mất data) | **0 tuyệt đối** | >0 → đã bật `unclean.leader.election.enable=true`, xem lại |
 | `...ReplicaManager,name=PartitionCount` / `LeaderCount` | Số partition / leader trên broker | **Đều nhau** giữa các broker | Lệch → `kafka-leader-election.sh --election-type preferred` / reassignment / Cruise Control |
 | `kafka.log:type=LogFlushStats,name=LogFlushRateAndTimeMs` | Tần suất + thời gian fsync | Ổn định | Tăng vọt = disk chậm |
 | `kafka.server:type=ReplicaFetcherManager,name=MaxLag,clientId=Replica` | Follower tụt leader bao nhiêu message | Nhỏ | Tăng → sắp rời ISR |

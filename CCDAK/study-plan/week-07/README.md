@@ -100,7 +100,7 @@
 **7. Security cho ecosystem**
 
 - **Schema Registry**: HTTP basic auth (`basic.auth.credentials.source=USER_INFO`, `basic.auth.user.info=user:pass`) hoặc bearer/OAuth; SR ↔ Kafka dùng `kafkastore.security.protocol=SASL_SSL` + `kafkastore.sasl.*`.
-- **Kafka Connect**: worker có `producer.*`/`consumer.*` chung; **connector override** cần `connector.client.config.override.policy=All` (mặc định `None`) rồi khai báo `producer.override.sasl.jaas.config` trong config connector; REST API bảo vệ bằng basic auth extension / TLS.
+- **Kafka Connect**: worker có `producer.*`/`consumer.*` chung; **connector override** cần `connector.client.config.override.policy` (**mặc định `All`** từ Kafka 3.0, KIP-722; giá trị khác: `None` · `Principal` · `Allowlist` từ 4.2) rồi khai báo `producer.override.sasl.jaas.config` trong config connector; REST API bảo vệ bằng basic auth extension / TLS.
 - **Amazon MSK** (Tuần 9): cổng TLS **9094**, SCRAM **9096**, IAM **9098**; IAM = SASL/OAUTHBEARER với `aws-msk-iam-auth`.
 - Cấu hình thời ZooKeeper (`zookeeper.set.acl`, `AclAuthorizer`, `--zookeeper` trong `kafka-configs.sh`) **không còn** ở 4.x — thấy là **đáp án sai**.
 
