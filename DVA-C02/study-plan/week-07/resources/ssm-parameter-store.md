@@ -5,6 +5,7 @@
 > ⚠️ Nội dung dưới đây được crawl tự động (qua WebFetch, có thể rút gọn nhẹ) — luôn đối chiếu link gốc để đầy đủ & cập nhật nhất.
 
 ## 🎯 Điểm thi quan trọng (tóm tắt tiếng Việt)
+
 - **`Parameter Store` = lưu config data đơn giản** (connection string, env var, endpoint URL, resource ID, tuning param). **Standard tier MIỄN PHÍ** → đề nhấn "tiết kiệm chi phí / config đơn giản" thường là `Parameter Store`.
 - **3 kiểu parameter:** `String`, `StringList` (đều lưu **plain text**), và `SecureString` (**mã hoá bằng KMS**). SecureString hợp cho "lightweight encrypted config **không cần rotation**".
 - **Đọc SecureString phải thêm `--with-decryption`** — nếu không sẽ chỉ nhận metadata đã mã hoá, KHÔNG có plaintext. (Bẫy CLI hay hỏi.)
@@ -31,6 +32,7 @@ Parameter Store supports `String`, `StringList`, and `SecureString` parameter ty
 **Note:** If you manage credentials that require automatic rotation, cross-account access, or fine-grained audit logging, we recommend using AWS Secrets Manager. Secrets Manager is purpose-built for managing secrets such as database credentials, API keys, and supported third-party software-vended secrets.
 
 Examples of configuration data you can store and manage in Parameter Store:
+
 - **Database connection strings (non-rotating)** – jdbc:mysql://host:3306/appdb
 - **Application environment variables** – ENV=production, LOG_LEVEL=debug
 - **Service endpoint URLs** – internal microservice endpoints or third-party base URLs
@@ -38,6 +40,7 @@ Examples of configuration data you can store and manage in Parameter Store:
 - **Application tuning parameters** – cache TTLs, batch sizes, polling intervals
 
 **Note:** We *don't* recommend using Parameter Store for the following types of configuration data (use AWS AppConfig instead):
+
 - Feature flags
 - Operational levers like timeouts
 - Allow lists and block lists
@@ -63,22 +66,24 @@ Examples of configuration data you can store and manage in Parameter Store:
 Parameter Store offers multiple parameter tiers that affect cost, scale, and performance. You individually configure parameters to use either the standard-parameter tier (the default tier) or the advanced-parameter tier.
 
 Use:
+
 - Standard parameters for most configuration data and low-scale workloads
 - Advanced parameters when you need higher limits, larger values, or parameter policies
 
 **Important:** You can upgrade a parameter from standard to advanced, but you cannot downgrade it.
 
-| Feature | Standard | Advanced |
-| --- | --- | --- |
-| Maximum parameters (per AWS account and AWS Region) | 10,000 | 100,000 |
-| Maximum value size | 4 KB | 8 KB |
-| Parameter policies | Not supported | Supported |
-| Share parameters across AWS accounts | Not supported | Supported |
-| Cost | No additional charge | Charges apply |
+| Feature                                             | Standard             | Advanced      |
+| --------------------------------------------------- | -------------------- | ------------- |
+| Maximum parameters (per AWS account and AWS Region) | 10,000               | 100,000       |
+| Maximum value size                                  | 4 KB                 | 8 KB          |
+| Parameter policies                                  | Not supported        | Supported     |
+| Share parameters across AWS accounts                | Not supported        | Supported     |
+| Cost                                                | No additional charge | Charges apply |
 
 ## Performance and throughput
 
 Parameter Store provides a default throughput suitable for lower scale workloads. For applications that require higher request rates, you can enable higher throughput.
+
 - Default throughput is sufficient for typical configuration retrieval patterns.
 - High-throughput mode supports significantly higher request rates for large-scale or latency-sensitive applications.
 - Additional charges apply when higher throughput is enabled.
@@ -86,23 +91,25 @@ Parameter Store provides a default throughput suitable for lower scale workloads
 ## How to retrieve parameters
 
 You can retrieve parameters using the AWS Management Console, AWS CLI, or AWS SDKs to call the following API actions:
+
 - `GetParameter`
 - `GetParameters`
 - `GetParametersByPath`
 
 **AWS CLI** sample commands:
 
-| Command | Usage | Best For |
-| --- | --- | --- |
-| get-parameter | `aws ssm get-parameter --name "<name>"` | Fetching one specific parameter value. |
-| get-parameter | `aws ssm get-parameter --name "<name>" --with-decryption` | Fetching `SecureString` parameter types. **You must include the `--with-decryption` flag to see the plaintext value; otherwise, you will only receive the encrypted metadata.** |
-| get-parameters | `aws ssm get-parameters --names "<name1>" "<name2>"` | Fetching up to **10** specific, unrelated parameters at once. |
-| get-parameters-by-path | `aws ssm get-parameters-by-path --path "</my/app/path/>"` | Bulk retrieval of an entire environment's configuration. |
-| get-parameter-history | `aws ssm get-parameter-history --name "<name>"` | Checking how a value has changed over time. |
+| Command                | Usage                                                       | Best For                                                                                                                                                                                 |
+| ---------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| get-parameter          | `aws ssm get-parameter --name "<name>"`                   | Fetching one specific parameter value.                                                                                                                                                   |
+| get-parameter          | `aws ssm get-parameter --name "<name>" --with-decryption` | Fetching`SecureString` parameter types. **You must include the `--with-decryption` flag to see the plaintext value; otherwise, you will only receive the encrypted metadata.** |
+| get-parameters         | `aws ssm get-parameters --names "<name1>" "<name2>"`      | Fetching up to**10** specific, unrelated parameters at once.                                                                                                                       |
+| get-parameters-by-path | `aws ssm get-parameters-by-path --path "</my/app/path/>"` | Bulk retrieval of an entire environment's configuration.                                                                                                                                 |
+| get-parameter-history  | `aws ssm get-parameter-history --name "<name>"`           | Checking how a value has changed over time.                                                                                                                                              |
 
 **SDKs (e.g., Boto3 for Python):** Use methods like `get_parameter()` or `get_parameters_by_path()` within your application code to fetch values at runtime.
 
 **CDK and CloudFormation:**
+
 - **AWS CDK**: Use `valueForStringParameter` or `valueFromLookup` to read values during synthesis or deployment.
 - **CloudFormation**: Use dynamic references like `{{resolve:ssm:parameter-name:version}}` to inject values directly into templates.
 
