@@ -7,6 +7,7 @@ Currently, it supports:
 - **AWS Certified Cloud Practitioner (CLF-C02)**
 - **AWS Certified Developer – Associate (DVA-C02)** — 10-week study plan in [`DVA-C02/`](DVA-C02/DVA-C02-STUDY-PLAN.md)
 - **Apache Kafka / CCDAK (Confluent Certified Developer for Apache Kafka)** — 10-week study plan in [`CCDAK/`](CCDAK/CCDAK-STUDY-PLAN.md), plus [3 full-length mock exams](CCDAK/mock-exams/README.md) (60 questions / 90 minutes, anchored to Kafka 4.3)
+- **Apache Kafka / CCAAK (Confluent Certified Administrator for Apache Kafka)** — 8-week operations-focused study plan in [`CCAAK/`](CCAAK/CCAAK-STUDY-PLAN.md), plus [3 full-length mock exams](CCAAK/mock-exams/README.md), building on the CCDAK material
 - **Kubernetes / CKA & CKAD (Certified Kubernetes Administrator & Developer)** — 10-week study plan in [`KUBERNETES/`](KUBERNETES/K8S-STUDY-PLAN.md)
 - **Scrum Master (SCRUM-MASTER-1)**
 

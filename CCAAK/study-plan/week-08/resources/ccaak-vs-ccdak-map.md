@@ -1,0 +1,51 @@
+# Bản đồ tái sử dụng CCDAK → CCAAK (theo 7 domain)
+
+> **Nguồn:** **tổng hợp** của người viết, đối chiếu mục lục bộ [`CCDAK/`](../../../../CCDAK/CCDAK-STUDY-PLAN.md) trong repo với 7 domain CCAAK ở [`../../VALIDATION.md`](../../VALIDATION.md) — **KHÔNG crawl từ tài liệu chính thức**.
+> **Tuần:** 8 — Tuần chốt · **Loại:** Tổng hợp (không crawl)
+> Về [file học Tuần 8](../README.md) · [Kế hoạch tổng](../../../CCAAK-STUDY-PLAN.md)
+
+## 🎯 Điểm thi quan trọng (tóm tắt)
+
+- Bạn **đã có sẵn nền** cho khoảng **một nửa** nội dung CCAAK — nhưng ở **góc nhìn developer**. Việc của tuần chốt là dịch từng mảng sang **góc nhìn admin** trước khi thi, chứ không đọc lại từ đầu.
+- **Quy tắc dịch trong một câu:** CCDAK hỏi *"ứng dụng của tôi nên đặt config nào"*; CCAAK hỏi *"cluster của tôi đang có triệu chứng này, tôi chỉnh con số nào ở broker/topic và kiểm chứng ra sao"*.
+- **3 domain tái dùng được nhiều nhất:** FUND (15%) · CONNECT (12%) · SEC (15%) — cộng lại **42%** đề. Đọc lại thay vì học lại.
+- **3 domain gần như hoàn toàn mới:** CFG (22%, riêng nhóm threads/socket/storage/JBOD), ARCH (12%, sizing & multi-DC), TROUBLE (15%, playbook có phương pháp). Cộng lại **49%** — đây là nơi mọi giờ học mới nên đổ vào.
+- **Cảnh báo tái sử dụng:** vài mảnh kiến thức CCDAK **đúng với developer nhưng lệch với admin** — liệt kê ở bảng cuối file. Đây là nhóm sai khó phát hiện nhất vì bạn "chắc chắn là mình biết".
+
+## Bảng ánh xạ theo domain
+
+| Domain CCAAK | Tỉ trọng | File CCDAK đọc lại | Tái dùng được bao nhiêu | Phải bổ sung gì cho góc admin |
+|---|---|---|---|---|
+| **Fundamentals** | 15% | [`week-01/README.md`](../../../../CCDAK/study-plan/week-01/README.md) · [`week-02/resources/kafka-replication-isr.md`](../../../../CCDAK/study-plan/week-02/resources/kafka-replication-isr.md) · [`week-02/resources/kafka-eligible-leader-replicas.md`](../../../../CCDAK/study-plan/week-02/resources/kafka-eligible-leader-replicas.md) · [`week-04/README.md`](../../../../CCDAK/study-plan/week-04/README.md) | **~80%** — topic/partition/offset, ISR, high watermark, ELR, consumer group, rebalance đã đủ dùng | KRaft **in production**: quorum 3/5, `__cluster_metadata`, `kafka-storage.sh format`, `kafka-metadata-quorum.sh describe --status`, controller tách riêng |
+| **Cluster Configuration** | 22% | [`week-02/resources/kafka-topic-configs.md`](../../../../CCDAK/study-plan/week-02/resources/kafka-topic-configs.md) · [`week-02/resources/kafka-log-compaction.md`](../../../../CCDAK/study-plan/week-02/resources/kafka-log-compaction.md) · [`week-07/resources/kafka-quotas.md`](../../../../CCDAK/study-plan/week-07/resources/kafka-quotas.md) | **~35%** — retention, compaction, tombstone, quota cơ bản | **Toàn bộ broker config**: `num.io.threads` 8, `num.network.threads` 3, `num.replica.fetchers` 1, `background.threads` 10, `queued.max.requests` 500, socket buffer 100 KiB; `log.dirs` nhiều ổ + JBOD; **thứ tự ưu tiên 5 mức config** và cột synonyms; **8 mức quota**; JVM/OS tuning |
+| **Security** | 15% | [`week-07/resources/kafka-security-overview.md`](../../../../CCDAK/study-plan/week-07/resources/kafka-security-overview.md) · [`kafka-security-ssl.md`](../../../../CCDAK/study-plan/week-07/resources/kafka-security-ssl.md) · [`kafka-security-sasl.md`](../../../../CCDAK/study-plan/week-07/resources/kafka-security-sasl.md) · [`kafka-security-authorization-acls.md`](../../../../CCDAK/study-plan/week-07/resources/kafka-security-authorization-acls.md) | **~70%** — 3 lớp bảo mật, `security.protocol`, 4 SASL mechanism, ACL cơ bản | Vận hành **ở quy mô**: PREFIXED pattern, `super.users`, principal mapping từ DN, **xoay cert/credential không downtime**, `kafka-storage.sh format --add-scram`, đọc `kafka-authorizer.log`, audit |
+| **Troubleshooting** | 15% | [`week-08/resources/kafka-monitoring-broker-metrics.md`](../../../../CCDAK/study-plan/week-08/resources/kafka-monitoring-broker-metrics.md) · [`week-08/labs.md`](../../../../CCDAK/study-plan/week-08/labs.md) Lab 8.3 · [`week-04/resources/kafka-consumer-configs.md`](../../../../CCDAK/study-plan/week-04/resources/kafka-consumer-configs.md) | **~40%** — URP khi kill broker, lag, rebalance do `max.poll.interval.ms` | **Playbook có phương pháp**: metric → log → config → hành động; đọc `server.log` / `controller.log` / `state-change.log` / `kafka-authorizer.log` (log4j2); exception cheat-sheet góc admin; `kafka-log-dirs.sh`, `kafka-dump-log.sh`, `kafka-metadata-quorum.sh`, `kafka-leader-election.sh` |
+| **Deployment Architecture** | 12% | [`week-08/resources/kafka-georeplication-mirrormaker2.md`](../../../../CCDAK/study-plan/week-08/resources/kafka-georeplication-mirrormaker2.md) · [`kafka-tiered-storage.md`](../../../../CCDAK/study-plan/week-08/resources/kafka-tiered-storage.md) · [`kafka-basic-ops-reassignment.md`](../../../../CCDAK/study-plan/week-08/resources/kafka-basic-ops-reassignment.md) · [`week-08/labs.md`](../../../../CCDAK/study-plan/week-08/labs.md) Lab 8.4/8.6/8.7 | **~45%** — MM2 3 connector, reassignment có throttle, tiered storage, rolling restart | **Sizing & capacity planning** (disk = throughput × retention × RF × 1.2; partition = `max(T/P, T/C)`); `broker.rack` và replica placement; follower fetching (KIP-392); stretch cluster vs multi-cluster; **RPO/RTO**; **Cluster Linking** (Confluent) vs MM2 |
+| **Kafka Connect** | 12% | [`week-05/resources/connect-user-guide-configs-rest.md`](../../../../CCDAK/study-plan/week-05/resources/connect-user-guide-configs-rest.md) · [`connect-error-handling-dlq-kip298.md`](../../../../CCDAK/study-plan/week-05/resources/connect-error-handling-dlq-kip298.md) · [`connect-transforms-predicates.md`](../../../../CCDAK/study-plan/week-05/resources/connect-transforms-predicates.md) | **~75%** — worker, task, converter vs SMT, DLQ chỉ sink, 3 internal topic 1/25/5 | Góc vận hành: `plugin.path` và **nâng cấp plugin**, rebalance của Connect, `connector.client.config.override.policy`, scale worker, `restart?includeTasks=true`, `DELETE /connectors/<n>/offsets` |
+| **Observability** | 10% | [`week-08/resources/kafka-monitoring-broker-metrics.md`](../../../../CCDAK/study-plan/week-08/resources/kafka-monitoring-broker-metrics.md) · [`kafka-monitoring-client-metrics.md`](../../../../CCDAK/study-plan/week-08/resources/kafka-monitoring-client-metrics.md) · [`confluent-consumer-lag.md`](../../../../CCDAK/study-plan/week-08/resources/confluent-consumer-lag.md) · [`week-08/labs.md`](../../../../CCDAK/study-plan/week-08/labs.md) Lab 8.1/8.2 | **~65%** — JMX → Prometheus → Grafana, metric đèn đỏ, lag committed vs position | **Ngưỡng cảnh báo**: cái gì gọi dậy 3 giờ sáng, cái gì chỉ cần ticket; `TotalTimeMs` tách 5 pha; `RequestHandlerAvgIdlePercent` < 0.3; MBean naming |
+
+## Lab CCDAK dùng lại nguyên si cho CCAAK
+
+| Lab CCDAK | Dùng lại cho | Ghi chú |
+|---|---|---|
+| [Tuần 1 — Lab 1.1/1.2](../../../../CCDAK/study-plan/week-01/labs.md) | **Mọi tuần CCAAK** | Hai file compose chuẩn (`docker-compose.single.yml`, `docker-compose.cluster.yml`): `controller` (node 1) + `kafka-1/2/3` (node 2/3/4), host port 9092/9094/9096, listener nội bộ `kafka-1:19092`, alias `kt`/`kcp`/`kcc`/`kcg`/`kcfg` |
+| [Tuần 8 — Lab 8.1](../../../../CCDAK/study-plan/week-08/labs.md) | OBS, capstone bước 1–2 | `docker-compose.monitoring.yml` — JMX Exporter :7071 + Prometheus :9090 + Grafana :3000. **Bẫy đã biết:** `KAFKA_OPTS`/`JMX_PORT` áp cho mọi script trong `bin/` → chạy CLI từ container `controller` |
+| [Tuần 8 — Lab 8.4](../../../../CCDAK/study-plan/week-08/labs.md) | ARCH, capstone **bài phá số 4** | `--generate` → `--execute --throttle` → `--verify` (chính `--verify` gỡ throttle) → `kafka-leader-election.sh --election-type preferred` |
+| [Tuần 8 — Lab 8.6](../../../../CCDAK/study-plan/week-08/labs.md) | ARCH, capstone **bước 7 (DR)** | `docker-compose.cluster-b.yml` + `mm2.properties`; nhớ hạ mọi `*.replication.factor` về 1 cho cluster B 1 broker |
+| [Tuần 8 — Lab 8.7](../../../../CCDAK/study-plan/week-08/labs.md) | CFG, ARCH | Rolling restart đúng cách + `kafka-features.sh describe` / `upgrade --release-version` |
+| [Tuần 7 — lab security](../../../../CCDAK/study-plan/week-07/labs.md) | SEC, capstone **bài phá số 3** | TLS/mTLS + SASL/SCRAM + ACL; CCAAK thêm phần **thu hồi ACL rồi chẩn đoán qua `kafka-authorizer.log`** |
+
+## ⚠️ Chỗ kiến thức CCDAK LỆCH với góc admin — đọc kỹ nhóm này
+
+| Điều bạn đã học ở CCDAK | Đúng với developer | Nhưng với admin thì… |
+|---|---|---|
+| "`acks=all` là đủ để không mất dữ liệu" | Đúng ở phía producer | **Chưa đủ.** Độ bền do **`min.insync.replicas` + RF** quyết định. Ma trận phải thuộc: RF3 + min.isr 2 + `acks=all` = chịu mất **1** broker; min.isr 3 là **over-correction** (mất 1 broker là ngừng ghi) |
+| "Tăng partition để scale consumer" | Hay dùng và hợp lý | Với admin đây là **hành động một chiều**, phá mapping key→partition, tốn file descriptor và kéo dài leader election. Thử **trước**: kiểm skew, thêm consumer, sửa key |
+| "DLQ xử lý record hỏng" | Đúng, connector-level | Admin còn phải biết DLQ **chỉ sink**, và `errors.tolerance=all` **không có DLQ** = mất record âm thầm — đó mới là câu hỏi CCAAK |
+| "Metric `records-lag-max`" | Metric **client** | Admin đo lag bằng `kafka-consumer-groups.sh` (theo **committed offset**), khác với metric client (theo **position**). Hai con số lệch nhau là bình thường |
+| "Rebalance do `max.poll.interval.ms`" | Đúng | Admin phải phân biệt tiếp: rebalance của **consumer group** khác rebalance của **Connect worker** khác leader election của **controller** |
+| "Thêm broker là scale được" | — | Kafka **không tự chuyển partition**. Broker mới chỉ nhận topic **tạo sau** → phải `kafka-reassign-partitions.sh`. Đây là câu hỏi lặp lại |
+| "Đặt retention 1 giờ là dữ liệu mất sau 1 giờ" | Gần đúng | Retention chỉ áp cho **segment đã đóng**; segment active không bao giờ bị xoá → phải hạ `segment.ms`/`segment.bytes` |
+| "`AclAuthorizer` để bật ACL" | Đúng với Kafka ≤ 3.x | **Sai với 4.x.** KRaft dùng **`StandardAuthorizer`**. Nhóm bẫy version nguy hiểm nhất của CCAAK |
+
+> 📌 Cách dùng file này trong tuần chốt: sau mock #2, mở bảng theo dõi domain; domain nào dưới ngưỡng thì tra **đúng một dòng** trong bảng ánh xạ ở trên, đọc file CCDAK được chỉ, rồi đọc tiếp cột *"Phải bổ sung gì cho góc admin"* — đó chính là phần bạn còn thiếu, không phải toàn bộ tuần.
