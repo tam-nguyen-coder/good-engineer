@@ -19,6 +19,7 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
 ```
 
 > 🧠 **Nhớ nhanh Domain 3** (hay bị nhầm, sẽ minh hoạ xuyên suốt các lab):
+>
 > - `buildspec.yml` → **`CodeBuild`**, đặt ở **ROOT** repo; phase `install → pre_build → build → post_build`.
 > - `appspec.yml` → **`CodeDeploy`**. `In-place` **CHỈ** EC2/on-prem; `Lambda`/`ECS` = **Blue/Green + Canary/Linear**.
 > - Cross-stack: stack nguồn `Outputs` + **`Export`**; stack đích **`Fn::ImportValue`**. Xem trước thay đổi = **change set**; sửa tay lệch template = **drift**.
@@ -30,6 +31,7 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
 
 **🎯 Mục tiêu:** Tự tay viết `buildspec.yml` đủ 4 phase, tạo `CodeBuild` project (source = `S3`), chạy build, xem log 4 phase chạy đúng thứ tự và kiểm tra artifact đã lên `S3`.
 **🧩 Luyện kỹ năng (liên quan đề):**
+
 - Thứ tự phase `install → pre_build → build → post_build` (bẫy thi kinh điển).
 - Lấy secret an toàn qua `parameter-store` (SSM) thay vì hardcode trong `variables`.
 - `artifacts` (`files` + `base-directory`) → nơi output được zip & upload lên `S3`; `cache` giữ dependency.
@@ -37,7 +39,9 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
 **⏱️ ~30 phút** · **Yêu cầu trước:** Chuẩn bị chung.
 
 ### Các bước
+
 1. Tạo 2 bucket (source + artifact) và 1 tham số `SSM` để `buildspec` kéo vào (chứng minh không hardcode secret).
+
    ```bash
    SRC_BUCKET=lab8-cb-src-$ACCOUNT_ID
    ART_BUCKET=lab8-cb-art-$ACCOUNT_ID
@@ -45,8 +49,8 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
    aws s3 mb s3://$ART_BUCKET --region $AWS_REGION
    aws ssm put-parameter --name /lab8/greeting --value "hello-from-ssm" --type String
    ```
-
 2. Viết `buildspec.yml` — **đặt ở ROOT** của source (đủ 4 phase + `artifacts` + `cache`).
+
    ```yaml
    version: 0.2
    env:
@@ -79,14 +83,14 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
      paths:
        - "/root/.npm/**/*"            # giữ dependency giữa các lần build
    ```
-
 3. Zip source (chỉ cần `buildspec.yml`) rồi upload lên `S3`.
+
    ```bash
    zip source.zip buildspec.yml
    aws s3 cp source.zip s3://$SRC_BUCKET/source.zip
    ```
-
 4. Tạo **service role** cho `CodeBuild` (ghi Logs + đọc/ghi `S3` + đọc `SSM`).
+
    ```bash
    cat > trust-cb.json <<'EOF'
    { "Version":"2012-10-17","Statement":[{"Effect":"Allow",
@@ -110,8 +114,8 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
      --policy-name cb-inline --policy-document file://cb-policy.json
    CB_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/lab8-codebuild-role"
    ```
-
 5. Tạo project (source `S3`, artifact `S3`, managed image) rồi start build.
+
    ```bash
    cat > project.json <<EOF
    {
@@ -131,15 +135,19 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
    BUILD_ID=$(aws codebuild start-build --project-name lab8-build --query 'build.id' --output text)
    echo "Build: $BUILD_ID"
    ```
+
    > 📝 Từ 11/2024 AWS đổi alias `amazonlinux2-x86_64-standard:5.0` → `amazonlinux-x86_64-standard:5.0` (alias cũ vẫn chạy nhưng nên dùng tên mới); `standard:5.0` thực chất là **Amazon Linux 2023** (có sẵn Node 20/22).
+   >
 
 ### ✅ Kiểm chứng
+
 - Chờ build xong rồi xem trạng thái + log 4 phase.
   ```bash
   aws codebuild batch-get-builds --ids "$BUILD_ID" \
     --query 'builds[0].{status:buildStatus,phases:phases[].phaseType}'
   aws logs tail /aws/codebuild/lab8-build --since 10m
   ```
+
   Log phải in `[install] → [pre_build] → [build] → [post_build]` đúng thứ tự; giá trị `GREETING` được **che (masked)** vì đến từ SSM.
 - Kiểm tra artifact đã lên `S3`:
   ```bash
@@ -147,6 +155,7 @@ echo "Account: $ACCOUNT_ID · Region: $AWS_REGION"
   ```
 
 ### 🧹 Dọn dẹp (tránh tính phí)
+
 ```bash
 aws codebuild delete-project --name lab8-build
 aws ssm delete-parameter --name /lab8/greeting
@@ -158,6 +167,7 @@ rm -f buildspec.yml source.zip trust-cb.json cb-policy.json project.json
 ```
 
 ### 🧠 Ý nghĩa với đề thi
+
 - `buildspec.yml` **thuộc `CodeBuild`**, mặc định ở **ROOT** repo; đổi tên/vị trí phải khai trong project (`buildspecOverride`).
 - Secret trong build (DB password/API key) → dùng `parameter-store`/`secrets-manager`, KHÔNG để trong `variables` (plaintext).
 - `artifacts` quyết định cái gì được upload lên `S3`; `cache` tăng tốc build lần sau.
@@ -165,8 +175,10 @@ rm -f buildspec.yml source.zip trust-cb.json cb-policy.json project.json
 ---
 
 ## Lab 8.2 — `SAM` app end-to-end: `Function` + `Api` + `SimpleTable` ⭐
+
 **🎯 Mục tiêu:** Dựng 1 app serverless bằng `SAM`: 2 `Lambda` sau `API Gateway` ghi/đọc 1 bảng `DynamoDB` (`SimpleTable`); test local bằng `sam local`, rồi `sam deploy --guided` và gọi API thật.
 **🧩 Luyện kỹ năng (liên quan đề):**
+
 - `Transform: AWS::Serverless-2016-10-31` → cú pháp rút gọn nở thành `CloudFormation`.
 - `AWS::Serverless::Function` + event `Api` = tích hợp `API Gateway` → `Lambda` **synchronous** (proxy).
 - `SimpleTable` (`DynamoDB`) + policy rút gọn (`DynamoDBCrudPolicy`); chuỗi lệnh `sam init/build/local/deploy`.
@@ -174,15 +186,17 @@ rm -f buildspec.yml source.zip trust-cb.json cb-policy.json project.json
 **⏱️ ~40 phút** · **Yêu cầu trước:** `AWS SAM CLI` + Docker đang chạy.
 
 ### Các bước
+
 1. Khởi tạo project rồi vào thư mục.
+
    ```bash
    sam init --name lab8-sam --runtime nodejs24.x --dependency-manager npm \
      --app-template hello-world --no-tracing --no-application-insights
    cd lab8-sam
    rm -rf hello-world hello_world tests events && mkdir -p src events
    ```
-
 2. Thay `template.yaml` bằng template dưới (Function + Api + SimpleTable).
+
    ```yaml
    AWSTemplateFormatVersion: '2010-09-09'
    Transform: AWS::Serverless-2016-10-31
@@ -235,8 +249,8 @@ rm -f buildspec.yml source.zip trust-cb.json cb-policy.json project.json
        Description: Base URL của API Gateway
        Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
    ```
-
 3. Viết handler `index.mjs` + `package.json` (AWS SDK v3 có sẵn trong runtime `nodejs24.x` nên KHÔNG cần `npm install`).
+
    ```javascript
    // src/index.mjs — export 2 handler: putItem + getItem (ESM)
    import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
@@ -257,17 +271,19 @@ rm -f buildspec.yml source.zip trust-cb.json cb-policy.json project.json
      return { statusCode: 200, body: JSON.stringify(resp.Item ?? {}) };
    };
    ```
+
    ```bash
    echo '{ "type": "module" }' > src/package.json
    ```
-
 4. Build + deploy có hướng dẫn (guided). Trả lời prompt: Stack name `lab8-sam`, Region của bạn, cho phép tạo IAM role (`Y`), lưu `samconfig.toml` (`Y`); các API không auth → chọn `y` khi hỏi "…may not have authorization defined".
+
    ```bash
    sam build
    sam deploy --guided
    ```
 
 ### ✅ Kiểm chứng
+
 - Lấy URL API từ Outputs rồi gọi thật (POST ghi item, GET đọc lại):
   ```bash
   API=$(aws cloudformation describe-stacks --stack-name lab8-sam \
@@ -286,12 +302,14 @@ rm -f buildspec.yml source.zip trust-cb.json cb-policy.json project.json
   ```
 
 ### 🧹 Dọn dẹp
+
 ```bash
 sam delete --stack-name lab8-sam --no-prompts
 cd .. && rm -rf lab8-sam
 ```
 
 ### 🧠 Ý nghĩa với đề thi
+
 - `SAM` = **superset của `CloudFormation`** cho serverless; nhận diện bằng header `Transform: AWS::Serverless-2016-10-31`.
 - `Api` event = `API Gateway` → `Lambda` **synchronous** (proxy); policy rút gọn (`DynamoDBCrudPolicy`) SAM nở thành IAM policy.
 - Luồng lệnh phải thuộc: `sam init → build → local invoke/start-api → deploy` (deploy thực thi qua `CloudFormation`).
@@ -299,8 +317,10 @@ cd .. && rm -rf lab8-sam
 ---
 
 ## Lab 8.3 — `CodeDeploy` Lambda **Canary** qua `DeploymentPreference` (SAM) ⭐
+
 **🎯 Mục tiêu:** Bật `DeploymentPreference: Canary10Percent5Minutes` cho 1 `Lambda`; đổi code rồi deploy lại để `SAM` kích `CodeDeploy` **shift traffic trên alias** (10% → 100% sau 5 phút); quan sát trọng số (weighting) của alias thay đổi.
 **🧩 Luyện kỹ năng (liên quan đề):**
+
 - `Lambda`/`ECS` KHÔNG dùng In-place → dùng **Blue/Green + Canary/Linear** shift traffic qua `CodeDeploy`.
 - `AutoPublishAlias` + `DeploymentPreference` = cách an toàn khi update `Lambda`.
 - Alias `RoutingConfig`/`AdditionalVersionWeights` = cơ chế chia % traffic giữa 2 version.
@@ -308,11 +328,14 @@ cd .. && rm -rf lab8-sam
 **⏱️ ~35 phút** · **Yêu cầu trước:** `AWS SAM CLI` (Lab 8.2).
 
 ### Các bước
+
 1. Tạo project SAM tối giản.
+
    ```bash
    mkdir -p lab8-canary/src && cd lab8-canary
    echo '{ "type": "module" }' > src/package.json
    ```
+
    ```yaml
    # template.yaml
    AWSTemplateFormatVersion: '2010-09-09'
@@ -333,14 +356,15 @@ cd .. && rm -rf lab8-sam
      FunctionName:
        Value: !Ref CanaryFunction
    ```
+
    ```javascript
    // src/index.mjs  (version 1)
    export const handler = async (event) => {
      return { version: "v1" };
    };
    ```
-
 2. Deploy lần đầu (function mới → chưa có shift).
+
    ```bash
    sam build && sam deploy --guided   # stack name: lab8-canary; cho phép tạo IAM role
    FN=$(aws cloudformation describe-stack-resource --stack-name lab8-canary \
@@ -350,8 +374,8 @@ cd .. && rm -rf lab8-sam
      --query '{Version:FunctionVersion,Routing:RoutingConfig}'
    # -> Version "1", Routing null
    ```
-
 3. Đổi code sang **v2** rồi deploy lại → `CodeDeploy` bắt đầu canary.
+
    ```bash
    cat > src/index.mjs <<'EOF'
    export const handler = async (event) => {
@@ -362,6 +386,7 @@ cd .. && rm -rf lab8-sam
    ```
 
 ### ✅ Kiểm chứng
+
 - **Ngay trong 5 phút** shift: alias `live` vẫn trỏ version 1 nhưng có `AdditionalVersionWeights` ~`0.1` cho version 2 (10% canary):
   ```bash
   aws lambda get-alias --function-name "$FN" --name live \
@@ -379,6 +404,7 @@ cd .. && rm -rf lab8-sam
 - (Khái niệm rollback) Nếu gắn `DeploymentPreference.Alarms` và alarm kêu trong lúc shift → `CodeDeploy` **tự rollback** về version cũ.
 
 ### 🧹 Dọn dẹp
+
 ```bash
 sam delete --stack-name lab8-canary --no-prompts
 cd .. && rm -rf lab8-canary
@@ -386,6 +412,7 @@ rm -f out.json
 ```
 
 ### 🧠 Ý nghĩa với đề thi
+
 - `Lambda` update an toàn = **alias + version + traffic shift** (Canary/Linear) qua `CodeDeploy`, KHÔNG có "In-place cho Lambda".
 - **Canary** = 1 cục nhỏ (10%) trước, phần còn lại 1 lần sau X phút; **Linear** = đều đặn 10% mỗi X phút. Nhớ tên: `Canary10Percent5Minutes`.
 - Hooks Lambda: `BeforeAllowTraffic`, `AfterAllowTraffic` (khác EC2/ECS).
@@ -393,8 +420,10 @@ rm -f out.json
 ---
 
 ## Lab 8.4 — `CodePipeline` end-to-end: Source → `CodeBuild` → Deploy ⭐
+
 **🎯 Mục tiêu:** Ráp pipeline 3 stage (Source `S3` → Build `CodeBuild` → Deploy `S3`), chạy tự động và quan sát **artifact store `S3`** truyền artifact giữa các stage.
 **🧩 Luyện kỹ năng (liên quan đề):**
+
 - Cấu trúc `Pipeline → Stage → Action`; artifact truyền qua **artifact store (S3 bucket)**.
 - `input/output artifacts` nối Source → Build → Deploy.
 - Nguồn từ GitHub dùng **`CodeConnections`** (trước là `CodeStar Connections`) — biến thể ở cuối lab.
@@ -402,7 +431,9 @@ rm -f out.json
 **⏱️ ~45 phút** · **Yêu cầu trước:** Chuẩn bị chung.
 
 ### Các bước
+
 1. Tạo 3 bucket: source (**bật versioning** — bắt buộc cho S3 source), artifact store, deploy đích.
+
    ```bash
    SRC_BUCKET=lab8-pipe-src-$ACCOUNT_ID
    ART_BUCKET=lab8-pipe-artifact-$ACCOUNT_ID
@@ -412,8 +443,8 @@ rm -f out.json
    aws s3 mb s3://$ART_BUCKET --region $AWS_REGION
    aws s3 mb s3://$DEPLOY_BUCKET --region $AWS_REGION
    ```
-
 2. Tạo source (buildspec dạng `CODEPIPELINE` + 1 file web) rồi upload.
+
    ```bash
    cat > buildspec.yml <<'EOF'
    version: 0.2
@@ -432,8 +463,8 @@ rm -f out.json
    zip source.zip buildspec.yml index.html
    aws s3 cp source.zip s3://$SRC_BUCKET/source.zip
    ```
-
 3. Role cho `CodeBuild` (Logs + `S3` artifact store) và project (source/artifacts = `CODEPIPELINE`).
+
    ```bash
    cat > trust-cb.json <<'EOF'
    { "Version":"2012-10-17","Statement":[{"Effect":"Allow",
@@ -458,8 +489,8 @@ rm -f out.json
    EOF
    aws codebuild create-project --cli-input-json file://project.json
    ```
-
 4. Role cho `CodePipeline` (dùng S3 các bucket + gọi CodeBuild).
+
    ```bash
    cat > trust-cp.json <<'EOF'
    { "Version":"2012-10-17","Statement":[{"Effect":"Allow",
@@ -474,8 +505,8 @@ rm -f out.json
        {\"Effect\":\"Allow\",\"Action\":[\"codebuild:StartBuild\",\"codebuild:BatchGetBuilds\"],\"Resource\":\"*\"}]}"
    CP_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/lab8-pipe-role"
    ```
-
 5. Tạo pipeline (create-pipeline tự chạy 1 execution ngay).
+
    ```bash
    cat > pipeline.json <<EOF
    {
@@ -508,6 +539,7 @@ rm -f out.json
    ```
 
 ### ✅ Kiểm chứng
+
 - Xem trạng thái từng stage (chờ đến khi Deploy `Succeeded`):
   ```bash
   aws codepipeline get-pipeline-state --name lab8-pipeline \
@@ -525,9 +557,12 @@ rm -f out.json
   ```bash
   aws codepipeline start-pipeline-execution --name lab8-pipeline
   ```
+
   > 💡 `PollForSourceChanges=false`: production nên dùng **EventBridge**/webhook để auto-detect thay vì polling.
+  >
 
 ### 🧹 Dọn dẹp
+
 ```bash
 aws codepipeline delete-pipeline --name lab8-pipeline
 aws codebuild delete-project --name lab8-pipe-build
@@ -542,11 +577,13 @@ rm -f buildspec.yml index.html source.zip trust-cb.json trust-cp.json project.js
 ```
 
 ### 🧠 Ý nghĩa với đề thi
+
 - `CodePipeline` = **orchestration**: nối các stage; artifact truyền giữa stage qua **artifact store `S3`** (không phải chép tay).
 - 1 stage **khoá** trong khi xử lý 1 execution; SUPERSEDED là execution mode mặc định.
 - Nguồn GitHub → dùng **`CodeConnections`** (biến thể dưới); có thể chèn stage **Approval** thủ công trước Deploy.
 
 > 🔁 **Biến thể — Source từ GitHub qua `CodeConnections`:** tạo connection rồi **authorize trong Console** (handshake không làm hết bằng CLI được):
+>
 > ```bash
 > aws codeconnections create-connection --provider-type GitHub --connection-name lab8-gh
 > # Trạng thái PENDING -> vào Console > Developer Tools > Connections > "Update pending connection" để cấp quyền GitHub.
@@ -557,8 +594,10 @@ rm -f buildspec.yml index.html source.zip trust-cb.json trust-cp.json project.js
 ---
 
 ## Lab 8.5 — `CloudFormation`: cross-stack `Export`/`Fn::ImportValue` + change set + drift
+
 **🎯 Mục tiêu:** Stack A `Export` 1 giá trị qua `Outputs`; stack B đọc bằng `Fn::ImportValue`. Tạo **change set** xem trước rồi mới apply lên stack A; bật **drift detection** để phát hiện sửa tay.
 **🧩 Luyện kỹ năng (liên quan đề):**
+
 - `Outputs` + `Export` ↔ `Fn::ImportValue` (cross-stack reference).
 - `Parameters` + `Ref`/`Fn::GetAtt`/`Fn::Sub` + pseudo params (`AWS::Region`, `AWS::AccountId`).
 - **change set** (xem trước) khác **drift detection** (phát hiện lệch template) — hay bị nhầm.
@@ -566,7 +605,9 @@ rm -f buildspec.yml index.html source.zip trust-cb.json trust-cp.json project.js
 **⏱️ ~30 phút** · **Yêu cầu trước:** Chuẩn bị chung.
 
 ### Các bước
+
 1. Viết stack A (`lab8-export.yaml`) — có `Parameters`, `Ref`, `GetAtt`, `Sub`, và `Outputs` kèm `Export`.
+
    ```yaml
    AWSTemplateFormatVersion: '2010-09-09'
    Description: Lab 8.5 Stack A - export giá trị cho stack khác
@@ -590,16 +631,16 @@ rm -f buildspec.yml index.html source.zip trust-cb.json trust-cp.json project.js
      Info:
        Value: !Sub "Topic ${TopicName} @ ${AWS::Region} / acct ${AWS::AccountId}"
    ```
-
 2. Deploy stack A rồi xem export.
+
    ```bash
    aws cloudformation create-stack --stack-name lab8-stack-a \
      --template-body file://lab8-export.yaml
    aws cloudformation wait stack-create-complete --stack-name lab8-stack-a
    aws cloudformation list-exports --query "Exports[?Name=='Lab8-SharedTopicArn']"
    ```
-
 3. Viết stack B (`lab8-import.yaml`) dùng `Fn::ImportValue` (lưu ARN import được vào 1 `SSM Parameter` — free).
+
    ```yaml
    AWSTemplateFormatVersion: '2010-09-09'
    Description: Lab 8.5 Stack B - import giá trị từ Stack A
@@ -614,13 +655,14 @@ rm -f buildspec.yml index.html source.zip trust-cb.json trust-cp.json project.js
      ImportedArn:
        Value: !ImportValue Lab8-SharedTopicArn
    ```
+
    ```bash
    aws cloudformation create-stack --stack-name lab8-stack-b \
      --template-body file://lab8-import.yaml
    aws cloudformation wait stack-create-complete --stack-name lab8-stack-b
    ```
-
 4. Sửa stack A (thêm `DisplayName` — không đụng export) và tạo **change set** để xem trước.
+
    ```bash
    # thêm 1 dòng dưới Properties của SharedTopic trong lab8-export.yaml:
    #   DisplayName: "Lab8 Shared"
@@ -633,6 +675,7 @@ rm -f buildspec.yml index.html source.zip trust-cb.json trust-cp.json project.js
    ```
 
 ### ✅ Kiểm chứng
+
 - Stack B đọc đúng ARN của topic tạo bởi stack A:
   ```bash
   aws ssm get-parameter --name /lab8/imported-topic-arn --query 'Parameter.Value' --output text
@@ -654,6 +697,7 @@ rm -f buildspec.yml index.html source.zip trust-cb.json trust-cp.json project.js
   ```
 
 ### 🧹 Dọn dẹp
+
 ```bash
 # XOÁ B TRƯỚC (gỡ phụ thuộc import), rồi mới xoá A
 aws cloudformation delete-stack --stack-name lab8-stack-b
@@ -664,6 +708,7 @@ rm -f lab8-export.yaml lab8-import.yaml
 ```
 
 ### 🧠 Ý nghĩa với đề thi
+
 - Chia sẻ giá trị giữa stack = **`Export` (Outputs) + `Fn::ImportValue`**; không copy-paste, không lồng resource.
 - **change set** = xem trước thay đổi TRƯỚC khi apply (tránh sửa/xoá ngoài ý muốn); **drift** = phát hiện resource bị sửa tay lệch template — 2 khái niệm khác nhau.
 - Không xoá được stack đang có export bị stack khác import → nhớ thứ tự xoá; muốn giữ resource khi xoá stack thì `DeletionPolicy: Retain`.
@@ -671,8 +716,10 @@ rm -f lab8-export.yaml lab8-import.yaml
 ---
 
 ## Lab 8.6 — `ECR` + `ECS`/`Fargate`: build/push image, run task, task role vs execution role ⭐
+
 **🎯 Mục tiêu:** Build & push image lên `ECR` (login qua `get-login-password`), đăng ký task definition `Fargate` với **2 role tách biệt**, `run-task` và xem log; phân biệt rõ **task role** vs **execution role**.
 **🧩 Luyện kỹ năng (liên quan đề):**
+
 - Luồng login/tag/push `ECR`; `scanOnPush` + lifecycle policy.
 - Task definition `Fargate` (`awsvpc`, cpu/mem, logging) chạy ra 1 **task**.
 - **Execution role** (kéo image `ECR` + ghi log — cho ECS agent) vs **task role** (quyền app gọi AWS API) — bẫy hay gặp.
@@ -680,7 +727,9 @@ rm -f lab8-export.yaml lab8-import.yaml
 **⏱️ ~40 phút** · **Yêu cầu trước:** Docker đang chạy; có **default VPC** trong Region.
 
 ### Các bước
+
 1. Tạo repo `ECR` (bật scan on push) + lifecycle policy (dọn image cũ).
+
    ```bash
    aws ecr create-repository --repository-name lab8-app \
      --image-scanning-configuration scanOnPush=true
@@ -694,8 +743,8 @@ rm -f lab8-export.yaml lab8-import.yaml
    EOF
    aws ecr put-lifecycle-policy --repository-name lab8-app --lifecycle-policy-text file://lifecycle.json
    ```
-
 2. Build image nhỏ (dùng base **public ECR** để tránh Docker Hub rate limit), login rồi push.
+
    ```bash
    cat > Dockerfile <<'EOF'
    FROM public.ecr.aws/amazonlinux/amazonlinux:2023
@@ -708,8 +757,8 @@ rm -f lab8-export.yaml lab8-import.yaml
    docker tag lab8-app:latest ${REPO_URI}:latest
    docker push ${REPO_URI}:latest
    ```
-
 3. Tạo **2 role** riêng biệt (cùng trust `ecs-tasks.amazonaws.com`).
+
    ```bash
    cat > trust-ecs.json <<'EOF'
    { "Version":"2012-10-17","Statement":[{"Effect":"Allow",
@@ -726,8 +775,8 @@ rm -f lab8-export.yaml lab8-import.yaml
    EXEC_ROLE_ARN=arn:aws:iam::${ACCOUNT_ID}:role/lab8-ecs-execution
    TASK_ROLE_ARN=arn:aws:iam::${ACCOUNT_ID}:role/lab8-ecs-task
    ```
-
 4. Log group + đăng ký task definition `Fargate` (khai cả 2 role).
+
    ```bash
    aws logs create-log-group --log-group-name /ecs/lab8-app
 
@@ -756,8 +805,8 @@ rm -f lab8-export.yaml lab8-import.yaml
    EOF
    aws ecs register-task-definition --cli-input-json file://taskdef.json
    ```
-
 5. Tạo cluster + `run-task` trên `Fargate` (dùng subnet/SG mặc định; `assignPublicIp=ENABLED` để kéo image `ECR`).
+
    ```bash
    aws ecs create-cluster --cluster-name lab8-cluster
    SUBNET=$(aws ec2 describe-subnets --filters "Name=default-for-az,Values=true" \
@@ -770,6 +819,7 @@ rm -f lab8-export.yaml lab8-import.yaml
    ```
 
 ### ✅ Kiểm chứng
+
 - Theo dõi task đến khi chạy rồi STOPPED, và xem log:
   ```bash
   aws ecs list-tasks --cluster lab8-cluster
@@ -781,6 +831,7 @@ rm -f lab8-export.yaml lab8-import.yaml
 - **Bẫy role (quan trọng):** nếu bỏ `executionRoleArn` (hoặc thiếu quyền) → task fail ở bước **kéo image** với `CannotPullContainerError` — đây là dấu hiệu thiếu **execution role**, KHÔNG phải task role. Task role chỉ ảnh hưởng quyền của app **lúc chạy** (ví dụ gọi `s3:ListAllMyBuckets`).
 
 ### 🧹 Dọn dẹp
+
 ```bash
 # đợi task về STOPPED trước khi xoá cluster
 aws ecs deregister-task-definition --task-definition lab8-app:1   # task definition không tính phí nhưng nên dọn
@@ -797,6 +848,7 @@ rm -f Dockerfile taskdef.json lifecycle.json trust-ecs.json
 ```
 
 ### 🧠 Ý nghĩa với đề thi
+
 - **Execution role** = kéo image `ECR` + ghi log (cấp cho ECS agent); **task role** = quyền cho app trong container gọi AWS API. Kéo image lỗi/thiếu quyền log → thiếu **execution role**.
 - `Fargate` bắt buộc `networkMode: awsvpc` (mỗi task có ENI riêng); `Fargate` = serverless, không quản EC2.
 - `ECR`: `get-login-password | docker login` → `tag` → `push`; `lifecycle policy` dọn image cũ, `scanOnPush` quét lỗ hổng.

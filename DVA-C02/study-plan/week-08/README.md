@@ -166,6 +166,7 @@ cache:
 - **EC2 launch type** (tự quản instance) vs **`Fargate`** (serverless, không quản server).
 - **TASK role** = quyền cho **app trong container** gọi AWS API. **EXECUTION role** = quyền **kéo image từ `ECR` + ghi log** (cho ECS agent). ⭐ Rất hay bẫy.
 - **`ECR`:** login rồi push/pull:
+
   ```bash
   aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin <acct>.dkr.ecr.ap-southeast-1.amazonaws.com
   docker tag myapp:latest <acct>.dkr.ecr.ap-southeast-1.amazonaws.com/myapp:latest
@@ -194,9 +195,9 @@ cache:
 
 | Fact                                                 | Ghi nhớ                                                                                                                                                                            |
 | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `buildspec.yml`                                    | dùng bởi**`CodeBuild`**, nằm ở **ROOT repo**; phase `install → pre_build → build → post_build`; có `env`/`artifacts`/`cache`/`reports`              |
+| `buildspec.yml`                                    | dùng bởi**`CodeBuild`**, nằm ở **ROOT repo**; phase `install → pre_build → build → post_build`; có `env`/`artifacts`/`cache`/`reports`                    |
 | `buildspec` lấy secret                            | `variables` / `parameter-store` (SSM) / `secrets-manager`                                                                                                                     |
-| `appspec.yml`                                      | dùng bởi**`CodeDeploy`**                                                                                                                                                  |
+| `appspec.yml`                                      | dùng bởi**`CodeDeploy`**                                                                                                                                                        |
 | Hooks**EC2/on-prem**                           | `ApplicationStop → BeforeInstall → AfterInstall → ApplicationStart → ValidateService`                                                                                         |
 | Hooks**Lambda**                                | `BeforeAllowTraffic`, `AfterAllowTraffic`                                                                                                                                       |
 | Hooks**ECS**                                   | `BeforeInstall`, `AfterInstall`, `AfterAllowTestTraffic`, `BeforeAllowTraffic`, `AfterAllowTraffic`                                                                       |
@@ -205,7 +206,7 @@ cache:
 | In-place                                             | **CHỈ** EC2/on-prem                                                                                                                                                          |
 | Blue/Green                                           | EC2,**ECS, Lambda**                                                                                                                                                           |
 | `CodePipeline`                                     | stage Source/Build/Deploy/Approval; artifact ở**S3**; trigger **EventBridge**/webhook; GitHub qua **`CodeConnections`** (trước là `CodeStar Connections`) |
-| CloudFormation bắt buộc                            | chỉ**`Resources`**                                                                                                                                                         |
+| CloudFormation bắt buộc                            | chỉ**`Resources`**                                                                                                                                                               |
 | Pseudo params                                        | `AWS::Region`, `AWS::AccountId`, `AWS::StackName`                                                                                                                             |
 | Cross-stack                                          | `Outputs` + **`Export`** + **`Fn::ImportValue`**                                                                                                                  |
 | `DeletionPolicy`                                   | `Delete` (mặc định) / `Retain` / `Snapshot`                                                                                                                                |
