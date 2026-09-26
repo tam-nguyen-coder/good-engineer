@@ -130,7 +130,7 @@ What should the developer configure?
 - C. Create an API Gateway Lambda authorizer to parse and validate the request payload.
 - D. Configure an API Gateway mapping template that converts missing query string parameters to null values.
 
-### Question 14 — `[D1.1 · API Gateway CORS Configuration · Single]`
+### Question 14 — `[D1.1 · API Gateway CORS Configuration · Multi — Choose 2]`
 A Single Page Application (SPA) hosted on `https://www.example.com` makes AJAX `POST` requests with a custom header `X-Custom-Auth` and `Content-Type: application/json` to an Amazon API Gateway REST API at `https://api.example.com`. In web browser tests, the request fails with the error: `Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource`.
 What two configurations must the developer implement in API Gateway to resolve this error? (Choose two.)
 - A. Enable CORS on the resource in API Gateway to create an `OPTIONS` mock method that returns the headers `Access-Control-Allow-Origin: 'https://www.example.com'` and `Access-Control-Allow-Headers: 'Content-Type,X-Custom-Auth'`.
@@ -166,7 +166,7 @@ Which messaging architecture satisfies these requirements?
 - C. Use an Amazon SNS Standard topic fanned out to multiple SQS Standard queues.
 - D. Use an Amazon SQS FIFO queue; leave `MessageGroupId` empty so all messages are processed concurrently.
 
-### Question 18 — `[D1.1 · SQS Polling & Visibility Timeout · Single]`
+### Question 18 — `[D1.1 · SQS Polling & Visibility Timeout · Multi — Choose 2]`
 A fleet of worker EC2 instances polls an Amazon SQS queue for order processing jobs. Processing an order takes approximately 45 seconds. However, developers observe that multiple worker instances frequently pick up and process the **exact same order message** simultaneously, resulting in duplicated orders. In addition, the workers make thousands of empty `ReceiveMessage` API calls per minute when the queue is idle, driving up AWS costs.
 What two configuration changes will solve both issues? (Choose two.)
 - A. Increase the queue's Visibility Timeout from the default 30 seconds to a value greater than processing time (e.g., 90 seconds).
@@ -530,7 +530,7 @@ Which service should the developer implement?
 - D. AWS X-Ray Sampling Rules
 
 ### Question 60 — `[D4.2 · CloudWatch Subscription Filters · Multi — Choose 2]`
-A developer needs to stream application logs from an Amazon CloudWatch Logs log group in **real time** to an Elasticsearch analytics cluster.
+A developer needs to stream application logs from an Amazon CloudWatch Logs log group in **real time** to an Amazon OpenSearch Service (formerly Elasticsearch) analytics cluster.
 Which two AWS services can be configured as direct targets for a CloudWatch Logs Subscription Filter? (Choose two.)
 - A. Amazon Kinesis Data Streams
 - B. AWS Lambda
@@ -571,7 +571,7 @@ In a microservices architecture, Service A calls Service B over HTTP. To ensure 
 - C. The services must run in the same VPC subnet.
 - D. AWS X-Ray automatically traces cross-service calls without any HTTP header propagation.
 
-### Question 65 — `[D4.3 · CloudFront Cache Optimization · Single]`
+### Question 65 — `[D4.3 · CloudFront Cache Optimization · Multi — Choose 2]`
 A global media company uses Amazon CloudFront to deliver static assets (images, CSS, JavaScript) from an Amazon S3 bucket. The development team releases an urgent patch to `main.js`. However, users continue to receive the outdated version of `main.js` from CloudFront edge caches.
 What are two valid ways to ensure users immediately receive the new file version? (Choose two.)
 - A. Create a CloudFront invalidation for `/main.js` (or `/*`).

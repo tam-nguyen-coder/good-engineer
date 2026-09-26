@@ -688,7 +688,7 @@ What architectural change achieves this?
 
 ---
 
-### Question 62 — `[D4.3 · ElastiCache Cache Stampede / Thundering Herd Prevention · Single]`
+### Question 62 — `[D4.3 · ElastiCache Cache Stampede / Thundering Herd Prevention · Multi — Choose 2]`
 An online media portal uses Amazon ElastiCache for Redis to cache trending news articles. When a hot breaking news article's cache key expires (TTL reaches 0), hundreds of concurrent web application workers simultaneously discover the cache miss and query the backend PostgreSQL database for the exact same article at the same millisecond. This sudden spike in database queries overwhelms and crashes the PostgreSQL database (Cache Stampede / Thundering Herd problem).
 Which two techniques mitigate this cache stampede? (Choose two.)
 - A. Implement a distributed mutex lock (locking the cache key) so only one worker queries the database while other workers wait or receive stale data.

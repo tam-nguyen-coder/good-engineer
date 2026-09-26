@@ -131,7 +131,7 @@
 ### Question 12 — Answer: **A**
 - **Why correct:** **Amazon S3 Select** cho phép chạy các câu lệnh truy vấn SQL đơn giản trực tiếp trên các file lưu trữ trong S3 (định dạng CSV, JSON, hoặc Apache Parquet). Bằng cách lọc dữ liệu ngay tại S3 và chỉ trả về phần dữ liệu khớp điều kiện (250 MB thay vì tải toàn bộ 50 GB), S3 Select giúp tăng tốc độ xử lý lên tới 400% và tiết kiệm 99% chi phí băng thông truyền tải mạng.
 - **Why the others are wrong:** B sai vì Transfer Acceleration chỉ tăng tốc đường truyền qua edge location của CloudFront, ứng dụng vẫn phải tải toàn bộ 50 GB. C sai vì replication sao chép cả file lớn, không lọc được dữ liệu. D sai vì Object Lock dùng để khóa dữ liệu chống xóa (WORM), không liên quan đến truy vấn.
-- 🧠 **Key point / trap:** Lọc và chỉ tải một phần dữ liệu nhỏ từ file lớn (CSV/JSON/Parquet) trên S3 bằng SQL → **Amazon S3 Select**.
+- 🧠 **Key point / trap:** Lọc và chỉ tải một phần dữ liệu nhỏ từ file lớn (CSV/JSON/Parquet) trên S3 bằng SQL → **Amazon S3 Select**. (Lưu ý: AWS đã dừng nhận khách hàng mới cho S3 Select từ giữa 2024 và khuyến nghị Athena/S3 Express, nhưng trong đề thi DVA-C02 hiện hành thì S3 Select vẫn là đáp án chuẩn cho kịch bản SQL lọc trực tiếp trên S3).
 - 📎 Source: `Amazon S3 User Guide — Filtering and retrieving data using Amazon S3 Select`.
 
 ---

@@ -22,7 +22,7 @@ What network configuration must the developer implement to allow the Lambda func
 A financial services API built on AWS Lambda experiences severe tail latency spikes every morning at 09:00 AM due to cold starts when hundreds of thousands of users open the mobile app. The developer wants to eliminate cold starts during business hours (09:00 AM – 05:00 PM) while avoiding paying for idle provisioned capacity overnight.
 What solution meets these requirements with the LEAST operational overhead?
 - A. Configure Provisioned Concurrency on the Lambda function's production alias, and configure Application Auto Scaling with scheduled scaling actions to increase provisioned concurrency at 08:50 AM and decrease it at 05:10 PM.
-- B. Write a CloudWatch Events / EventBridge rule that invokes the Lambda function every 5 minutes with a dummy test payload.
+- B. Write an Amazon EventBridge scheduled rule that invokes the Lambda function every 5 minutes with a dummy test payload.
 - C. Increase the Lambda function's timeout from 30 seconds to 900 seconds.
 - D. Configure Reserved Concurrency on the function with a value of 500.
 
@@ -175,7 +175,7 @@ What must the developer add to the S3 bucket configuration?
 - C. Enable S3 Transfer Acceleration on the bucket.
 - D. Create an IAM role for web identity federation.
 
-### Question 20 — `[D1.1 · SQS Message Deduplication · Single]`
+### Question 20 — `[D1.1 · SQS Message Deduplication · Multi — Choose 2]`
 A financial reporting microservice publishes messages to an Amazon SQS FIFO queue. During high-traffic bursts, the publisher application retries API calls when it encounters temporary network blips. The developer needs to ensure that duplicate messages sent within a 5-minute interval are recognized and discarded by Amazon SQS.
 What two methods can be used to ensure message deduplication in an SQS FIFO queue? (Choose two.)
 - A. Explicitly provide a unique `MessageDeduplicationId` for each message when calling `SendMessage`.
