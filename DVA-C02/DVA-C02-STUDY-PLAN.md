@@ -613,7 +613,7 @@
 - [ ] Mini-mock **Domain 1** (Tuần 5) đạt **≥ 70%**.
 - [ ] Mini-mock **Domain 1+2** (Tuần 7) đạt **≥ 72%**.
 - [ ] Mini-mock **Domain 3** (Tuần 8) đạt **≥ 70%**.
-- [ ] Làm **≥ 3 bộ full-length mock KHÁC NHAU** (65 câu, canh giờ 130').
+- [ ] Làm **≥ 3 bộ full-length mock KHÁC NHAU** (65 câu, canh giờ 130') trong [mock-exams/](mock-exams/README.md).
 - [ ] Đạt **ổn định ≥ 85%** trên ≥ 3 bộ mock khác nhau trước khi đặt lịch thi (biên an toàn so với ngưỡng đậu 72%).
 - [ ] Với **mỗi câu sai** → viết file phân tích trong `questions/DVA-C02/` (format 6 mục) + ôn theo mốc 1/3/7 ngày.
 - [ ] Ôn lại toàn bộ file câu sai 2–3 lần đến khi trả lời đúng 100%.

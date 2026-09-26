@@ -23,9 +23,9 @@ Bốn "buổi" tuần này quy đổi thành **lịch mock dồn**. Nguyên tắ
 
 | Ngày                       | Việc chính                                                                                                                       |
 | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| **Ngày 1**           | 🎯**FULL MOCK #2** (canh giờ 130') → **Review 100% câu sai** + viết file phân tích 6 mục                        |
-| **Ngày 2**           | Cày**vùng yếu** (domain điểm thấp nhất ở mock #2) + đọc lại **bảng số §6**                               |
-| **Ngày 3**           | 🎯**FULL MOCK #3** (canh giờ 130') → Review 100% câu sai + viết file phân tích                                         |
+| **Ngày 1**           | 🎯 **[FULL MOCK #2](../../mock-exams/mock-02/questions.md)** (canh giờ 130') → **Review 100% câu sai** ở [answers.md](../../mock-exams/mock-02/answers.md) + viết file phân tích 6 mục                        |
+| **Ngày 2**           | Cày **vùng yếu** (domain điểm thấp nhất ở mock #2) + đọc lại **bảng số §6**                               |
+| **Ngày 3**           | 🎯 **[FULL MOCK #3](../../mock-exams/mock-03/questions.md)** (canh giờ 130') → Review 100% câu sai ở [answers.md](../../mock-exams/mock-03/answers.md) + viết file phân tích                                         |
 | **Ngày 4**           | Cày vùng yếu còn lại + đọc lại**bảng phản xạ §7** + danh sách bẫy                                              |
 | **Ngày 5**           | 🎯**FULL MOCK #4** *(nếu chưa đủ 3 bài ≥85%)* → Review. Nếu đã đủ → flashcard nhẹ + rà hands-on còn thiếu |
 | **Ngày 6**           | **Cram:** cheat sheet + bảng số §6 + bảng phản xạ §7; chuẩn bị **giấy tờ + thiết bị/phòng**              |

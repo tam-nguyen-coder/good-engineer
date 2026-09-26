@@ -210,7 +210,7 @@
 - [ ] Đẩy custom metric bằng `PutMetricData`.
 - [ ] Tạo metric filter từ log + alarm gắn action `SNS`, kích được trạng thái `ALARM`.
 - [ ] Tạo `EventBridge` rule `cron`/`rate` trigger `Lambda`, xác nhận chạy định kỳ.
-- [ ] **Làm FULL MOCK #1 (65 câu / 130 phút), ghi điểm, review 100% câu sai.**
+- [ ] **Làm [FULL MOCK #1](../../mock-exams/mock-01/questions.md) (65 câu / 130 phút), tự chấm ở [answers.md](../../mock-exams/mock-01/answers.md), review 100% câu sai.**
 
 ## 🚪 Cổng tự kiểm tra (phải trả lời trôi chảy mới sang tuần sau)
 

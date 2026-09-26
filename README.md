@@ -5,7 +5,7 @@ Welcome to **Good Engineer**, a repository dedicated to study materials and auto
 Currently, it supports:
 - **AWS Certified Solutions Architect – Associate (SAA-C03)**
 - **AWS Certified Cloud Practitioner (CLF-C02)**
-- **AWS Certified Developer – Associate (DVA-C02)** — 10-week study plan in [`DVA-C02/`](DVA-C02/DVA-C02-STUDY-PLAN.md)
+- **AWS Certified Developer – Associate (DVA-C02)** — 10-week study plan in [`DVA-C02/`](DVA-C02/DVA-C02-STUDY-PLAN.md), plus [3 full-length mock exams](DVA-C02/mock-exams/README.md) (65 questions / 130 minutes, authentic Pearson VUE difficulty)
 - **Apache Kafka / CCDAK (Confluent Certified Developer for Apache Kafka)** — 10-week study plan in [`CCDAK/`](CCDAK/CCDAK-STUDY-PLAN.md), plus [3 full-length mock exams](CCDAK/mock-exams/README.md) (60 questions / 90 minutes, anchored to Kafka 4.3)
 - **Apache Kafka / CCAAK (Confluent Certified Administrator for Apache Kafka)** — 8-week operations-focused study plan in [`CCAAK/`](CCAAK/CCAAK-STUDY-PLAN.md), plus [3 full-length mock exams](CCAAK/mock-exams/README.md), building on the CCDAK material
 - **Kubernetes / CKA & CKAD (Certified Kubernetes Administrator & Developer)** — 10-week study plan in [`KUBERNETES/`](KUBERNETES/K8S-STUDY-PLAN.md)
